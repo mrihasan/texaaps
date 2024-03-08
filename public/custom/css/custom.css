@@ -1,0 +1,16 @@
+.required{
+    color: red;
+}
+.help-block{
+    color: red;
+}
+.breadcrumb {
+    margin-bottom: 0rem;
+    padding-top: 0.5rem;
+    padding-right: 1rem;
+    padding-bottom: 0.5rem;
+    padding-left: 1rem;
+}
+.card{
+    margin-top: 0.5rem;
+}
