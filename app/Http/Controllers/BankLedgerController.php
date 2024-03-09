@@ -81,7 +81,7 @@ class BankLedgerController extends Controller
         $ledger_banking->transaction_method_id = $request->transaction_method;
         $ledger_banking->amount = $request->amount;
         $ledger_banking->particulars  = $request->particulars;
-        $ledger_banking->ref_date = date('Y-m-d', strtotime($request->ref_date));
+        $ledger_banking->ref_date = ($request->ref_date!=null) ? date('Y-m-d', strtotime($request->ref_date)) : null;
         $ledger_banking->ref_no = $request->ref_no;
         $ledger_banking->entry_by = Auth::user()->id;
         $ledger_banking->approve_status = 'Approved';

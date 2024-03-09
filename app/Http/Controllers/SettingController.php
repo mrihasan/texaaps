@@ -127,7 +127,7 @@ class SettingController extends Controller
     public function backupDatabase($code)
     {
         if ($code == 'Ei$2021') {
-            $filename = "ersms-" . date('YmdHis') . ".sql";
+            $filename = "texaapa-" . date('YmdHis') . ".sql";
             $toFile = storage_path() . "/backups/" . $filename;
 //        $mysqldump_path="F:\laragon5\bin\mysql\mysql-5.7.33-winx64\bin\mysqldump.exe";
             $mysqldump_path="mysqldump";
@@ -162,7 +162,7 @@ class SettingController extends Controller
 
     public function getSeeder($table)
     {
-        $table=DB::table($table)->get();
+        $table=DB::table($table)->select('id','expense_name')->get();
         return view('seeder',compact('table'));
     }
 

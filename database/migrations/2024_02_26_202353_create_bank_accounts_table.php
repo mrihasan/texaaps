@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('bank_accounts', function (Blueprint $table) {
             $table->id();
             $table->string('account_name');
+            $table->string('bank_name')->nullable();
             $table->string('account_no')->nullable();
             $table->text('details')->nullable();
             $table->enum('account_type', ['Bank Account','Mobile Banking','Petty Cash'])->default('Petty Cash');

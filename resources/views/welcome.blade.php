@@ -49,7 +49,8 @@
             <h4 style="color: orangered"> Powered By - Eidy ICT Solutions Ltd. (01716-383038)</h4>
         </div>
         <div class="col-md-3">
-
+            <img src="{!! asset('storage/images/pad_top.png')!!}" alt="logo"
+                 class="img-fluid" style="height: 100px; width: auto; align: middle ; " />
         </div>
         <div class="footer">
             <a href="https://www.eidyict.com" target="_blank" class="btn btn-sm blue slidebut">

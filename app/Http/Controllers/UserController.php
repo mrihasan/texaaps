@@ -315,10 +315,22 @@ class UserController extends Controller
     function myprofile()
     {
         $user = \Auth::user();
+
+        if ($user->user_type_id == 1)
+            $user_type = 'Admin';
+        elseif ($user->user_type_id == 2)
+            $user_type = 'Employee';
+        elseif ($user->user_type_id == 3)
+            $user_type = 'Client';
+        elseif ($user->user_type_id == 4)
+            $user_type = 'Supplier';
+        else
+            $user_type = 'User';
+
         $ledger = ledger_balancce($user->id);
         $ledger1 = ledgerBalance($user->id);
 //        dd($ledger1);
-        return view('user.show_sc', compact('user', 'ledger', 'ledger1'));
+        return view('user.show_sc', compact('user', 'ledger', 'ledger1','user_type'));
     }
 
     //By selfUser

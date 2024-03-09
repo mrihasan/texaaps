@@ -58,6 +58,7 @@ class BankAccountController extends Controller
         $ledger_banking->amount = $request->opening_balance;
         $ledger_banking->transaction_type_id = 8;
         $ledger_banking->transaction_method_id = 1;
+        $ledger_banking->ref_date = null;
         $ledger_banking->particulars = 'Opening';
         $ledger_banking->approve_status = 'Approved';
         $ledger_banking->entry_by = Auth::user()->id;

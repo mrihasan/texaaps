@@ -181,7 +181,7 @@
                                 </tr>
                                 <tr style="border: none">
                                     <td style="text-align:right; border: none" width="95%" colspan="3">
-                                        {!! $invoice->notes !!}}
+                                        <p style="text-align:justify; white-space: pre-wrap">{{ $invoice->notes }}</p>
                                     </td>
 
                                 </tr>
@@ -437,7 +437,7 @@
                                 </tr>
                                 <tr style="border: none">
                                     <td style="text-align:right; border: none" width="95%" colspan="3">
-                                        {!! $invoice->notes !!}}
+                                        <p style="text-align:justify; white-space: pre-wrap">{{ $invoice->notes }}</p>
                                     </td>
 
                                 </tr>

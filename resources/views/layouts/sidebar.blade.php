@@ -11,12 +11,12 @@
     <div class="sidebar">
         <!-- Sidebar Menu -->
         <nav class="mt-2">
-            <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent nav-compact" data-widget="treeview"
+            <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent nav-compact " data-widget="treeview"
                 role="menu"
                 data-accordion="false">
                 <!-- Add icons to the links using the .nav-icon class
                      with font-awesome or any other icon font library -->
-                <li class="nav-item has-treeview">
+                <li class="nav-item has-treeview d-none">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fa fa-language " style="color: yellow"></i>
                         <p style="color: yellow">
@@ -185,6 +185,18 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
+                            {{--<li class="nav-item">--}}
+                                {{--<a href="{{ url('payment_request/create') }}" class="nav-link @yield('add_payment_request')">--}}
+                                    {{--<i class="far fa-circle nav-icon"></i>--}}
+                                    {{--<p>Payment request</p>--}}
+                                {{--</a>--}}
+                            {{--</li>--}}
+                            {{--<li class="nav-item">--}}
+                                {{--<a href="{{ url('payment_request') }}" class="nav-link @yield('manade_payment_request')">--}}
+                                    {{--<i class="far fa-circle nav-icon"></i>--}}
+                                    {{--<p>Manage Payment request</p>--}}
+                                {{--</a>--}}
+                            {{--</li>--}}
                             <li class="nav-item">
                                 <a href="{{ url('payment') }}" class="nav-link @yield('payment')">
                                     <i class="far fa-circle nav-icon"></i>
