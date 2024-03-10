@@ -76,7 +76,6 @@
                         <input type="text" class="form-control datetimepicker-input"
                                name="transaction_date"
                                value="{{ old('transaction_date') }}" data-target="#transaction_date"/>
-                        {{--                                  {!! Form::input('text', 'transaction_date', \Carbon\Carbon::now()->format('d-M-Y'),['class'=>'form-control']) !!}--}}
                         <div class="input-group-append" data-target="#transaction_date"
                              data-toggle="datetimepicker">
                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>

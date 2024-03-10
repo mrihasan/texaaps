@@ -2,7 +2,7 @@
 @section('accounting_mo','menu-open')
 @section('accounting','active')
 @section('withdraw','active')
-@section('title','withdraw')
+@section('title','withdraw Update')
 @section('breadcrumb')
     <li class="nav-item d-none d-sm-inline-block">
         <a href="#" class="nav-link">Accounting</a>
@@ -25,9 +25,9 @@
     <div class="row justify-content-center">
         <div class="card card-info col-md-8">
             <div class="card-header">
-                <h3 class="card-title">Withdraw</h3>
+                <h3 class="card-title">Withdraw Update</h3>
             </div>
-            {!! Form::open(array('route' => 'bank_ledger.store','method'=>'POST','class'=>'form-horizontal','id'=>'saveForm')) !!}
+            {!! Form::model($bank_ledger,['method'=>'PATCH', 'route'=>['bank_ledger.update',$bank_ledger->id],'class'=>'form-horizontal','id'=>'saveForm']) !!}
             {{ csrf_field() }}
             {!! Form::hidden('transaction_type_id', 9 )!!} {{--Withdraw--}}
 
@@ -37,12 +37,7 @@
                     <label for="roles" class="col-md-4 control-label text-right">Branch :<span
                                 class="required"> * </span></label>
                     <div class="col-md-6">
-                        <select name="branch" class="form-control select2" style="width: 100%;" id="branch">
-                            {{--<option>Select Branch</option>--}}
-                            @foreach($branches as $key=>$branch)
-                                <option value="{{ $key }}" {{ (session()->get('brand')) == $key ? 'selected' : '' }}>{{ $branch}}</option>
-                            @endforeach
-                        </select>
+                        {{ Form::select('branch', $branches, $bank_ledger->branch_id, ['class'=>'form-control select2bs4 ', 'required'] ) }}
                     </div>
                     @if($errors->has('branch'))
                         <em class="invalid-feedback">
@@ -51,14 +46,10 @@
                     @endif
                 </div>
                 <div class="form-group row{{ $errors->has('bank_account') ? 'has-error' : '' }}">
-                    <label for="roles" class="col-md-4 control-label text-right">Withdraw From Account :<span
+                    <label for="roles" class="col-md-4 control-label text-right">Select Account :<span
                                 class="required"> * </span></label>
                     <div class="col-md-6">
-                        <select name="bank_account" class="form-control select2" style="width: 100%;" id="bank_account">
-                            @foreach($to_accounts as $key=>$to_account)
-                                <option value="{{ $key }}">{{ $to_account}}</option>
-                            @endforeach
-                        </select>
+                        {{ Form::select('bank_account', $to_accounts, $bank_ledger->bank_account_id, ['class'=>'form-control select2bs4 ', 'required'] ) }}
                     </div>
                     @if($errors->has('bank_account'))
                         <em class="invalid-feedback">
@@ -73,7 +64,8 @@
                          data-target-input="nearest">
                         <input type="text" class="form-control datetimepicker-input"
                                name="transaction_date"
-                               value="{{ old('transaction_date') }}" data-target="#transaction_date"/>
+                               value="{{Carbon\Carbon::parse(date('Y-m-d ', strtotime($bank_ledger->transaction_date)))->format('dd-mm-YYYY')}}" data-target="#transaction_date"/>
+                        {{--                                  {!! Form::input('text', 'transaction_date', \Carbon\Carbon::now()->format('d-M-Y'),['class'=>'form-control']) !!}--}}
                         <div class="input-group-append" data-target="#transaction_date"
                              data-toggle="datetimepicker">
                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
@@ -90,7 +82,7 @@
                     <label class="col-md-4 control-label text-md-right">Amount :<span
                                 class="required"> * </span></label>
                     <div class="col-md-6">
-                        {!! Form::number('amount', null,['class'=>'form-control ', 'placeholder'=>'Enter Amount']) !!}
+                        {!! Form::number('amount', $bank_ledger->amount,['class'=>'form-control ', 'placeholder'=>'Enter Amount']) !!}
                         @if ($errors->has('amount'))
                             <span class="help-block">
                                         <strong>{{ $errors->first('amount') }}</strong>
@@ -104,7 +96,7 @@
                     <label class="col-sm-4 control-label text-md-right">Transaction Method : <span
                                 class="required"> * </span></label>
                     <div class="col-sm-6">
-                        {{ Form::select('transaction_method', $transaction_methods, null,['class'=>'form-control select2'] ) }}
+                        {{ Form::select('transaction_method', $transaction_methods, $bank_ledger->transaction_method_id,['class'=>'form-control select2'] ) }}
                         @if ($errors->has('transaction_method'))
                             <span class="help-block">
                                         <strong>{{ $errors->first('transaction_method') }}</strong>
@@ -116,8 +108,7 @@
                 <div class="form-group row {{ $errors->has('ref_no') ? ' has-error' : '' }}">
                     <label for="ref_no" class="col-md-4 control-label text-md-right">Ref No :</label>
                     <div class="col-md-6">
-                        <input id="ref_no" type="text" class="form-control input-circle" name="ref_no"
-                               value="{{ old('ref_no') }}" placeholder="Enter Ref No">
+                        {!! Form::text('ref_no', $bank_ledger->ref_no,['class'=>'form-control ', 'placeholder'=>'Enter Ref No']) !!}
                         @if ($errors->has('ref_no'))
                             <span class="help-block">
                                         <strong>{{ $errors->first('ref_no') }}</strong>
@@ -132,7 +123,7 @@
                          data-target-input="nearest">
                         <input type="text" class="form-control datetimepicker-input"
                                name="ref_date"
-                               value="{{ old('ref_date') }}" data-target="#ref_date"/>
+                               value="{{($bank_ledger->ref_date!=null)?Carbon\Carbon::parse(date('Y-m-d ', strtotime($bank_ledger->ref_date)))->format('dd-mm-YYYY'):''}}" data-target="#ref_date"/>
                         <div class="input-group-append" data-target="#ref_date"
                              data-toggle="datetimepicker">
                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
@@ -200,12 +191,12 @@
         $('#datemask').inputmask('dd-mm-yyyy', {'placeholder': 'dd-mm-yyyy'})
         //Date range picker
         $('#transaction_date').datetimepicker({
-            date: moment(),
-            format: 'DD-MM-Y'
+//            date: moment(),
+            format: 'DD-MM-YYYY'
         });
         $('#ref_date').datetimepicker({
 //            date: moment(),
-            format: 'DD-MM-Y'
+            format: 'DD-MM-YYYY'
         });
 
     })

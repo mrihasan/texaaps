@@ -61,6 +61,7 @@
                             <th>Credit<br/>Amount(+)</th>
                             <th>Debit<br/>Amount(-)</th>
                             <th>Balance</th>
+                            <th>Action</th>
 
                         </tr>
                         </thead>
@@ -75,6 +76,7 @@
                             <td class="total"></td>
                             <td class="total"></td>
                             <td></td>
+                            <td></td>
                         </tr>
                         </tfoot>
                         @foreach($ledger as $key=>$data)
@@ -88,6 +90,28 @@
                                 <td style="text-align: right">{{($data['transaction_type'][$key]=='Credited'||$data['transaction_type'][$key]=='Receipt'||$data['transaction_type'][$key]=='Deposit')?$data['transaction_amount'][$key]:''}}</td>
                                 <td style="text-align: right">{{($data['transaction_type'][$key]=='Debited'||$data['transaction_type'][$key]=='Payment'||$data['transaction_type'][$key]=='Withdraw')?$data['transaction_amount'][$key]:''}}</td>
                                 <td style="text-align: right">{{$data['balance'][$key]}}</td>
+                                <td>
+                                    @can('AccountMgtAccess')
+                                        <a href="{{ url('bank_ledger/' . $data['transaction_code'][$key] . '/edit') }}"
+                                           class="btn btn-info btn-xs" title="Edit"><span class="far fa-edit"
+                                                                                          aria-hidden="true"></span></a>
+                                    @endcan
+                                    @can('AccountMgtDelete')
+                                        {!! Form::open([
+                                            'method'=>'DELETE',
+                                            'url' => ['bank_ledger', $data['transaction_code'][$key]],
+                                            'style' => 'display:inline'
+                                        ]) !!}
+                                        {!! Form::button('<span class="far fa-trash-alt" aria-hidden="true" title="Delete" />', array(
+                                                'type' => 'submit',
+                                                'class' => 'btn btn-danger btn-xs',
+                                                'title' => 'Delete',
+                                                'onclick'=>'return confirm("Confirm delete?")'
+                                        ))!!}
+                                        {!! Form::close() !!}
+                                    @endcan
+
+                                </td>
                             </tr>
                         @endforeach
                     </table>

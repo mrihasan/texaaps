@@ -8,7 +8,7 @@
         <a href="#" class="nav-link">Accounting</a>
     </li>
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">Deposit</a>
+        <a href="#" class="nav-link">Update</a>
     </li>
 @endsection
 @push('css')
