@@ -1,8 +1,21 @@
 @extends('layouts.al305_main')
-@section('user_mo','menu-open')
+@if($user_type=='Employee')
+    @section('employee_mo','menu-open')
+@section('employee','active')
+@section('manage_employee','active')
+@section('title','ManageEmployee')
+
+@elseif($user_type=='Admin')
+
+    @section('user_mo','menu-open')
 @section('user','active')
-@section('manage_user','active')
-@section('title','View User')
+@else
+    @section('product_mo','menu-open')
+@section('product','active')
+
+@endif
+@section('manage_'.$user_type,'active')
+@section('title','Manage '.$user_type)
 @push('css')
 <link rel="stylesheet"
       href="{{ asset('alte305/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">

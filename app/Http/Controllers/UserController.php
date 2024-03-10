@@ -223,7 +223,7 @@ class UserController extends Controller
         elseif ($user->user_type_id == 4)
             $user_type = 'Supplier';
         else
-            $user_type_id = 'User';
+            $user_type = 'User';
 
 
         return view('user.show_sc', compact('user', 'ledger', 'ledger1','user_type'));
@@ -246,7 +246,18 @@ class UserController extends Controller
         $company_names = CompanyName::where('status', 'Active')->get();
         $branches = DB::table('branches')->where('status', 'Active')->pluck('title', 'id');
 
-        return view('user.edit', compact(['user', 'roles', 'user_types', 'company_names','branches']));
+        if ($user->user_type_id == 1)
+            $user_type = 'Admin';
+        elseif ($user->user_type_id == 2)
+            $user_type = 'Employee';
+        elseif ($user->user_type_id == 3)
+            $user_type = 'Client';
+        elseif ($user->user_type_id == 4)
+            $user_type = 'Supplier';
+        else
+            $user_type = 'User';
+
+        return view('user.edit', compact('user', 'roles', 'user_types', 'company_names','branches','user_type'));
     }
 
     public function update(User $user, Request $request)
