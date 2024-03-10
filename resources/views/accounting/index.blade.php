@@ -8,7 +8,7 @@
         <a href="#" class="nav-link">Accounting</a>
     </li>
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">Manage Payment</a>
+        <a href="#" class="nav-link">Manage Ledger</a>
     </li>
 @endsection
 
@@ -49,6 +49,7 @@
                             <th> Date</th>
                             <th> {{ __('all_settings.Transaction') }}<br/> No</th>
                             <th>User<br/> Info</th>
+                            <th>Type</th>
                             <th>Total<br/> Amount</th>
                             <th>{{ __('all_settings.Transaction') }}<br/> {{ __('all_settings.Made By') }}</th>
                             <th>Remarks</th>
@@ -64,6 +65,7 @@
                                 <td><a href="{{ route('user.show',$data->user->id) }}" class="btn btn-success btn-xs"
                                        title="User Profile View"><span class="far fa-user-circle" aria-hidden="true"></span></a>
                                     {{$data->user->name}}</td>
+                                <td>{{ $data->transaction_type->title}}</td>
                                 <td style="text-align: right">{{ $data->amount }}</td>
                                 <td>{{ $data->entryby->name}}</td>
                                 <td>{{ $data->comments }}</td>
@@ -95,17 +97,6 @@
 
                         @endforeach
                         </tbody>
-                        <tfoot>
-                        <tr>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th style="text-align: right"></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                        </tfoot>
 
                     </table>
                 </div>
@@ -306,23 +297,6 @@
                     }
                 }
             ],
-            "footerCallback": function (row, data, start, end, display) {
-                var api = this.api();
-//                nb_cols = api.columns().nodes().length;
-                nb_cols = 4;
-                var j = 3;
-                while (j < nb_cols) {
-                    var pageTotal = api
-                        .column(j, {page: 'current'})
-                        .data()
-                        .reduce(function (a, b) {
-                            return (Number(a) + Number(b)).toFixed(2);
-                        }, 0);
-                    // Update footer
-                    $(api.column(j).footer()).html(pageTotal);
-                    j++;
-                }
-            }
 
         });
     });

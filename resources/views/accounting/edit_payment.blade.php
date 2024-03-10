@@ -38,12 +38,7 @@
                     <label for="roles" class="col-md-4 control-label text-right">Branch :<span
                                 class="required"> * </span></label>
                     <div class="col-md-6">
-                        <select name="branch" class="form-control select2" style="width: 100%;" id="branch">
-                            {{--<option>Select Branch</option>--}}
-                            @foreach($branches as $key=>$branch)
-                                <option value="{{ $key }}" {{ (session()->get('brand')) == $key ? 'selected' : '' }}>{{ $branch}}</option>
-                            @endforeach
-                        </select>
+                        {{ Form::select('branch', $branches, $ledger->branch_id, ['class'=>'form-control select2bs4 ', 'required'] ) }}
                     </div>
                     @if($errors->has('branch'))
                         <em class="invalid-feedback">
@@ -51,17 +46,18 @@
                         </em>
                     @endif
                 </div>
-                <div class="form-group row {{ $errors->has('user') ? ' has-error' : '' }}">
-                    <label for="user" class="col-md-4 control-label text-md-right">Select
-                        User:<span class="required"> * </span></label>
+                <div class="form-group row{{ $errors->has('bank_account') ? 'has-error' : '' }}">
+                    <label for="roles" class="col-md-4 control-label text-right">Select Account :<span
+                                class="required"> * </span></label>
                     <div class="col-md-6">
-                        {{ Form::select('user', $user,$ledger->user_id, ['class'=>'form-control select2bs4' ] ) }}
-                        @if ($errors->has('user'))
-                            <span class="help-block"><strong>{{ $errors->first('user') }}</strong></span>
-                        @endif
+                        {{ Form::select('bank_account', $to_accounts, $bank_ledger->bank_account_id, ['class'=>'form-control select2bs4 ', 'required'] ) }}
                     </div>
+                    @if($errors->has('bank_account'))
+                        <em class="invalid-feedback">
+                            {{ $errors->first('bank_account') }}
+                        </em>
+                    @endif
                 </div>
-
                 <div class="form-group row {{ $errors->has('transaction_date') ? ' has-error' : '' }}">
                     <label class="col-md-4 control-label text-md-right">Select Transaction Date : <span
                                 class="required"> * </span></label>
@@ -82,6 +78,17 @@
                                     </span>
                     @endif
                 </div>
+                <div class="form-group row {{ $errors->has('user') ? ' has-error' : '' }}">
+                    <label for="user" class="col-md-4 control-label text-md-right">Select
+                        User:<span class="required"> * </span></label>
+                    <div class="col-md-6">
+                        {{ Form::select('user', $user,$ledger->user_id, ['class'=>'form-control select2bs4' ] ) }}
+                        @if ($errors->has('user'))
+                            <span class="help-block"><strong>{{ $errors->first('user') }}</strong></span>
+                        @endif
+                    </div>
+                </div>
+
                 <div class="form-group row {{ $errors->has('amount') ? ' has-error' : '' }}">
                     <label class="col-md-4 control-label text-md-right">Paid Amount :<span
                                 class="required"> * </span></label>
@@ -107,6 +114,36 @@
                         @endif
 
                     </div>
+                </div>
+                <div class="form-group row {{ $errors->has('ref_no') ? ' has-error' : '' }}">
+                    <label for="ref_no" class="col-md-4 control-label text-md-right">Ref No :</label>
+                    <div class="col-md-6">
+                        {!! Form::text('ref_no', $bank_ledger->ref_no,['class'=>'form-control ', 'placeholder'=>'Enter Ref No']) !!}
+                        @if ($errors->has('ref_no'))
+                            <span class="help-block">
+                                        <strong>{{ $errors->first('ref_no') }}</strong>
+                                    </span>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="form-group row {{ $errors->has('ref_date') ? ' has-error' : '' }}">
+                    <label class="col-md-4 control-label text-md-right">Ref Date : </label>
+                    <div class="col-md-6 input-group date" id="ref_date"
+                         data-target-input="nearest">
+                        <input type="text" class="form-control datetimepicker-input"
+                               name="ref_date"
+                               value="{{Carbon\Carbon::parse(date('Y-m-d ', strtotime($bank_ledger->ref_date)))->format('dd-mm-YYYY')}}" data-target="#ref_date"/>
+                        <div class="input-group-append" data-target="#ref_date"
+                             data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                    </div>
+                    @if ($errors->has('ref_date'))
+                        <span class="help-block">
+                                        <strong>{{ $errors->first('ref_date') }}</strong>
+                                    </span>
+                    @endif
                 </div>
 
                 <div class="form-group row">

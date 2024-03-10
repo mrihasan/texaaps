@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BankAccount;
 use App\Models\BankLedger;
 use App\Models\Branch;
 use App\Models\BranchLedger;
@@ -154,7 +155,7 @@ class LedgerController extends Controller
                 $ledger_banking->transaction_method_id = $request->transaction_method;
                 $ledger_banking->amount = $request->amount;
                 $ledger_banking->particulars = $request->comments;
-                $ledger_banking->ref_date = ($request->ref_date!=null) ? date('Y-m-d', strtotime($request->ref_date)) : null;
+                $ledger_banking->ref_date = ($request->ref_date != null) ? date('Y-m-d', strtotime($request->ref_date)) : null;
                 $ledger_banking->ref_no = $request->ref_no;
                 $ledger_banking->entry_by = Auth::user()->id;
                 $ledger_banking->approve_status = 'Approved';
@@ -179,15 +180,22 @@ class LedgerController extends Controller
     public function edit(Ledger $ledger)
     {
         abort_if(Gate::denies('AccountMgtAccess'), redirect('error'));
-        $user = user_list();
         $branches = branch_list();
         $transaction_methods = TransactionMethod::orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Method', '')->toArray();
-        if ($ledger->transaction_type_id == 4)
-            return view('accounting.edit_payment', compact('user', 'branches', 'transaction_methods', 'ledger'));
-        if ($ledger->transaction_type_id == 3)
-            return view('accounting.edit_receipt', compact('user', 'branches', 'transaction_methods', 'ledger'));
-        else {
-            return view('accounting.edit', compact('user', 'branches', 'transaction_methods', 'ledger'));
+        $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
+        $bank_ledger = DB::table('bank_ledgers')->where('transaction_code', $ledger->transaction_code)->first();
+//        dd($bank_ledger);
+        if ($ledger->transaction_type_id == 4) //4=Payment
+        {
+            $user = supplier_list();
+            return view('accounting.edit_payment', compact('user', 'branches', 'transaction_methods', 'ledger', 'bank_ledger', 'to_accounts'));
+        } elseif ($ledger->transaction_type_id == 3) //3=Receipt
+        {
+            $user = customer_list();
+            return view('accounting.edit_receipt', compact('user', 'branches', 'transaction_methods', 'ledger', 'bank_ledger', 'to_accounts'));
+        } else {
+            $user = user_list();
+            return view('accounting.edit', compact('user', 'branches', 'transaction_methods', 'ledger', 'bank_ledger', 'to_accounts'));
         }
     }
 
@@ -196,6 +204,7 @@ class LedgerController extends Controller
         abort_if(Gate::denies('AccountMgtAccess'), redirect('error'));
         $this->validate($request, [
             'branch' => 'required',
+            'bank_account' => 'required',
             'user' => 'required',
             'transaction_method' => 'required',
             'transaction_date' => 'required',
@@ -223,6 +232,20 @@ class LedgerController extends Controller
         $ledger_branch->entry_by = Auth::user()->id;
         $ledger_branch->approve_status = 'Approved';
         $ledger_branch->save();
+
+        $del_la = DB::table('bank_ledgers')->where('transaction_code', $ledger->transaction_code)->delete();
+        $ledger_banking = new BankLedger();
+        $ledger_banking->branch_id = $request->branch;
+        $ledger_banking->bank_account_id = $request->bank_account;
+        $ledger_banking->transaction_date = date('Y-m-d', strtotime($request->transaction_date)) . date(' H:i:s');
+        $ledger_banking->transaction_method_id = $request->transaction_method;
+        $ledger_banking->amount = $request->amount;
+        $ledger_banking->particulars = $request->comments;
+        $ledger_banking->ref_date = ($request->ref_date != null) ? date('Y-m-d', strtotime($request->ref_date)) : null;
+        $ledger_banking->ref_no = $request->ref_no;
+        $ledger_banking->entry_by = Auth::user()->id;
+        $ledger_banking->approve_status = 'Approved';
+        $ledger_banking->save();
 
         \Session::flash('flash_message', 'Successfully Updated');
         if ($request->ledger_type == 'Payment')
