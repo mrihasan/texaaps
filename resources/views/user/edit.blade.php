@@ -106,8 +106,14 @@
                                 </li>
                                 <li class="nav-item"><a class="nav-link" href="#avatar" data-toggle="tab">Avatar</a>
                                 </li>
-                                <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Settings</a>
+                                <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">System
+                                        Settings</a>
                                 </li>
+                                @if($user->user_type_id == 2)
+                                    <li class="nav-item"><a class="nav-link" href="#employee_settings"
+                                                            data-toggle="tab">Employee Settings</a>
+                                    </li>
+                                @endif
                             </ul>
                         </div><!-- /.card-header -->
                         <div class="card-body">
@@ -250,13 +256,14 @@
                                         <div class="form-group row {{ $errors->has('company_name_id') ? ' has-error' : '' }}">
                                             <label class="control-label col-md-4 text-right">Company :</label>
                                             <div class="col-md-6">
-                                                <select name="company_name_id" class="form-control select2" id="company_name_id" >
-                                                    <option value="">Select Company </option>
+                                                <select name="company_name_id" class="form-control select2"
+                                                        id="company_name_id">
+                                                    <option value="">Select Company</option>
                                                     @foreach($company_names as $company_name)
 
                                                         <option
                                                                 value="{{$company_name->id}}" {{($user->profile->company_name_id==$company_name->id)?'selected':''}}>
-                                                                {{--value="{{$company_name->id}}">--}}
+                                                            {{--value="{{$company_name->id}}">--}}
                                                             {{$company_name->title}}</option>
                                                     @endforeach
                                                 </select>
@@ -450,7 +457,8 @@
                                                 <span class="required"> * </span>
                                             </label>
                                             <div class="col-md-6">
-                                                <select name="user_type_id" class="form-control select2" style="width: 100%">
+                                                <select name="user_type_id" class="form-control select2"
+                                                        style="width: 100%">
                                                     @foreach($user_types as $user_type)
                                                         <option
                                                                 value="{{$user_type->id}}" {{($user->user_type->id==$user_type->id)?'selected':''}}>
@@ -515,6 +523,9 @@
                                     {!! Form::close() !!}
 
                                 </div>
+                                @if($user->user_type_id == 2)
+                                    @include('user.edit_employee_settings')
+                                @endif
                             </div>
                             <!-- /.tab-content -->
                         </div><!-- /.card-body -->

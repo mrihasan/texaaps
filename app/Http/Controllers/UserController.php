@@ -244,7 +244,9 @@ class UserController extends Controller
             $roles = Role::where('title', '!=', 'Super Admin')->pluck('title', 'id');
         $user_types = UserType::get();
         $company_names = CompanyName::where('status', 'Active')->get();
-        return view('user.edit', compact(['user', 'roles', 'user_types', 'company_names']));
+        $branches = DB::table('branches')->where('status', 'Active')->pluck('title', 'id');
+
+        return view('user.edit', compact(['user', 'roles', 'user_types', 'company_names','branches']));
     }
 
     public function update(User $user, Request $request)

@@ -148,25 +148,6 @@
                         </select>
                     </div>
                 </div>
-                {{--<div class="form-group row {{ $errors->has('joining_day') ? ' has-error' : '' }}">--}}
-                    {{--<label class="col-md-4 control-label text-md-right">Joining Day : <span--}}
-                                {{--class="required"> * </span></label>--}}
-                    {{--<div class="col-md-6 input-group date" id="joining_day" data-target-input="nearest">--}}
-                        {{--<input type="text" class="form-control datetimepicker-input" name="joining_day"--}}
-                               {{--value="{{Carbon\Carbon::parse(date('Y-m-d ', strtotime($employee->joining_day)))->format('dd-mm-YYYY')}}"--}}
-                               {{--data-target="#joining_day"/>--}}
-                        {{--<div class="input-group-append" data-target="#joining_day"--}}
-                             {{--data-toggle="datetimepicker">--}}
-                            {{--<div class="input-group-text"><i class="fa fa-calendar"></i></div>--}}
-                        {{--</div>--}}
-                    {{--</div>--}}
-                    {{--@if ($errors->has('joining_day'))--}}
-                        {{--<span class="help-block">--}}
-                                        {{--<strong>{{ $errors->first('joining_day') }}</strong>--}}
-                                    {{--</span>--}}
-                    {{--@endif--}}
-
-                {{--</div>--}}
                 <hr/>
 
                 <div class="form-group row {{ $errors->has('last_working_day') ? ' has-error' : '' }}">

@@ -38,6 +38,9 @@
                 <strong>Cell No: </strong>{{$user->cell_phone}}<br/>
                 <strong>E-mail: </strong>{{$user->email}}<br/>
             </address>
+            <a href="{{ url('user/' . $user->id . '/edit') }}" class="btn btn-info btn-xs"
+               title="Edit"><span class="far fa-edit" aria-hidden="true"></span></a>
+
         </div>
     </div>
     <!-- /.card -->

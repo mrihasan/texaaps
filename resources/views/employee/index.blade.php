@@ -67,8 +67,10 @@
                                    title="User Profile View"><span class="far fa-user-circle" aria-hidden="true"></span></a>
                             {{--@endcan--}}
                             @can('EmployeeAccess')
-                                <a href="{{ url('employee/' . $employee->id . '/edit') }}" class="btn btn-info btn-xs"
-                                   title="Edit"><span class="far fa-edit" aria-hidden="true"></span></a>
+                                {{--<a href="{{ url('employee/' . $employee->id . '/edit') }}" class="btn btn-info btn-xs"--}}
+                                   {{--title="Edit"><span class="far fa-edit" aria-hidden="true"></span></a>--}}
+                                <a href="{{ url('user/' . $employee->user->id . '/edit') }}" class="btn btn-info btn-xs"
+                                   title="User Edit"><span class="far fa-edit" aria-hidden="true"></span></a>
                             @endcan
                         </td>
                     </tr>
