@@ -237,6 +237,7 @@ class LedgerController extends Controller
         $ledger_banking = new BankLedger();
         $ledger_banking->branch_id = $request->branch;
         $ledger_banking->bank_account_id = $request->bank_account;
+        $ledger_banking->transaction_code = $ledger->transaction_code;
         $ledger_banking->transaction_date = date('Y-m-d', strtotime($request->transaction_date)) . date(' H:i:s');
         $ledger_banking->transaction_method_id = $request->transaction_method;
         $ledger_banking->amount = $request->amount;

@@ -133,7 +133,7 @@
                          data-target-input="nearest">
                         <input type="text" class="form-control datetimepicker-input"
                                name="ref_date"
-                               value="{{Carbon\Carbon::parse(date('Y-m-d ', strtotime($bank_ledger->ref_date)))->format('dd-mm-YYYY')}}" data-target="#ref_date"/>
+                               value="{{($bank_ledger->ref_date!=null)?Carbon\Carbon::parse(date('Y-m-d ', strtotime($bank_ledger->ref_date)))->format('dd-mm-YYYY'):''}}" data-target="#ref_date"/>
                         <div class="input-group-append" data-target="#ref_date"
                              data-toggle="datetimepicker">
                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
@@ -203,6 +203,10 @@
         $('#datemask').inputmask('dd-mm-yyyy', {'placeholder': 'dd-mm-yyyy'})
         //Date range picker
         $('#transaction_date').datetimepicker({
+//            date: moment(),
+            format: 'DD-MM-YYYY'
+        });
+        $('#ref_date').datetimepicker({
 //            date: moment(),
             format: 'DD-MM-YYYY'
         });
