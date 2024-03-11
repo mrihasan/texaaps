@@ -47,6 +47,23 @@
                         </em>
                     @endif
                 </div>
+                <div class="form-group row{{ $errors->has('bank_account') ? 'has-error' : '' }}">
+                    <label for="roles" class="col-md-4 control-label text-right">Select Account :<span
+                                class="required"> * </span></label>
+                    <div class="col-md-6">
+                        <select name="bank_account" class="form-control select2" style="width: 100%;" id="bank_account">
+                            @foreach($to_accounts as $key=>$to_account)
+                                <option value="{{ $key }}">{{ $to_account}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @if($errors->has('bank_account'))
+                        <em class="invalid-feedback">
+                            {{ $errors->first('bank_account') }}
+                        </em>
+                    @endif
+                </div>
+
                 <div class="form-group row {{ $errors->has('expense_type') ? ' has-error' : '' }}">
                     <label class="col-sm-4 control-label text-md-right">Select Expense type : <span
                                 class="required"> * </span></label>

@@ -22,7 +22,7 @@ return new class extends Migration
                 ->onDelete('cascade');
             $table->timestamp('expense_date')->useCurrent();
             $table->float('expense_amount',10,2);
-            $table->enum('status',['Submitted','Approved','Canceled'.'Updated']);
+            $table->enum('status',['Submitted','Approved','Canceled','Updated']);
             $table->string('comments')->nullable();
             $table->integer('user_id');
             $table->string('transaction_code',30)->nullable();

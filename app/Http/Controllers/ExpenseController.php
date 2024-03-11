@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DataTables\ExpenseDataTable;
+use App\Models\BankLedger;
 use App\Models\Branch;
 use App\Models\BranchLedger;
 use App\Models\Expense;
@@ -24,8 +25,8 @@ class ExpenseController extends Controller
     public function index()
     {
 //        abort_if(Gate::denies('expense-access'), redirect('error'));
-        $start_date = date('Y-m-d', strtotime(Carbon::now()->subDays(30)));
-        $end_date = date('Y-m-d', strtotime(Carbon::now()));
+        $start_date = Carbon::now()->subDays(30)->format('Y-m-d') . ' 00:00:00';
+        $end_date = date('Y-m-d') . ' 23:59:59';
         $header_title = 'Expense From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
 
         if (session()->get('branch') != 'all') {
@@ -36,6 +37,7 @@ class ExpenseController extends Controller
                 ->where('branch_id', session()->get('branch'))
                 ->whereBetween('expense_date', [$start_date, $end_date])
                 ->orderBy('expense_date', 'desc')->orderBy('created_at', 'desc')->get();
+
         } else {
             $expense = Expense::with('user')->with('approvedBy')->with('expense_type')
                 ->with('branch')
@@ -44,6 +46,7 @@ class ExpenseController extends Controller
                 ->whereBetween('expense_date', [$start_date, $end_date])
                 ->orderBy('expense_date', 'desc')->orderBy('created_at', 'desc')->get();
         }
+
         return view('expense.index', compact('expense', 'header_title'));
     }
 
@@ -73,18 +76,18 @@ class ExpenseController extends Controller
         }
 //        dd($start_date, $end_date);
 //        dd($dataTable);
-        $header_title='test';
+        $header_title = 'test';
         // Pass start_date and end_date to the DataTable instance
 //        dd($dataTable);
-        return $dataTable->with(['start_date' => $start_date, 'end_date' => $end_date])->render('expense.index_dt',compact('header_title'));
+        return $dataTable->with(['start_date' => $start_date, 'end_date' => $end_date])->render('expense.index_dt', compact('header_title'));
     }
 
 
-public function expense_approved()
+    public function expense_approved()
     {
 //        abort_if(Gate::denies('expense-access'), redirect('error'));
-        $start_date = date('Y-m-d', strtotime(Carbon::now()->subDays(30)));
-        $end_date = date('Y-m-d', strtotime(Carbon::now()));
+        $start_date = Carbon::now()->subDays(30)->format('Y-m-d') . ' 00:00:00';
+        $end_date = date('Y-m-d') . ' 23:59:59';
 
         $expense = Expense::with('user')->with('approvedBy')->with('expense_type')->
         where('status', 'Approved')
@@ -99,8 +102,9 @@ public function expense_approved()
         abort_if(Gate::denies('ExpenseAccess'), redirect('error'));
         $expense_type = ExpenseType::orderBy('expense_name')->pluck('expense_name', 'id')->prepend('Select a Expense Type', '')->toArray();
         $transaction_methods = TransactionMethod::orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Method', '')->toArray();
-        $branches=branch_list();
-        return view('expense.create', compact('expense_type', 'transaction_methods', 'branches'));
+        $branches = branch_list();
+        $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
+        return view('expense.create', compact('expense_type', 'transaction_methods', 'branches', 'to_accounts'));
     }
 
     public function store(Request $request)
@@ -112,14 +116,15 @@ public function expense_approved()
             'expense_amount' => 'required',
             'expense_type' => 'required',
             'branch' => 'required',
+            'bank_account' => 'required',
             'transaction_method' => 'required',
         ]);
-        $transaction_code=autoTimeStampCode('EXP');
+        $transaction_code = autoTimeStampCode('EXP');
 
         $expense = new Expense();
         $expense->expense_type_id = $request->expense_type;
         $expense->branch_id = $request->branch;
-        $expense->expense_date = date('Y-m-d', strtotime($request->expense_date)).date(' H:i:s');
+        $expense->expense_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
         $expense->expense_amount = $request->expense_amount;
         $expense->comments = $request->expense_comments;
         $expense->status = 'Submitted';
@@ -128,18 +133,31 @@ public function expense_approved()
         $expense->transaction_method_id = $request->transaction_method;
         $expense->save();
 
-        $ledger_banking = new BranchLedger();
+        $branch_ledger = new BranchLedger();
+        $branch_ledger->branch_id = $request->branch;
+        $branch_ledger->transaction_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
+        $branch_ledger->transaction_code = $transaction_code;
+        $branch_ledger->amount = $request->expense_amount;
+        $branch_ledger->transaction_type_id = 2; //Debited
+        $branch_ledger->transaction_method_id = $request->transaction_method;
+        $branch_ledger->comments = $expense->expense_type->expense_name . ' ' . $request->expense_amount;
+        $branch_ledger->entry_by = Auth::user()->id;
+        $branch_ledger->approve_status = 'Not Approved';
+        $branch_ledger->save();
+
+        $ledger_banking = new BankLedger();
         $ledger_banking->branch_id = $request->branch;
-        $ledger_banking->transaction_date = date('Y-m-d', strtotime($request->expense_date)).date(' H:i:s');
+        $ledger_banking->bank_account_id = $request->bank_account;
         $ledger_banking->transaction_code = $transaction_code;
-        $ledger_banking->amount = $request->expense_amount;
-        $ledger_banking->transaction_type_id = 2; //Debited
+        $ledger_banking->transaction_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
         $ledger_banking->transaction_method_id = $request->transaction_method;
-        $ledger_banking->comments = $expense->expense_type->expense_name.' '.$request->expense_amount;
+        $ledger_banking->transaction_type_id = 2; //Debited
+        $ledger_banking->amount = $request->expense_amount;
+        $ledger_banking->particulars = $expense->expense_type->expense_name . ' ' . $request->expense_amount;
         $ledger_banking->entry_by = Auth::user()->id;
         $ledger_banking->approve_status = 'Not Approved';
-
         $ledger_banking->save();
+
 
         \Session::flash('flash_message', 'Successfully Added');
         return redirect('expense');
@@ -161,20 +179,21 @@ public function expense_approved()
         } else {
             $branches = DB::table('branches')->where('id', session()->get('branch'))->pluck('title', 'id');
         }
-
-        return view('expense.edit', compact('expense', 'expense_type', 'branches','transaction_methods'));
+        $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
+        $bank_ledger = DB::table('bank_ledgers')->where('transaction_code', $expense->transaction_code)->first();
+        return view('expense.edit', compact('expense', 'expense_type', 'branches', 'transaction_methods', 'to_accounts', 'bank_ledger'));
     }
 
     public function update(Request $request, Expense $expense)
     {
         abort_if(Gate::denies('ExpenseAccess'), redirect('error'));
-            $this->validate($request, [
-                'expense_date' => 'required',
-                'expense_amount' => 'required',
-                'expense_type' => 'required',
-                'branch' => 'required',
-                'transaction_method_id' => 'required',
-            ]);
+        $this->validate($request, [
+            'expense_date' => 'required',
+            'expense_amount' => 'required',
+            'expense_type' => 'required',
+            'branch' => 'required',
+            'transaction_method_id' => 'required',
+        ]);
 
         $expense->expense_type_id = $request->expense_type;
         $expense->branch_id = $request->branch;
@@ -197,10 +216,25 @@ public function expense_approved()
         $ledger_banking->amount = $request->expense_amount;
         $ledger_banking->transaction_type_id = 2; //Debited
         $ledger_banking->transaction_method_id = $request->transaction_method_id;
-        $ledger_banking->comments = $expense->expense_type->expense_name.' '.$request->expense_amount;
+        $ledger_banking->comments = $expense->expense_type->expense_name . ' ' . $request->expense_amount;
         $ledger_banking->entry_by = Auth::user()->id;
         $ledger_banking->approve_status = 'Not Approved';
         $ledger_banking->save();
+
+        $del_la = DB::table('bank_ledgers')->where('transaction_code', $expense->transaction_code)->delete();
+        $ledger_banking = new BankLedger();
+        $ledger_banking->branch_id = $request->branch;
+        $ledger_banking->bank_account_id = $request->bank_account;
+        $ledger_banking->transaction_code = $expense->transaction_code;
+        $ledger_banking->transaction_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
+        $ledger_banking->transaction_method_id = $request->transaction_method_id;
+        $ledger_banking->transaction_type_id = 2; //Debited
+        $ledger_banking->amount = $request->expense_amount;
+        $ledger_banking->particulars = $expense->expense_type->expense_name . ' ' . $request->expense_amount;
+        $ledger_banking->entry_by = Auth::user()->id;
+        $ledger_banking->approve_status = 'Not Approved';
+        $ledger_banking->save();
+
 
         \Session::flash('flash_message', 'Successfully Updated');
         return redirect('expense');
@@ -227,6 +261,9 @@ public function expense_approved()
             $ledger_expense = BranchLedger::where('transaction_code', $expense->transaction_code)->first();
             $ledger_expense->approve_status = 'Approved';
             $ledger_expense->save();
+            $bankledger_expense = BankLedger::where('transaction_code', $expense->transaction_code)->first();
+            $bankledger_expense->approve_status = 'Approved';
+            $bankledger_expense->save();
 
             \Session::flash('flash_message', 'Successfully Approved');
         } else {

@@ -41,6 +41,18 @@
                         @endif
                     </div>
                 </div>
+                <div class="form-group row{{ $errors->has('bank_account') ? 'has-error' : '' }}">
+                    <label for="roles" class="col-md-4 control-label text-right">Select Account :<span
+                                class="required"> * </span></label>
+                    <div class="col-md-6">
+                        {{ Form::select('bank_account', $to_accounts, $bank_ledger->bank_account_id, ['class'=>'form-control select2bs4 ', 'required'] ) }}
+                    </div>
+                    @if($errors->has('bank_account'))
+                        <em class="invalid-feedback">
+                            {{ $errors->first('bank_account') }}
+                        </em>
+                    @endif
+                </div>
 
                 <div class="form-group row {{ $errors->has('expense_type') ? ' has-error' : '' }}">
                     <label class="col-sm-4 control-label text-md-right">Select Expense type : </label>
