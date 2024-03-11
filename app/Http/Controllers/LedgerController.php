@@ -119,16 +119,16 @@ class LedgerController extends Controller
                     $ledger->transaction_type_id = 4; //4=payment
                     $ledger->transaction_code = $tcode;
                     $ledger_branch->transaction_code = $tcode;
-                    $ledger_banking->transaction_code = $tcode;
                     $ledger_branch->transaction_type_id = 4;//4=payment
+                    $ledger_banking->transaction_code = $tcode;
                     $ledger_banking->transaction_type_id = 4;//4=payment
                 } elseif ($request->ledger_type == 'Receipt') {
                     $tcode = autoTimeStampCode('LR');
                     $ledger->transaction_type_id = 3; //3=received
                     $ledger->transaction_code = $tcode;
                     $ledger_branch->transaction_code = $tcode;
-                    $ledger_banking->transaction_code = $tcode;
                     $ledger_branch->transaction_type_id = 3; //3=received
+                    $ledger_banking->transaction_code = $tcode;
                     $ledger_banking->transaction_type_id = 3; //3=received
                 } else {
                     die();
@@ -240,6 +240,7 @@ class LedgerController extends Controller
         $ledger_banking->transaction_code = $ledger->transaction_code;
         $ledger_banking->transaction_date = date('Y-m-d', strtotime($request->transaction_date)) . date(' H:i:s');
         $ledger_banking->transaction_method_id = $request->transaction_method;
+        $ledger_banking->transaction_type_id = $request->ledger_type; //4=Payment, 3=Receipt
         $ledger_banking->amount = $request->amount;
         $ledger_banking->particulars = $request->comments;
         $ledger_banking->ref_date = ($request->ref_date != null) ? date('Y-m-d', strtotime($request->ref_date)) : null;
