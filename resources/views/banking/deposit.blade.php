@@ -29,7 +29,8 @@
             </div>
             {!! Form::open(array('route' => 'bank_ledger.store','method'=>'POST','class'=>'form-horizontal','id'=>'saveForm')) !!}
             {{ csrf_field() }}
-            {!! Form::hidden('transaction_type_id', 8 )!!} {{--Deposite--}}
+            {{--{!! Form::hidden('transaction_type_id', 8 )!!} --}}
+            {{--Deposite--}}
 
             <div class="card-body">
                 <div class="form-group row{{ $errors->has('branch') ? 'has-error' : '' }}">
@@ -64,6 +65,19 @@
                             {{ $errors->first('bank_account') }}
                         </em>
                     @endif
+                </div>
+                <div class="form-group row {{ $errors->has('transaction_type') ? ' has-error' : '' }}">
+                    <label class="col-sm-4 control-label text-md-right">Transaction Type : <span
+                                class="required"> * </span></label>
+                    <div class="col-sm-6">
+                        {{ Form::select('transaction_type', $transaction_types, null,['class'=>'form-control select2'] ) }}
+                        @if ($errors->has('transaction_type'))
+                            <span class="help-block">
+                                        <strong>{{ $errors->first('transaction_type') }}</strong>
+                                    </span>
+                        @endif
+
+                    </div>
                 </div>
                 <div class="form-group row {{ $errors->has('transaction_date') ? ' has-error' : '' }}">
                     <label class="col-md-4 control-label text-md-right">Transaction Date : <span

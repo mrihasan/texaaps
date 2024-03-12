@@ -63,6 +63,7 @@ Route::get('lowStockProduct', '\App\Http\Controllers\ProductController@lowStockP
 Route::resource('product', \App\Http\Controllers\ProductController::class);
 Route::resource('branch', \App\Http\Controllers\BranchController::class);
 Route::resource('bank_account', \App\Http\Controllers\BankAccountController::class);
+Route::get('/account_transfer', '\App\Http\Controllers\BankLedgerController@account_transfer')->name('account_transfer');
 Route::get('/deposit', '\App\Http\Controllers\BankLedgerController@deposit')->name('deposit');
 Route::get('/withdraw', '\App\Http\Controllers\BankLedgerController@withdraw')->name('withdraw');
 Route::get('/account_statement', '\App\Http\Controllers\BankLedgerController@account_statement')->name('account_statement');

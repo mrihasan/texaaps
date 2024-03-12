@@ -1,14 +1,14 @@
 @extends('layouts.al305_main')
 @section('accounting_mo','menu-open')
 @section('accounting','active')
-@section('withdraw','active')
-@section('title','withdraw')
+@section('deposit','active')
+@section('title','Receipt')
 @section('breadcrumb')
     <li class="nav-item d-none d-sm-inline-block">
         <a href="#" class="nav-link">Accounting</a>
     </li>
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">Receipt</a>
+        <a href="#" class="nav-link">Transfer</a>
     </li>
 @endsection
 @push('css')
@@ -25,14 +25,75 @@
     <div class="row justify-content-center">
         <div class="card card-info col-md-8">
             <div class="card-header">
-                <h3 class="card-title">Withdraw</h3>
+                <h3 class="card-title">Account to Account Transfer</h3>
             </div>
             {!! Form::open(array('route' => 'bank_ledger.store','method'=>'POST','class'=>'form-horizontal','id'=>'saveForm')) !!}
             {{ csrf_field() }}
-            {{--{!! Form::hidden('transaction_type_id', 9 )!!} --}}
-            {{--Withdraw--}}
+            {!! Form::hidden('transaction_type_id', 'account_transfer' )!!} {{--account_transfer--}}
 
             <div class="card-body">
+                <div class="form-group row{{ $errors->has('withdraw_account') ? 'has-error' : '' }}">
+                    <label for="roles" class="col-md-4 control-label text-right">Withdraw from Account :<span
+                                class="required"> * </span></label>
+                    <div class="col-md-6">
+                        <select name="withdraw_account" class="form-control select2" style="width: 100%;"
+                                id="withdraw_account">
+                            @foreach($from_accounts as $key=>$from_account)
+                                <option value="{{ $key }}">{{ $from_account}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @if($errors->has('withdraw_account'))
+                        <em class="invalid-feedback">
+                            {{ $errors->first('withdraw_account') }}
+                        </em>
+                    @endif
+                </div>
+                <div class="form-group row {{ $errors->has('withdraw_method') ? ' has-error' : '' }}">
+                    <label class="col-sm-4 control-label text-md-right">Withdraw Method : <span
+                                class="required"> * </span></label>
+                    <div class="col-sm-6">
+                        {{ Form::select('withdraw_method', $transaction_methods, null,['class'=>'form-control select2'] ) }}
+                        @if ($errors->has('withdraw_method'))
+                            <span class="help-block">
+                                        <strong>{{ $errors->first('withdraw_method') }}</strong>
+                                    </span>
+                        @endif
+
+                    </div>
+                </div>
+                <hr/>
+                <div class="form-group row{{ $errors->has('deposit_account') ? 'has-error' : '' }}">
+                    <label for="roles" class="col-md-4 control-label text-right">Deposit to Account :<span
+                                class="required"> * </span></label>
+                    <div class="col-md-6">
+                        <select name="deposit_account" class="form-control select2" style="width: 100%;"
+                                id="deposit_account">
+                            @foreach($to_accounts as $key=>$to_account)
+                                <option value="{{ $key }}">{{ $to_account}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @if($errors->has('deposit_account'))
+                        <em class="invalid-feedback">
+                            {{ $errors->first('deposit_account') }}
+                        </em>
+                    @endif
+                </div>
+                <div class="form-group row {{ $errors->has('deposit_method') ? ' has-error' : '' }}">
+                    <label class="col-sm-4 control-label text-md-right">Deposit Method : <span
+                                class="required"> * </span></label>
+                    <div class="col-sm-6">
+                        {{ Form::select('deposit_method', $transaction_methods, null,['class'=>'form-control select2'] ) }}
+                        @if ($errors->has('deposit_method'))
+                            <span class="help-block">
+                                        <strong>{{ $errors->first('deposit_method') }}</strong>
+                                    </span>
+                        @endif
+
+                    </div>
+                </div>
+                <hr/>
                 <div class="form-group row{{ $errors->has('branch') ? 'has-error' : '' }}">
                     <label for="roles" class="col-md-4 control-label text-right">Branch :<span
                                 class="required"> * </span></label>
@@ -50,35 +111,7 @@
                         </em>
                     @endif
                 </div>
-                <div class="form-group row{{ $errors->has('bank_account') ? 'has-error' : '' }}">
-                    <label for="roles" class="col-md-4 control-label text-right">Withdraw From Account :<span
-                                class="required"> * </span></label>
-                    <div class="col-md-6">
-                        <select name="bank_account" class="form-control select2" style="width: 100%;" id="bank_account">
-                            @foreach($to_accounts as $key=>$to_account)
-                                <option value="{{ $key }}">{{ $to_account}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    @if($errors->has('bank_account'))
-                        <em class="invalid-feedback">
-                            {{ $errors->first('bank_account') }}
-                        </em>
-                    @endif
-                </div>
-                <div class="form-group row {{ $errors->has('transaction_type') ? ' has-error' : '' }}">
-                    <label class="col-sm-4 control-label text-md-right">Transaction Type : <span
-                                class="required"> * </span></label>
-                    <div class="col-sm-6">
-                        {{ Form::select('transaction_type', $transaction_types, null,['class'=>'form-control select2'] ) }}
-                        @if ($errors->has('transaction_type'))
-                            <span class="help-block">
-                                        <strong>{{ $errors->first('transaction_type') }}</strong>
-                                    </span>
-                        @endif
 
-                    </div>
-                </div>
                 <div class="form-group row {{ $errors->has('transaction_date') ? ' has-error' : '' }}">
                     <label class="col-md-4 control-label text-md-right">Transaction Date : <span
                                 class="required"> * </span></label>
@@ -87,6 +120,7 @@
                         <input type="text" class="form-control datetimepicker-input"
                                name="transaction_date"
                                value="{{ old('transaction_date') }}" data-target="#transaction_date"/>
+                        {{--                                  {!! Form::input('text', 'transaction_date', \Carbon\Carbon::now()->format('d-M-Y'),['class'=>'form-control']) !!}--}}
                         <div class="input-group-append" data-target="#transaction_date"
                              data-toggle="datetimepicker">
                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
@@ -113,19 +147,6 @@
                     </div>
                 </div>
 
-                <div class="form-group row {{ $errors->has('transaction_method') ? ' has-error' : '' }}">
-                    <label class="col-sm-4 control-label text-md-right">Transaction Method : <span
-                                class="required"> * </span></label>
-                    <div class="col-sm-6">
-                        {{ Form::select('transaction_method', $transaction_methods, null,['class'=>'form-control select2'] ) }}
-                        @if ($errors->has('transaction_method'))
-                            <span class="help-block">
-                                        <strong>{{ $errors->first('transaction_method') }}</strong>
-                                    </span>
-                        @endif
-
-                    </div>
-                </div>
                 <div class="form-group row {{ $errors->has('ref_no') ? ' has-error' : '' }}">
                     <label for="ref_no" class="col-md-4 control-label text-md-right">Ref No :</label>
                     <div class="col-md-6">

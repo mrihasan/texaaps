@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\BankAccount;
 use App\Models\BankLedger;
+use App\Models\BranchLedger;
 use App\Models\TransactionMethod;
+use App\Models\TransactionType;
 use Illuminate\Http\Request;
 use DB;
 use Illuminate\Support\Facades\Auth;
@@ -61,7 +63,8 @@ class BankLedgerController extends Controller
         $branches = branch_list();
         $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
         $transaction_methods = TransactionMethod::orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Method', '')->toArray();
-        return view('banking.deposit', compact('branches', 'transaction_methods', 'to_accounts'));
+        $transaction_types = TransactionType::whereIn('id',[5,10])->orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Type', '')->toArray();
+        return view('banking.deposit', compact('branches', 'transaction_methods', 'to_accounts','transaction_types'));
     }
 
     public function withdraw()
@@ -70,27 +73,83 @@ class BankLedgerController extends Controller
         $branches = branch_list();
         $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
         $transaction_methods = TransactionMethod::orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Method', '')->toArray();
-        return view('banking.withdraw', compact('branches', 'transaction_methods', 'to_accounts'));
+        $transaction_types = TransactionType::whereIn('id',[6,11])->orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Type', '')->toArray();
+        return view('banking.withdraw', compact('branches', 'transaction_methods', 'to_accounts','transaction_types'));
+    }
+
+    public function account_transfer()
+    {
+        abort_if(Gate::denies('AccountMgtAccess'), redirect('error'));
+        $branches = branch_list();
+        $from_accounts = DB::table('bank_accounts')->where('status', 'Active')->pluck('account_name', 'id')->prepend('From Account', '')->toArray();
+        $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->pluck('account_name', 'id')->prepend('To Account', '')->toArray();
+        $transaction_methods = TransactionMethod::orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Method', '')->toArray();
+        return view('banking.account_transfer', compact('branches', 'transaction_methods', 'to_accounts', 'from_accounts'));
     }
 
     public function store(Request $request)
     {
+        if ($request->transaction_type_id == 'account_transfer') {
+//            withdraw
+            $ledger_banking = new BankLedger();
+            $ledger_banking->branch_id = $request->branch;
+            $ledger_banking->bank_account_id = $request->withdraw_account;
+            $ledger_banking->transaction_date = date('Y-m-d', strtotime($request->transaction_date)) . date(' H:i:s');
+            $ledger_banking->transaction_code = autoTimeStampCode('AL');
+            $ledger_banking->transaction_type_id = 9; //Withdraw=9
+            $ledger_banking->transaction_method_id = $request->withdraw_method;
+            $ledger_banking->amount = $request->amount;
+            $ledger_banking->particulars = $request->particulars;
+            $ledger_banking->ref_date = ($request->ref_date != null) ? date('Y-m-d', strtotime($request->ref_date)) : null;
+            $ledger_banking->ref_no = $request->ref_no;
+            $ledger_banking->entry_by = Auth::user()->id;
+            $ledger_banking->approve_status = 'Approved';
+            $ledger_banking->save();
+//            Deposit
+            $ledger_banking = new BankLedger();
+            $ledger_banking->branch_id = $request->branch;
+            $ledger_banking->bank_account_id = $request->deposit_account;
+            $ledger_banking->transaction_date = date('Y-m-d', strtotime($request->transaction_date)) . date(' H:i:s');
+            $ledger_banking->transaction_code = autoTimeStampCode('AL');
+            $ledger_banking->transaction_type_id = 8; //deposit=8
+            $ledger_banking->transaction_method_id = $request->deposit_method;
+            $ledger_banking->amount = $request->amount;
+            $ledger_banking->particulars = $request->particulars;
+            $ledger_banking->ref_date = ($request->ref_date != null) ? date('Y-m-d', strtotime($request->ref_date)) : null;
+            $ledger_banking->ref_no = $request->ref_no;
+            $ledger_banking->entry_by = Auth::user()->id;
+            $ledger_banking->approve_status = 'Approved';
+            $ledger_banking->save();
+        } else {
+            $tcode = autoTimeStampCode('AL');
+            $ledger_banking = new BankLedger();
+            $ledger_banking->branch_id = $request->branch;
+            $ledger_banking->bank_account_id = $request->bank_account;
+            $ledger_banking->transaction_date = date('Y-m-d', strtotime($request->transaction_date)) . date(' H:i:s');
+            $ledger_banking->transaction_code = $tcode;
+            $ledger_banking->transaction_type_id = $request->transaction_type;
+            $ledger_banking->transaction_method_id = $request->transaction_method;
+            $ledger_banking->amount = $request->amount;
+            $ledger_banking->particulars = $request->particulars;
+            $ledger_banking->ref_date = ($request->ref_date != null) ? date('Y-m-d', strtotime($request->ref_date)) : null;
+            $ledger_banking->ref_no = $request->ref_no;
+            $ledger_banking->entry_by = Auth::user()->id;
+            $ledger_banking->approve_status = 'Approved';
+            $ledger_banking->save();
 
-        $ledger_banking = new BankLedger();
-        $ledger_banking->branch_id = $request->branch;
-        $ledger_banking->bank_account_id = $request->bank_account;
-        $ledger_banking->transaction_date = date('Y-m-d', strtotime($request->transaction_date)) . date(' H:i:s');
-        $ledger_banking->transaction_code = autoTimeStampCode('AL');
-        $ledger_banking->transaction_type_id = $request->transaction_type_id;
-        $ledger_banking->transaction_method_id = $request->transaction_method;
-        $ledger_banking->amount = $request->amount;
-        $ledger_banking->particulars = $request->particulars;
-        $ledger_banking->ref_date = ($request->ref_date != null) ? date('Y-m-d', strtotime($request->ref_date)) : null;
-        $ledger_banking->ref_no = $request->ref_no;
-        $ledger_banking->entry_by = Auth::user()->id;
-        $ledger_banking->approve_status = 'Approved';
-        $ledger_banking->save();
+            $ledger_branch = new BranchLedger();
+            $ledger_branch->branch_id = $request->branch;
+            $ledger_branch->transaction_date = date('Y-m-d', strtotime($request->transaction_date)) . date(' H:i:s');
+            $ledger_branch->transaction_code = $tcode;
+            $ledger_branch->amount = $request->amount;
+            $ledger_branch->transaction_type_id = $request->transaction_type;
+            $ledger_branch->transaction_method_id = $request->transaction_method;
+            $ledger_branch->comments = $request->particulars;
+            $ledger_branch->entry_by = Auth::user()->id;
+            $ledger_branch->approve_status = 'Approved';
+            $ledger_branch->save();
 
+        }
         \Session::flash('flash_message', 'Successfully Added');
         return redirect('bank_ledger');
     }
@@ -100,7 +159,8 @@ class BankLedgerController extends Controller
 //        dd($transaction_code);
         abort_if(Gate::denies('AccountMgtAccess'), redirect('error'));
         $bank_ledger = DB::table('bank_ledgers')->where('transaction_code', $transaction_code)->first();
-//        dd($bank_ledger);
+        $branch_ledger = DB::table('branch_ledgers')->where('transaction_code', $transaction_code)->first();
+//        dd($branch_ledger);
         $branches = branch_list();
         $transaction_methods = TransactionMethod::orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Method', '')->toArray();
         $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();

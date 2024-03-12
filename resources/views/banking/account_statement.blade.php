@@ -81,8 +81,13 @@
                                 <td>{{$data['ref_date'][$key]}}</td>
                                 <td>{{$data['transaction_type'][$key] }}</td>
                                 <td>{{$data['transaction_code'][$key]}}</td>
-                                <td style="text-align: right">{{($data['transaction_type'][$key]=='Credited'||$data['transaction_type'][$key]=='Receipt'||$data['transaction_type'][$key]=='Deposit')?$data['transaction_amount'][$key]:''}}</td>
-                                <td style="text-align: right">{{($data['transaction_type'][$key]=='Debited'||$data['transaction_type'][$key]=='Payment'||$data['transaction_type'][$key]=='Withdraw')?$data['transaction_amount'][$key]:''}}</td>
+                                {{--<td style="text-align: right">{{($data['transaction_type'][$key]=='Credited'||$data['transaction_type'][$key]=='Receipt'||$data['transaction_type'][$key]=='Deposit')?$data['transaction_amount'][$key]:''}}</td>--}}
+                                {{--<td style="text-align: right">{{($data['transaction_type'][$key]=='Debited'||$data['transaction_type'][$key]=='Payment'||$data['transaction_type'][$key]=='Withdraw')?$data['transaction_amount'][$key]:''}}</td>--}}
+                                <td style="text-align: right">{{($data['transaction_type'][$key]=='Credited'||$data['transaction_type'][$key]=='Receipt'||
+                                $data['transaction_type'][$key]=='Deposit'||$data['transaction_type'][$key]=='Loan'||$data['transaction_type'][$key]=='Investment')?$data['transaction_amount'][$key]:''}}</td>
+                                <td style="text-align: right">{{($data['transaction_type'][$key]=='Debited'||$data['transaction_type'][$key]=='Payment'||
+                                $data['transaction_type'][$key]=='Withdraw'||$data['transaction_type'][$key]=='Loan Payment'||$data['transaction_type'][$key]=='Profit Share')?$data['transaction_amount'][$key]:''}}</td>
+
                                 <td style="text-align: right">{{$data['balance'][$key]}}</td>
                             </tr>
                         @endforeach

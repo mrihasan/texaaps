@@ -42,11 +42,13 @@ class SettingSeeder extends Seeder
             ['id' => 2, 'title' => 'Debited', 'nature' => 'Negative(-)'],
             ['id' => 3, 'title' => 'Receipt', 'nature' => 'Positive(+)'],
             ['id' => 4, 'title' => 'Payment', 'nature' => 'Negative(-)'],
-            ['id' => 5, 'title' => 'Loan', 'nature' => 'Negative(-)'],
-            ['id' => 6, 'title' => 'Loan Payment', 'nature' => 'Positive(+)'],
+            ['id' => 5, 'title' => 'Loan', 'nature' => 'Positive(+)'],
+            ['id' => 6, 'title' => 'Loan Payment', 'nature' => 'Negative(-)'],
             ['id' => 7, 'title' => 'Payslip', 'nature' => 'Positive(+)'],
             ['id' => 8, 'title' => 'Deposit', 'nature' => 'Positive(+)'],
             ['id' => 9, 'title' => 'Withdraw', 'nature' => 'Negative(-)'],
+            ['id' => 10, 'title' => 'Investment', 'nature' => 'Positive(+)'],
+            ['id' => 11, 'title' => 'Profit Share', 'nature' => 'Negative(-)'],
         ];
         \DB::table('transaction_types')->insert($transaction_type);
 

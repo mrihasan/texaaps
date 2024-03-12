@@ -235,6 +235,12 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a href="{{ url('account_transfer') }}" class="nav-link @yield('account_transfer')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Transfer (AC to AC)</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="{{ url('deposit') }}" class="nav-link @yield('deposit')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Deposit (Account)</p>

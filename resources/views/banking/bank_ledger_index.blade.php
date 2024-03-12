@@ -2,7 +2,7 @@
 @section('accounting_mo','menu-open')
 @section('accounting','active')
 @section('manage_bank_ledger','active')
-@section('title','Branch Ledger')
+@section('title',$header_title)
 @section('breadcrumb')
     <li class="nav-item d-none d-sm-inline-block">
         <a href="#" class="nav-link">Accounting</a>
@@ -87,8 +87,10 @@
                                 <td>{{$data['account_name'][$key]}}</td>
                                 <td>{{$data['transaction_type'][$key] }}</td>
                                 <td>{{$data['transaction_code'][$key]}}</td>
-                                <td style="text-align: right">{{($data['transaction_type'][$key]=='Credited'||$data['transaction_type'][$key]=='Receipt'||$data['transaction_type'][$key]=='Deposit')?$data['transaction_amount'][$key]:''}}</td>
-                                <td style="text-align: right">{{($data['transaction_type'][$key]=='Debited'||$data['transaction_type'][$key]=='Payment'||$data['transaction_type'][$key]=='Withdraw')?$data['transaction_amount'][$key]:''}}</td>
+                                <td style="text-align: right">{{($data['transaction_type'][$key]=='Credited'||$data['transaction_type'][$key]=='Receipt'||
+                                $data['transaction_type'][$key]=='Deposit'||$data['transaction_type'][$key]=='Loan'||$data['transaction_type'][$key]=='Investment')?$data['transaction_amount'][$key]:''}}</td>
+                                <td style="text-align: right">{{($data['transaction_type'][$key]=='Debited'||$data['transaction_type'][$key]=='Payment'||
+                                $data['transaction_type'][$key]=='Withdraw'||$data['transaction_type'][$key]=='Loan Payment'||$data['transaction_type'][$key]=='Profit Share')?$data['transaction_amount'][$key]:''}}</td>
                                 <td style="text-align: right">{{$data['balance'][$key]}}</td>
                                 <td>
                                     @can('AccountMgtAccess')

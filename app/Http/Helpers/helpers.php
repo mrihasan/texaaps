@@ -342,6 +342,18 @@ function ledger_account($account_id, $start_date, $end_date)
         if ($sort_array[$i]->transaction_type == 'Withdraw') {
             $runningSum -= $sort_array[$i]->amount;
         }
+        if ($sort_array[$i]->transaction_type == 'Loan') {
+            $runningSum += $sort_array[$i]->amount;
+        }
+        if ($sort_array[$i]->transaction_type == 'Loan Payment') {
+            $runningSum -= $sort_array[$i]->amount;
+        }
+        if ($sort_array[$i]->transaction_type == 'Investment') {
+            $runningSum += $sort_array[$i]->amount;
+        }
+        if ($sort_array[$i]->transaction_type == 'Profit Share') {
+            $runningSum -= $sort_array[$i]->amount;
+        }
 
         $ledger_balance['transaction_type'][] = $sort_array[$i]->transaction_type;
         $ledger_balance['transaction_date'][] = $sort_array[$i]->transaction_date;
@@ -402,6 +414,18 @@ function ledger_account_all($start_date, $end_date)
             $runningSum += $sort_array[$i]->amount;
         }
         if ($sort_array[$i]->transaction_type == 'Withdraw') {
+            $runningSum -= $sort_array[$i]->amount;
+        }
+        if ($sort_array[$i]->transaction_type == 'Loan') {
+            $runningSum += $sort_array[$i]->amount;
+        }
+        if ($sort_array[$i]->transaction_type == 'Loan Payment') {
+            $runningSum -= $sort_array[$i]->amount;
+        }
+        if ($sort_array[$i]->transaction_type == 'Investment') {
+            $runningSum += $sort_array[$i]->amount;
+        }
+        if ($sort_array[$i]->transaction_type == 'Profit Share') {
             $runningSum -= $sort_array[$i]->amount;
         }
         $ledger_balance['transaction_type'][] = $sort_array[$i]->transaction_type;
