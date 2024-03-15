@@ -73,12 +73,12 @@ class PermissionSeeder extends Seeder
             \App\Models\User::create($value);
         }
         $profile = [
-            ['user_id' => '1','gender' => 'Male','address' => 'Dhaka'],
-            ['user_id' => '2','gender' => 'Male','address' => 'Dhaka'],
-            ['user_id' => '3','gender' => 'Male','address' => 'Dhaka'],
-            ['user_id' => '4','gender' => 'Male','address' => 'Dhaka'],
-            ['user_id' => '5','gender' => 'Male','address' => 'Dhaka'],
-            ['user_id' => '6','gender' => 'Male','address' => 'Dhaka'],
+            ['user_id' => '1','gender' => 'Male','address' => 'Dhaka','designation' => 'Admin'],
+            ['user_id' => '2','gender' => 'Male','address' => 'Dhaka','designation' => 'Admin'],
+            ['user_id' => '3','gender' => 'Male','address' => 'Dhaka','designation' => 'Employee'],
+            ['user_id' => '4','gender' => 'Male','address' => 'Dhaka','designation' => 'Customer'],
+            ['user_id' => '5','gender' => 'Male','address' => 'Dhaka','designation' => 'Supplier'],
+            ['user_id' => '6','gender' => 'Male','address' => 'Dhaka','designation' => 'Customer'],
         ];
         \DB::table('profiles')->insert($profile);
         $image_profile = [

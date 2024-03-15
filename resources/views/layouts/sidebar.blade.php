@@ -185,18 +185,18 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-                            {{--<li class="nav-item">--}}
-                                {{--<a href="{{ url('payment_request/create') }}" class="nav-link @yield('add_payment_request')">--}}
-                                    {{--<i class="far fa-circle nav-icon"></i>--}}
-                                    {{--<p>Payment request</p>--}}
-                                {{--</a>--}}
-                            {{--</li>--}}
-                            {{--<li class="nav-item">--}}
-                                {{--<a href="{{ url('payment_request') }}" class="nav-link @yield('manade_payment_request')">--}}
-                                    {{--<i class="far fa-circle nav-icon"></i>--}}
-                                    {{--<p>Manage Payment request</p>--}}
-                                {{--</a>--}}
-                            {{--</li>--}}
+                            <li class="nav-item">
+                                <a href="{{ url('payment_request/create') }}" class="nav-link @yield('add_payment_request')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Payment request</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ url('payment_request') }}" class="nav-link @yield('manage_payment_request')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Manage Payment request</p>
+                                </a>
+                            </li>
                             <li class="nav-item">
                                 <a href="{{ url('payment') }}" class="nav-link @yield('payment')">
                                     <i class="far fa-circle nav-icon"></i>

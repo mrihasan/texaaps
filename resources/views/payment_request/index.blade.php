@@ -1,7 +1,7 @@
 @extends('layouts.al305_main')
 @section('accounting_mo','menu-open')
 @section('accounting','active')
-@section('manage_account','active')
+@section('manage_payment_request','active')
 @section('title','Manage Payment Request')
 @section('breadcrumb')
     <li class="nav-item d-none d-sm-inline-block">
@@ -12,6 +12,7 @@
     </li>
 @endsection
 @push('css')
+<link rel="stylesheet" href="{{ asset('supporting/sweetalert/sweetalert2.css') }}">
 @endpush
 @section('maincontent')
 
@@ -24,11 +25,11 @@
                        aria-selected="true">Accounting</a>
                 </li>
                 {{--@can('AccountMgtAccess')--}}
-                    <li class="nav-item">
-                        <a href="{{ url('payment_request/create') }}" class="nav-link">
-                            Add Payment Request
-                        </a>
-                    </li>
+                <li class="nav-item">
+                    <a href="{{ url('payment_request/create') }}" class="nav-link">
+                        Add Payment Request
+                    </a>
+                </li>
                 {{--@endcan--}}
 
             </ul>
@@ -41,10 +42,12 @@
                         <thead>
                         <tr style="background-color: #dff0d8">
                             <th>S.No</th>
-                            <th> Account Name</th>
-                            <th> Account Number</th>
-                            <th> Account Type</th>
-                            {{--<th> Details</th>--}}
+                            <th> Requester</th>
+                            <th> Request Number</th>
+                            <th> Product</th>
+                            <th> Amount</th>
+                            <th> Checked By</th>
+                            <th> Approved By</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
@@ -52,29 +55,70 @@
                         @foreach($payment_requests as $key=>$data)
                             <tr>
                                 <td>{{ $key+1 }}</td>
-                                <td>{{ $data->account_name }}</td>
-                                <td>{{ $data->account_no }}</td>
-                                <td>{{ $data->account_type }}</td>
-                                {{--<td>{{ $data->details }}</td>--}}
+                                <td>{{ $data->user->name}}</td>
+                                <td>{{ $data->req_no }}</td>
+                                <td>{{ $data->product->title}}</td>
+                                <td>{{ $data->amount }}</td>
+                                <td>
+                                    @if( $data->checked_by == null && Auth::user()->hasRole('Checked'))
+                                        <button class="btn btn-warning btn-xs" title="Verify" type="button"
+                                                onclick="checkedPost({{$data->id}})">
+                                            <i class="fa fa-check-circle"></i>
+                                            <span>Checked</span>
+                                        </button>
+                                        <form method="post" action="{{route('payment_request_checked', $data->id)}}"
+                                              id="check-form{{$data->id}}" style="display: none;">
+                                            @csrf
+                                            @method('PUT')
+                                        </form>
+                                    @elseif( $data->checked_by == null)
+                                        <span class="right badge badge-danger">Not Yet Checked</span>
+                                    @else
+                                        {{$data->checkedBy->name}}
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($data->checked_by == null)
+                                        <span class="right badge badge-danger">Not Yet Verified</span>
+                                    @else
+                                    @if( $data->approved_by == null && Auth::user()->hasRole('Approval'))
+                                        <button class="btn btn-warning btn-xs" title="Approve" type="button"
+                                                onclick="approvedPost({{$data->id}})">
+                                            <i class="fa fa-check-circle"></i>
+                                            <span>Approve</span>
+                                        </button>
+                                        <form method="post" action="{{route('payment_request_approved', $data->id)}}"
+                                              id="approve-form{{$data->id}}" style="display: none;">
+                                            @csrf
+                                            @method('PUT')
+                                        </form>
+                                    @elseif( $data->approved_by == null)
+                                        <span class="right badge badge-danger">Not Yet Approved</span>
+                                    @else
+                                        {{$data->approvedBy->name}}
+                                    @endif
+                                    @endif
+                                </td>
 
                                 <td>
-                                @can('AccountMgtAccess')
-                                <a href="{{ url('bank_account/'.$data->id) }}" class="btn btn-success btn-xs" title="View "><span class="far fa-eye" aria-hidden="true"/></a>
-                                <a href="{{ url('bank_account/' . $data->id . '/edit') }}" class="btn btn-info btn-xs" title="Edit"><span class="far fa-edit" aria-hidden="true"/></a>
+                                    {{--@can('AccountMgtAccess')--}}
+                                    <a href="{{ url('payment_request/'.$data->id) }}" class="btn btn-success btn-xs"
+                                       title="View "><span class="far fa-eye" aria-hidden="true"></span></a>
+                                    {{--<a href="{{ url('bank_account/' . $data->id . '/edit') }}" class="btn btn-info btn-xs" title="Edit"><span class="far fa-edit" aria-hidden="true"/></a>--}}
 
-                                {{--{!! Form::open([--}}
-                                {{--'method'=>'DELETE',--}}
-                                {{--'url' => ['bank_account', $data->id],--}}
-                                {{--'style' => 'display:inline'--}}
-                                {{--]) !!}--}}
-                                {{--{!! Form::button('<span class="far fa-trash-alt" aria-hidden="true" title="Delete" />', array(--}}
-                                {{--'type' => 'submit',--}}
-                                {{--'class' => 'btn btn-danger btn-xs',--}}
-                                {{--'title' => 'Delete',--}}
-                                {{--'onclick'=>'return confirm("Confirm delete?")'--}}
-                                {{--))!!}--}}
-                                {{--{!! Form::close() !!}--}}
-                                @endcan
+                                    {{--{!! Form::open([--}}
+                                    {{--'method'=>'DELETE',--}}
+                                    {{--'url' => ['bank_account', $data->id],--}}
+                                    {{--'style' => 'display:inline'--}}
+                                    {{--]) !!}--}}
+                                    {{--{!! Form::button('<span class="far fa-trash-alt" aria-hidden="true" title="Delete" />', array(--}}
+                                    {{--'type' => 'submit',--}}
+                                    {{--'class' => 'btn btn-danger btn-xs',--}}
+                                    {{--'title' => 'Delete',--}}
+                                    {{--'onclick'=>'return confirm("Confirm delete?")'--}}
+                                    {{--))!!}--}}
+                                    {{--{!! Form::close() !!}--}}
+                                    {{--@endcan--}}
                                 </td>
                             </tr>
                         @endforeach
@@ -85,4 +129,90 @@
         </div>
     </div>
 @endsection
+
+@push('js')
+<script type="text/javascript" src="{{ asset('supporting/sweetalert/sweetalert2.min.js') }}"></script>
+
+<script type="text/javascript">
+
+    function checkedPost(id) {
+//        console.log(id);
+        var id = id;
+        const swalWithBootstrapButtons = swal.mixin({
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn btn-danger',
+            buttonsStyling: false
+        })
+
+        swalWithBootstrapButtons({
+            title: 'Are you sure?',
+            text: "You want to verify this Request!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Verify it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.value
+    )
+        {
+            document.getElementById('check-form' + id).submit();
+            event.preventDefault();
+        }
+    else
+        if (
+            // Read more about handling dismissals
+        result.dismiss === swal.DismissReason.cancel
+        ) {
+            swalWithBootstrapButtons(
+                'Cancelled',
+                'The user remain pending :)',
+                'info'
+            )
+        }
+    })
+    }
+</script>
+<script type="text/javascript">
+    function approvedPost(id) {
+//        console.log(id);
+        var id = id;
+        const swalWithBootstrapButtons = swal.mixin({
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn btn-danger',
+            buttonsStyling: false
+        })
+
+        swalWithBootstrapButtons({
+            title: 'Are you sure?',
+            text: "You want to approve this Request!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Approve it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.value
+    )
+        {
+            document.getElementById('approve-form' + id).submit();
+            event.preventDefault();
+        }
+    else
+        if (
+            // Read more about handling dismissals
+        result.dismiss === swal.DismissReason.cancel
+        ) {
+            swalWithBootstrapButtons(
+                'Cancelled',
+                'The user remain pending :)',
+                'info'
+            )
+        }
+    })
+
+    }
+
+</script>
+@endpush
 

@@ -93,7 +93,7 @@ class LedgerController extends Controller
         $branches = branch_list();
         $transaction_methods = TransactionMethod::orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Method', '')->toArray();
         $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
-        return view('accounting.receipt', compact('user', 'branches', 'transaction_methods', 'to_accounts'));
+        return view('accounting.receipt', compact('user', 'branches', 'transaction_methods', 'to_accounts','transaction_methods'));
     }
 
     public function store(Request $request)

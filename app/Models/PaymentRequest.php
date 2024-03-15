@@ -11,16 +11,55 @@ class PaymentRequest extends Model
 
     protected $fillable = [
         'user_id',
-        'branch_id',
-        'date',
+        'req_no',
+        'req_date',
+        'customer_id',
+        'product_id',
+        'model',
+        'workorder_refno',
+        'workorder_date',
+        'workorder_amount',
+        'supplier_id',
         'contact_person',
         'contact_no',
         'amount',
-        'amount_inword',
+        'bank_account_id',
         'transaction_method_id',
+        'expected_bill',
+        'expected_day',
         'prepared_by',
         'checked_by',
-        'approved_by',
-    ];
+        'approved_by'
+        ];
+
+    public function user()
+    {
+        return $this->belongsTo('App\Models\User');
+    }
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
+    public function branch()
+    {
+        return $this->belongsTo('App\Models\Branch');
+    }
+    public function bank_account()
+    {
+        return $this->belongsTo('App\Models\BankAccount');
+    }
+    public function transaction_method()
+    {
+        return $this->belongsTo('App\Models\TransactionMethod');
+    }
+    public function checkedBy()
+    {
+        return $this->belongsTo('App\Models\User','checked_by');
+    }
+    public function approvedBy()
+    {
+        return $this->belongsTo('App\Models\User','approved_by');
+    }
+
 
 }

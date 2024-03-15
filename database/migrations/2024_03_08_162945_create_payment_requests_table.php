@@ -19,14 +19,29 @@ return new class extends Migration
             $table->foreign('user_id')
                 ->references('id')->on('users')
                 ->onDelete('cascade');
-            $table->integer('branch_id')->unsigned();
-            $table->date('date');
+            $table->string('req_no');
+            $table->timestamp('req_date');
+
+            $table->integer('branch_id')->nullable();
+            $table->integer('customer_id')->nullable();
+            $table->integer('product_id')->nullable();
+            $table->string('model')->nullable();
+            $table->string('workorder_refno')->nullable();
+            $table->date('workorder_date')->nullable();
+            $table->float('workorder_amount', 10, 1)->nullable();
+
+            $table->integer('supplier_id')->nullable();
             $table->string('contact_person')->nullable();
             $table->string('contact_no')->nullable();
-            $table->float('amount', 10, 2);
-            $table->string('amount_inword')->nullable();
-            $table->integer('transaction_method_id');
-            $table->integer('prepared_by')->nullable();
+            $table->float('amount', 10, 1);
+
+            $table->integer('bank_account_id')->nullable();
+            $table->integer('transaction_method_id')->nullable();
+
+            $table->string('expected_bill')->nullable();
+            $table->integer('expected_day')->nullable();
+
+//            $table->integer('prepared_by')->nullable();
             $table->integer('checked_by')->nullable();
             $table->integer('approved_by')->nullable();
             $table->timestamps();

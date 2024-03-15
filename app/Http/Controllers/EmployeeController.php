@@ -57,6 +57,7 @@ class EmployeeController extends Controller
             'password' => 'required|min:6',
             'branch_id' => 'required',
             'religion' => 'required',
+            'designation' => 'required',
             'salary_amount' => 'required|numeric|between:0,99999999.99',
             'bonus_amount' => 'required|numeric|between:0,100',
         ]);
@@ -146,6 +147,7 @@ class EmployeeController extends Controller
             'user_id' => 'required',
             'branch_id' => 'required',
             'religion' => 'required',
+            'designation' => 'required',
             'salary_amount' => 'required|numeric|between:0,99999999.99',
             'bonus_amount' => 'required|numeric|between:0,100',
         ]);

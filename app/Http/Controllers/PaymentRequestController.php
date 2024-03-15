@@ -3,7 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\PaymentRequest;
+use App\Models\Product;
+use App\Models\TransactionMethod;
 use Illuminate\Http\Request;
+use DB;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Gate;
 
 class PaymentRequestController extends Controller
 {
@@ -21,78 +27,105 @@ class PaymentRequestController extends Controller
     public function create()
     {
 //        abort_if(Gate::denies('superadmin-access'), redirect('error'));
-        return view('payment_request.create');
+        $branches = branch_list();
+        $customer = customer_list();
+        $supplier = supplier_list();
+        $product=product_list();
+        $expected_days =[30=>30,45=>45,60=>60,75=>75,90=>90];
+        $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
+        $transaction_methods = TransactionMethod::orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Method', '')->toArray();
+        return view('payment_request.create',compact('customer','supplier','product','to_accounts','expected_days','transaction_methods','branches'));
     }
 
     public function store(Request $request)
     {
+//        dd($request);
 //        abort_if(Gate::denies('superadmin-access'), redirect('error'));
-        $this->validate($request, [
-            'title' => 'required|unique:payment_requests',
-            'code_no' => 'nullable|unique:payment_requests',
-        ]);
+//        $this->validate($request, [
+//            'title' => 'required|unique:payment_requests',
+//            'code_no' => 'nullable|unique:payment_requests',
+//        ]);
 
-        $branch = new PaymentRequest();
-        $branch->title = $request->title;
-        $branch->code_no = $request->code_no;
-        $branch->address = $request->address;
-        $branch->contact_no1 = $request->contact_no1;
-        $branch->contact_no2 = $request->contact_no2;
-        $branch->status = 'Active';
-        $branch->save();
+        $pr = new PaymentRequest();
+        $pr->branch_id = $request->branch;
+        $pr->user_id = Auth::user()->id;
+        $pr->req_no = autoTimeStampCode('PR');
+        $pr->req_date = date('Y-m-d', strtotime($request->request_date)) . date(' H:i:s');
 
-
-//        $s_year = date('Y-m') . '-00 00:00:00';
-//        $e_year = date('Y-m') . '-31 23:59:59';
-//        $count_ledger = (DB::table('branch_ledgers')
-//                ->whereBetween('created_at', [$s_year, $e_year])->max('id')) + 1;
-//        $transaction_code = 'LB-' . date('ym') . '-' . str_pad($count_ledger, 6, '0', STR_PAD_LEFT);
-        $transaction_code = autoTimeStampCode('LB');
-
-        $ledger_banking = new BranchLedger();
-        $ledger_banking->branch_id = $branch->id;
-        $ledger_banking->transaction_date = date('Y-m-d H:i:s');
-        $ledger_banking->transaction_code = $transaction_code;
-        $ledger_banking->amount = 0;
-        $ledger_banking->transaction_type_id = 1;
-        $ledger_banking->transaction_method_id = 1;
-        $ledger_banking->comments = 'Opening';
-        $ledger_banking->approve_status = 'Approved';
-        $ledger_banking->entry_by = Auth::user()->id;
-        $ledger_banking->save();
-
+        $pr->customer_id = $request->customer;
+        $pr->product_id = $request->product;
+        $pr->model = $request->contact_no1;
+        $pr->workorder_refno = $request->workorder_refno;
+        $pr->workorder_date = date('Y-m-d', strtotime($request->workorder_date));
+        $pr->workorder_amount = $request->workorder_amount;
+        
+        $pr->supplier_id = $request->supplier;
+        $pr->contact_person = $request->contact_person;
+        $pr->contact_no = $request->contact_no;
+        $pr->amount = $request->amount;
+        $pr->bank_account_id = $request->bank_account;
+        $pr->transaction_method_id = $request->transaction_method;
+        $pr->expected_bill = $request->expected_bill;
+        $pr->expected_day = $request->expected_day;
+        $pr->save();
+        
         \Session::flash('flash_message', 'Successfully Added');
         return redirect('payment_request');
     }
 
 
-    public function edit(PaymentRequest $branch)
+    public function edit(PaymentRequest $pr)
     {
         return view('payment_request.edit',compact('payment_request'));
     }
 
-    public function update(Request $request, PaymentRequest $branch)
+    public function update(Request $request, PaymentRequest $pr)
     {
 //        dd($request);
         $this->validate($request, [
-            'title' => 'required|unique:payment_requests,title,' . $branch->id . ',id',
-            'code_no' => 'nullable|unique:payment_requests,code_no,' . $branch->id . ',id',
+            'title' => 'required|unique:payment_requests,title,' . $pr->id . ',id',
+            'code_no' => 'nullable|unique:payment_requests,code_no,' . $pr->id . ',id',
         ]);
-        $branch->title = $request->title;
-        $branch->code_no = $request->code_no;
-        $branch->address = $request->address;
-        $branch->contact_no1 = $request->contact_no1;
-        $branch->contact_no2 = $request->contact_no2;
-        $branch->status = $request->status;
-        $branch->update();
+        $pr->title = $request->title;
+        $pr->code_no = $request->code_no;
+        $pr->address = $request->address;
+        $pr->contact_no1 = $request->contact_no1;
+        $pr->contact_no2 = $request->contact_no2;
+        $pr->status = $request->status;
+        $pr->update();
 
         \Session::flash('flash_message', 'Successfully Updated');
         return redirect('payment_request');
     }
 
-    public function show(PaymentRequest $branch)
+    public function show(PaymentRequest $payment_request)
     {
         return view('payment_request.show', compact('payment_request'));
+    }
+
+    public function payment_request_checked($id)
+    {
+//        dd($id);
+//        abort_if(Gate::denies('$payment_request-approval'), redirect('error'));
+        $payment_request = PaymentRequest::find($id);
+            $payment_request->checked_by = Auth::user()->id;
+            $payment_request->save();
+
+            \Session::flash('flash_message', 'Successfully Saved');
+
+        return redirect()->back();
+    }
+    public function payment_request_approved($id)
+    {
+//        dd($id);
+//        abort_if(Gate::denies('$payment_request-approval'), redirect('error'));
+        $payment_request = PaymentRequest::find($id);
+            $payment_request->approved_by = Auth::user()->id;
+            $payment_request->save();
+
+            \Session::flash('flash_message', 'Successfully Saved');
+
+        return redirect()->back();
     }
 
 }

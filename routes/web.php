@@ -115,6 +115,9 @@ Route::get('/payment_index', '\App\Http\Controllers\LedgerController@payment_ind
 Route::get('/payment', '\App\Http\Controllers\LedgerController@payment')->name('payment');
 Route::resource('ledger', '\App\Http\Controllers\LedgerController');
 Route::resource('branch_ledger', '\App\Http\Controllers\BranchLedgerController');
+
+Route::put('payment_request_approved/{id}', '\App\Http\Controllers\PaymentRequestController@payment_request_approved')->name('payment_request_approved');
+Route::put('payment_request_checked/{id}', '\App\Http\Controllers\PaymentRequestController@payment_request_checked')->name('payment_request_checked');
 Route::resource('payment_request', '\App\Http\Controllers\PaymentRequestController');
 
 //Report Route________________________________________________________________________
