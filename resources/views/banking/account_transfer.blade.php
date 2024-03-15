@@ -1,8 +1,8 @@
 @extends('layouts.al305_main')
 @section('accounting_mo','menu-open')
 @section('accounting','active')
-@section('deposit','active')
-@section('title','Receipt')
+@section('account_transfer','active')
+@section('title','Transfer')
 @section('breadcrumb')
     <li class="nav-item d-none d-sm-inline-block">
         <a href="#" class="nav-link">Accounting</a>

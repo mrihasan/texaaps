@@ -93,25 +93,25 @@
                                 $data['transaction_type'][$key]=='Withdraw'||$data['transaction_type'][$key]=='Loan Payment'||$data['transaction_type'][$key]=='Profit Share')?$data['transaction_amount'][$key]:''}}</td>
                                 <td style="text-align: right">{{$data['balance'][$key]}}</td>
                                 <td>
-                                    @can('AccountMgtAccess')
-                                        <a href="{{ url('bank_ledger/' . $data['transaction_code'][$key] . '/edit') }}"
-                                           class="btn btn-info btn-xs" title="Edit"><span class="far fa-edit"
-                                                                                          aria-hidden="true"></span></a>
-                                    @endcan
-                                    @can('AccountMgtDelete')
-                                        {!! Form::open([
-                                            'method'=>'DELETE',
-                                            'url' => ['bank_ledger', $data['transaction_code'][$key]],
-                                            'style' => 'display:inline'
-                                        ]) !!}
-                                        {!! Form::button('<span class="far fa-trash-alt" aria-hidden="true" title="Delete" />', array(
-                                                'type' => 'submit',
-                                                'class' => 'btn btn-danger btn-xs',
-                                                'title' => 'Delete',
-                                                'onclick'=>'return confirm("Confirm delete?")'
-                                        ))!!}
-                                        {!! Form::close() !!}
-                                    @endcan
+                                    {{--@can('AccountMgtAccess')--}}
+                                        {{--<a href="{{ url('bank_ledger/' . $data['transaction_code'][$key] . '/edit') }}"--}}
+                                           {{--class="btn btn-info btn-xs" title="Edit"><span class="far fa-edit"--}}
+                                                                                          {{--aria-hidden="true"></span></a>--}}
+                                    {{--@endcan--}}
+                                    {{--@can('AccountMgtDelete')--}}
+                                        {{--{!! Form::open([--}}
+                                            {{--'method'=>'DELETE',--}}
+                                            {{--'url' => ['bank_ledger', $data['transaction_code'][$key]],--}}
+                                            {{--'style' => 'display:inline'--}}
+                                        {{--]) !!}--}}
+                                        {{--{!! Form::button('<span class="far fa-trash-alt" aria-hidden="true" title="Delete" />', array(--}}
+                                                {{--'type' => 'submit',--}}
+                                                {{--'class' => 'btn btn-danger btn-xs',--}}
+                                                {{--'title' => 'Delete',--}}
+                                                {{--'onclick'=>'return confirm("Confirm delete?")'--}}
+                                        {{--))!!}--}}
+                                        {{--{!! Form::close() !!}--}}
+                                    {{--@endcan--}}
 
                                 </td>
                             </tr>
