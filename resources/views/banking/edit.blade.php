@@ -2,7 +2,7 @@
 @section('accounting_mo','menu-open')
 @section('accounting','active')
 @section('manage_account','active')
-@section('title','Update Account')
+@section('title','Manage Account')
 @section('breadcrumb')
     <li class="nav-item d-none d-sm-inline-block">
         <a href="#" class="nav-link">Accounting</a>
@@ -20,7 +20,7 @@
             <div class="card-header">
                 <h3 class="card-title">Update Account</h3>
             </div>
-            {!! Form::model($banking,['method'=>'PATCH', 'route'=>['banking.update',$banking->id],'class'=>'form-horizontal','id'=>'saveForm']) !!}
+            {!! Form::model($bank_account,['method'=>'PATCH', 'route'=>['bank_account.update',$bank_account->id],'class'=>'form-horizontal','id'=>'saveForm']) !!}
             {{ csrf_field() }}
 
             <div class="card-body">
@@ -29,10 +29,22 @@
                     <label class="col-md-4 control-label text-md-right">Account Name :<span
                                 class="required"> * </span></label>
                     <div class="col-md-6">
-                        {!! Form::text('account_name', null,['class'=>'form-control ', 'placeholder'=>'Enter Account Name']) !!}
+                        {!! Form::text('account_name', null,['class'=>'form-control ', 'placeholder'=>'Enter Bank Name']) !!}
                         @if ($errors->has('account_name'))
                             <span class="help-block">
                                         <strong>{{ $errors->first('account_name') }}</strong>
+                                    </span>
+                        @endif
+
+                    </div>
+                </div>
+                <div class="form-group row {{ $errors->has('bank_name') ? ' has-error' : '' }}">
+                    <label class="col-md-4 control-label text-md-right">Bank Name :</label>
+                    <div class="col-md-6">
+                        {!! Form::text('bank_name', null,['class'=>'form-control ', 'placeholder'=>'Enter Account Name']) !!}
+                        @if ($errors->has('bank_name'))
+                            <span class="help-block">
+                                        <strong>{{ $errors->first('bank_name') }}</strong>
                                     </span>
                         @endif
 
@@ -58,16 +70,16 @@
                     <div class="col-sm-6">
                         <select name="account_type" class="form-control" id="account_type" required>
                             <option value="">Select Account type</option>
-                            <option value="Bank Account" {{ (isset($banking) && $banking->account_type == 'Bank Account') ? ' selected' : '' }}>
+                            <option value="Bank Account" {{ (isset($bank_account) && $bank_account->account_type == 'Bank Account') ? ' selected' : '' }}>
                                 Bank Account
                             </option>
-                            <option value="Mobile Banking" {{ (isset($banking) && $banking->account_type == 'Mobile Banking') ? ' selected' : '' }}>
+                            <option value="Mobile Banking" {{ (isset($bank_account) && $bank_account->account_type == 'Mobile Banking') ? ' selected' : '' }}>
                                 Mobile Banking
                             </option>
-                            <option value="Petty Cash" {{ (isset($banking) && $banking->account_type == 'Petty Cash') ? ' selected' : '' }}>
+                            <option value="Petty Cash" {{ (isset($bank_account) && $bank_account->account_type == 'Petty Cash') ? ' selected' : '' }}>
                                 Petty Cash
                             </option>
-                            {{--<option value="Others" {{ (isset($banking) && $banking->account_type == 'Others') ? ' selected' : '' }}>--}}
+                            {{--<option value="Others" {{ (isset($bank_account) && $bank_account->account_type == 'Others') ? ' selected' : '' }}>--}}
                                 {{--Others--}}
                             {{--</option>--}}
                         </select>

@@ -32,9 +32,8 @@ class PaymentRequestController extends Controller
         $supplier = supplier_list();
         $product=product_list();
         $expected_days =[30=>30,45=>45,60=>60,75=>75,90=>90];
-        $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
         $transaction_methods = TransactionMethod::orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Method', '')->toArray();
-        return view('payment_request.create',compact('customer','supplier','product','to_accounts','expected_days','transaction_methods','branches'));
+        return view('payment_request.create',compact('customer','supplier','product','expected_days','transaction_methods','branches'));
     }
 
     public function store(Request $request)
@@ -63,7 +62,10 @@ class PaymentRequestController extends Controller
         $pr->contact_person = $request->contact_person;
         $pr->contact_no = $request->contact_no;
         $pr->amount = $request->amount;
-        $pr->bank_account_id = $request->bank_account;
+
+        $pr->account_name = $request->account_name;
+        $pr->bank_name = $request->bank_name;
+        $pr->account_no = $request->account_no;
         $pr->transaction_method_id = $request->transaction_method;
         $pr->expected_bill = $request->expected_bill;
         $pr->expected_day = $request->expected_day;

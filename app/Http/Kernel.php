@@ -39,7 +39,6 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\AuthGates::class,
             \App\Http\Middleware\Languageone::class,
 
-
         ],
 
         'api' => [

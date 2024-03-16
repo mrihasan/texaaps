@@ -1,7 +1,7 @@
 @extends('layouts.al305_main')
 @section('accounting_mo','menu-open')
 @section('accounting','active')
-@section('manage_bank_account','active')
+@section('manage_account','active')
 @section('title','Add Account')
 @section('breadcrumb')
     <li class="nav-item d-none d-sm-inline-block">

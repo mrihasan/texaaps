@@ -65,59 +65,6 @@
                                     </span>
                     @endif
                 </div>
-                <div class="form-group row{{ $errors->has('bank_account') ? 'has-error' : '' }}">
-                    <label for="roles" class="col-md-4 control-label text-right">Select Account :<span
-                                class="required"> * </span></label>
-                    <div class="col-md-6">
-                        <select name="bank_account" class="form-control select2" style="width: 100%;" id="bank_account">
-                            @foreach($to_accounts as $key=>$to_account)
-                                <option value="{{ $key }}">{{ $to_account}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    @if($errors->has('bank_account'))
-                        <em class="invalid-feedback">
-                            {{ $errors->first('bank_account') }}
-                        </em>
-                    @endif
-                </div>
-                <div class="form-group row {{ $errors->has('transaction_method') ? ' has-error' : '' }}">
-                    <label class="col-sm-4 control-label text-md-right">Payment Mode : <span
-                                class="required"> * </span></label>
-                    <div class="col-sm-6">
-                        {{ Form::select('transaction_method', $transaction_methods, null,['class'=>'form-control select2'] ) }}
-                        @if ($errors->has('transaction_method'))
-                            <span class="help-block">
-                                        <strong>{{ $errors->first('transaction_method') }}</strong>
-                                    </span>
-                        @endif
-
-                    </div>
-                </div>
-                <div class="form-group row {{ $errors->has('expected_bill') ? ' has-error' : '' }}">
-                    <label class="col-md-4 control-label text-md-right">Expected Bill :</label>
-                    <div class="col-md-6">
-                        {!! Form::text('expected_bill', null,['class'=>'form-control ', 'placeholder'=>'Enter Expected Bill ']) !!}
-                        @if ($errors->has('expected_bill'))
-                            <span class="help-block">
-                                        <strong>{{ $errors->first('expected_bill') }}</strong>
-                                    </span>
-                        @endif
-
-                    </div>
-                </div>
-                <div class="form-group row {{ $errors->has('expected_day') ? ' has-error' : '' }}">
-                    <label class="col-sm-4 control-label text-md-right">Expected Day : </label>
-                    <div class="col-sm-6">
-                        {{ Form::select('expected_day', $expected_days, null,['class'=>'form-control select2'] ) }}
-                        @if ($errors->has('expected_day'))
-                            <span class="help-block">
-                                        <strong>{{ $errors->first('expected_day') }}</strong>
-                                    </span>
-                        @endif
-
-                    </div>
-                </div>
 
                 <hr/>
                 <div class="form-group row {{ $errors->has('customer') ? ' has-error' : '' }}">
@@ -241,6 +188,83 @@
 
                     </div>
                 </div>
+                <hr/>
+                <div class="form-group row {{ $errors->has('account_name') ? ' has-error' : '' }}">
+                    <label class="col-md-4 control-label text-md-right">Account Name :<span
+                                class="required"> * </span></label>
+                    <div class="col-md-6">
+                        {!! Form::text('account_name', null,['class'=>'form-control ', 'placeholder'=>'Enter Account Name']) !!}
+                        @if ($errors->has('account_name'))
+                            <span class="help-block">
+                                        <strong>{{ $errors->first('account_name') }}</strong>
+                                    </span>
+                        @endif
+
+                    </div>
+                </div>
+                <div class="form-group row {{ $errors->has('account_no') ? ' has-error' : '' }}">
+                    <label class="col-md-4 control-label text-md-right">Account Number :<span
+                                class="required"> * </span></label>
+                    <div class="col-md-6">
+                        {!! Form::text('account_no', null,['class'=>'form-control ', 'placeholder'=>'Enter Account Number']) !!}
+                        @if ($errors->has('account_no'))
+                            <span class="help-block">
+                                        <strong>{{ $errors->first('account_no') }}</strong>
+                                    </span>
+                        @endif
+
+                    </div>
+                </div>
+                <div class="form-group row {{ $errors->has('bank_name') ? ' has-error' : '' }}">
+                    <label class="col-md-4 control-label text-md-right">Bank Name :</label>
+                    <div class="col-md-6">
+                        {!! Form::text('bank_name', null,['class'=>'form-control ', 'placeholder'=>'Enter Bank Name']) !!}
+                        @if ($errors->has('bank_name'))
+                            <span class="help-block">
+                                        <strong>{{ $errors->first('bank_name') }}</strong>
+                                    </span>
+                        @endif
+
+                    </div>
+                </div>
+                <div class="form-group row {{ $errors->has('transaction_method') ? ' has-error' : '' }}">
+                    <label class="col-sm-4 control-label text-md-right">Payment Mode : <span
+                                class="required"> * </span></label>
+                    <div class="col-sm-6">
+                        {{ Form::select('transaction_method', $transaction_methods, null,['class'=>'form-control select2'] ) }}
+                        @if ($errors->has('transaction_method'))
+                            <span class="help-block">
+                                        <strong>{{ $errors->first('transaction_method') }}</strong>
+                                    </span>
+                        @endif
+
+                    </div>
+                </div>
+                <div class="form-group row {{ $errors->has('expected_bill') ? ' has-error' : '' }}">
+                    <label class="col-md-4 control-label text-md-right">Expected Bill :</label>
+                    <div class="col-md-6">
+                        {!! Form::text('expected_bill', null,['class'=>'form-control ', 'placeholder'=>'Enter Expected Bill ']) !!}
+                        @if ($errors->has('expected_bill'))
+                            <span class="help-block">
+                                        <strong>{{ $errors->first('expected_bill') }}</strong>
+                                    </span>
+                        @endif
+
+                    </div>
+                </div>
+                <div class="form-group row {{ $errors->has('expected_day') ? ' has-error' : '' }}">
+                    <label class="col-sm-4 control-label text-md-right">Expected Day : </label>
+                    <div class="col-sm-6">
+                        {{ Form::select('expected_day', $expected_days, null,['class'=>'form-control select2'] ) }}
+                        @if ($errors->has('expected_day'))
+                            <span class="help-block">
+                                        <strong>{{ $errors->first('expected_day') }}</strong>
+                                    </span>
+                        @endif
+
+                    </div>
+                </div>
+
 
             </div>
 

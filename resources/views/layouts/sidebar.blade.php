@@ -229,7 +229,7 @@
                             </li>
                             <div class="dropdown-divider"></div>
                             <li class="nav-item">
-                                <a href="{{ url('bank_account') }}" class="nav-link @yield('manage_bank_account')">
+                                <a href="{{ url('bank_account') }}" class="nav-link @yield('manage_account')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Manage Bank Account</p>
                                 </a>

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Carbon\Carbon;
 
 class BankAccountController extends Controller
 {
@@ -43,6 +44,7 @@ class BankAccountController extends Controller
         ]);
         $banking = new BankAccount();
         $banking->account_name = $request->account_name;
+        $banking->bank_name = $request->bank_name;
         $banking->account_no = $request->account_no;
         $banking->account_type = $request->account_type;
         $banking->details = $request->details;
@@ -68,35 +70,39 @@ class BankAccountController extends Controller
         return redirect('bank_account');
     }
 
-    public function show(BankAccount $banking)
+    public function show(BankAccount $bank_account)
     {
-        return view('banking.show', compact('banking'));
+            $start_date = Carbon::now()->subDays(30)->format('Y-m-d') . ' 00:00:00';
+            $end_date = date('Y-m-d') . ' 23:59:59';
+            $account_id = $bank_account->id;
+        $ledger = ledger_account($account_id, $start_date, $end_date);
+        $header_title= 'Account Information';
+        return view('banking.show', compact('bank_account','ledger','header_title'));
     }
 
-    public function edit(BankAccount $banking)
+    public function edit(BankAccount $bank_account)
     {
         abort_if(Gate::denies('AccountMgtAccess'), redirect('error'));
-        return view('banking.edit',compact('banking'));
+        return view('banking.edit',compact('bank_account'));
     }
 
-    public function update(Request $request, BankAccount $banking)
+    public function update(Request $request, BankAccount $bank_account)
     {
         abort_if(Gate::denies('AccountMgtAccess'), redirect('error'));
         $this->validate($request, [
-            'account_no' => 'required|unique:bankings,account_no,' . $banking->id . ',id',
+            'account_no' => 'required|unique:bank_accounts,account_no,' . $bank_account->id . ',id',
             'account_name' => 'required',
             'account_type' => 'required',
 //            'opening_balance' => 'required',
         ]);
-        $banking->account_name = $request->account_name;
-        $banking->account_no = $request->account_no;
-        $banking->account_type = $request->account_type;
-        $banking->details = $request->details;
-//        $banking->opening_balance = $request->opening_balance;
-//        $banking->is_status = 1;
-        $banking->update();
+        $bank_account->account_name = $request->account_name;
+        $bank_account->bank_name = $request->bank_name;
+        $bank_account->account_no = $request->account_no;
+        $bank_account->account_type = $request->account_type;
+        $bank_account->details = $request->details;
+        $bank_account->update();
         \Session::flash('flash_message', 'Successfully Updated');
-        return redirect('banking');
+        return redirect('bank_account');
     }
 
     public function destroy(BankAccount $banking)

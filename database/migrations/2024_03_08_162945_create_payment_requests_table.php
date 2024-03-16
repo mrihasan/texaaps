@@ -35,9 +35,10 @@ return new class extends Migration
             $table->string('contact_no')->nullable();
             $table->float('amount', 10, 1);
 
-            $table->integer('bank_account_id')->nullable();
+            $table->integer('account_name')->nullable();
+            $table->integer('account_no')->nullable();
+            $table->integer('bank_name')->nullable();
             $table->integer('transaction_method_id')->nullable();
-
             $table->string('expected_bill')->nullable();
             $table->integer('expected_day')->nullable();
 

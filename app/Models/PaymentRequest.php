@@ -23,11 +23,12 @@ class PaymentRequest extends Model
         'contact_person',
         'contact_no',
         'amount',
-        'bank_account_id',
+        'account_name',
+        'account_no',
+        'bank_name',
         'transaction_method_id',
         'expected_bill',
         'expected_day',
-        'prepared_by',
         'checked_by',
         'approved_by'
         ];

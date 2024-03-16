@@ -42,6 +42,7 @@
                         <tr style="background-color: #dff0d8">
                             <th>S.No</th>
                             <th> Account Name</th>
+                            <th> Bank Name</th>
                             <th> Account Number</th>
                             <th> Account Type</th>
                             {{--<th> Details</th>--}}
@@ -53,6 +54,7 @@
                             <tr>
                                 <td>{{ $key+1 }}</td>
                                 <td>{{ $data->account_name }}</td>
+                                <td>{{ $data->bank_name }}</td>
                                 <td>{{ $data->account_no }}</td>
                                 <td>{{ $data->account_type }}</td>
                                 {{--<td>{{ $data->details }}</td>--}}
