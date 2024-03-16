@@ -140,7 +140,7 @@
                                     <td style="text-align:right; border: none" >
                                         <strong>Customer Name :</strong>
                                     </td>
-                                    <td style="text-align:left; border: none" >
+                                    <td style="text-align:left; border: none" colspan="2">
                                         <strong>{{companyBy($payment_request->customer_id)}}</strong>
                                     </td>
                                 </tr>
@@ -148,7 +148,7 @@
                                     <td style="text-align:right; border: none" >
                                         <strong>Product Name :</strong>
                                     </td>
-                                    <td style="text-align:left; border: none" >
+                                    <td style="text-align:left; border: none" colspan="2">
                                         {{$payment_request->product->title}}
                                     </td>
                                 </tr>
@@ -156,7 +156,7 @@
                                     <td style="text-align:right; border: none" >
                                         <strong>Product Brand :</strong>
                                     </td>
-                                    <td style="text-align:left; border: none" >
+                                    <td style="text-align:left; border: none" colspan="2">
                                         {{$payment_request->product->brand->title}}
                                     </td>
                                 </tr>
@@ -164,7 +164,7 @@
                                     <td style="text-align:right; border: none" >
                                         <strong>Product Model :</strong>
                                     </td>
-                                    <td style="text-align:left; border: none" >
+                                    <td style="text-align:left; border: none" colspan="2">
                                         {{$payment_request->model}}
                                     </td>
                                 </tr>
@@ -172,7 +172,7 @@
                                     <td style="text-align:right; border: none" >
                                         <strong>Work order Ref No :</strong>
                                     </td>
-                                    <td style="text-align:left; border: none" >
+                                    <td style="text-align:left; border: none" colspan="2">
                                         {{$payment_request->workorder_refno}}
                                     </td>
                                 </tr>
@@ -180,7 +180,7 @@
                                     <td style="text-align:right; border: none" >
                                         <strong>Work order Date :</strong>
                                     </td>
-                                    <td style="text-align:left; border: none" >
+                                    <td style="text-align:left; border: none" colspan="2">
                                         {{ Carbon\Carbon::parse($payment_request->workorder_date)->format('d-M-Y') }}
                                     </td>
                                 </tr>
@@ -188,7 +188,7 @@
                                     <td style="text-align:right; border: none" >
                                         <strong>Work order Amount :</strong>
                                     </td>
-                                    <td style="text-align:left; border: none" >
+                                    <td style="text-align:left; border: none" colspan="2">
                                         {{ $payment_request->workorder_amount }}
                                     </td>
                                 </tr>
@@ -202,7 +202,7 @@
                                     <td style="text-align:right; border: none" >
                                         <strong>Supplier Name :</strong>
                                     </td>
-                                    <td style="text-align:left; border: none" >
+                                    <td style="text-align:left; border: none" colspan="2">
                                         <strong>{{companyBy($payment_request->supplier_id)}}</strong>
                                     </td>
                                 </tr>
@@ -210,7 +210,7 @@
                                     <td style="text-align:right; border: none" >
                                         <strong>Supplier Address :</strong>
                                     </td>
-                                    <td style="text-align:left; border: none" >
+                                    <td style="text-align:left; border: none" colspan="2">
                                         {{companyAddress($payment_request->supplier_id)}}
                                     </td>
                                 </tr>
@@ -218,7 +218,7 @@
                                     <td style="text-align:right; border: none" >
                                         <strong>Contact Person :</strong>
                                     </td>
-                                    <td style="text-align:left; border: none" >
+                                    <td style="text-align:left; border: none" colspan="2">
                                         {{$payment_request->contact_person }}
                                     </td>
                                 </tr>
@@ -226,7 +226,7 @@
                                     <td style="text-align:right; border: none" >
                                         <strong>Contact No :</strong>
                                     </td>
-                                    <td style="text-align:left; border: none" >
+                                    <td style="text-align:left; border: none" colspan="2">
                                         {{$payment_request->contact_no}}
                                     </td>
                                 </tr>
@@ -234,7 +234,7 @@
                                     <td style="text-align:right; border: none" >
                                         <strong>Amount :</strong>
                                     </td>
-                                    <td style="text-align:left; border: none" >
+                                    <td style="text-align:left; border: none" colspan="2">
                                         {{$payment_request->amount}}
                                     </td>
                                 </tr>
@@ -242,7 +242,7 @@
                                     <td style="text-align:right; border: none" >
                                         <strong>In Word :</strong>
                                     </td>
-                                    <td style="text-align:left; border: none" >
+                                    <td style="text-align:left; border: none" colspan="2">
                                         {{numberToWord($payment_request->amount).' Taka Only'}}
                                     </td>
                                 </tr>
@@ -256,47 +256,55 @@
                                     <td style="text-align:right; border: none" >
                                         <strong>Account Name :</strong>
                                     </td>
-                                    <td style="text-align:left; border: none" >
-                                        <strong>{{$payment_request->bank_account->account_name}}</strong>
+                                    <td style="text-align:left; border: none" colspan="2">
+                                        <strong>{{$payment_request->account_name}}</strong>
                                     </td>
                                 </tr>
                                 <tr style="border: none">
                                     <td style="text-align:right; border: none" >
                                         <strong>Account No :</strong>
                                     </td>
-                                    <td style="text-align:left; border: none" >
-                                        <strong>{{$payment_request->bank_account->account_no}}</strong>
+                                    <td style="text-align:left; border: none" colspan="2">
+                                        <strong>{{$payment_request->account_no}}</strong>
                                     </td>
                                 </tr>
                                 <tr style="border: none">
                                     <td style="text-align:right; border: none" >
                                         <strong>Bank Name :</strong>
                                     </td>
-                                    <td style="text-align:left; border: none" >
-                                        <strong>{{$payment_request->bank_account->bank_name}}</strong>
+                                    <td style="text-align:left; border: none" colspan="2">
+                                        <strong>{{$payment_request->bank_name}}</strong>
                                     </td>
                                 </tr>
                                 <tr style="border: none">
                                     <td style="text-align:right; border: none" >
                                         <strong>Payment Mode :</strong>
                                     </td>
-                                    <td style="text-align:left; border: none" >
+                                    <td style="text-align:left; border: none" colspan="2">
                                         <strong>{{$payment_request->transaction_method->title}}</strong>
                                     </td>
                                 </tr>
+
+                                <tr style="border: none">
+                                    <td style="text-align:left; border: none" colspan="3">
+                                        <p><strong></strong></p>
+                                    </td>
+                                </tr>
+
                                 <tr style="border: none">
                                     <td style="text-align:right; border: none" >
                                         <strong>Expected Bill :</strong>
                                     </td>
-                                    <td style="text-align:left; border: none" >
+                                    <td style="text-align:left; border: none" colspan="2">
                                         <strong>{{$payment_request->expected_bill}}</strong>
                                     </td>
                                 </tr>
+
                                 <tr style="border: none">
                                     <td style="text-align:right; border: none" >
                                         <strong>Expected Day :</strong>
                                     </td>
-                                    <td style="text-align:left; border: none" >
+                                    <td style="text-align:left; border: none" colspan="2">
                                         <strong>{{$payment_request->expected_day}}</strong>
                                     </td>
                                 </tr>

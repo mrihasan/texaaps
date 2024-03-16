@@ -1,4 +1,4 @@
-@extends('layouts.al305_main')
+@extends('layouts.al305_main')0
 @section('accounting_mo','menu-open')
 @section('accounting','active')
 @section('manage_payment_request','active')
@@ -104,7 +104,7 @@
                                     {{--@can('AccountMgtAccess')--}}
                                     <a href="{{ url('payment_request/'.$data->id) }}" class="btn btn-success btn-xs"
                                        title="View "><span class="far fa-eye" aria-hidden="true"></span></a>
-                                    {{--<a href="{{ url('bank_account/' . $data->id . '/edit') }}" class="btn btn-info btn-xs" title="Edit"><span class="far fa-edit" aria-hidden="true"/></a>--}}
+                                    <a href="{{ url('payment_request/' . $data->id . '/edit') }}" class="btn btn-info btn-xs" title="Edit"><span class="far fa-edit" aria-hidden="true"></span></a>
 
                                     {{--{!! Form::open([--}}
                                     {{--'method'=>'DELETE',--}}

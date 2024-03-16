@@ -53,7 +53,7 @@ class PaymentRequestController extends Controller
 
         $pr->customer_id = $request->customer;
         $pr->product_id = $request->product;
-        $pr->model = $request->contact_no1;
+        $pr->model = $request->model;
         $pr->workorder_refno = $request->workorder_refno;
         $pr->workorder_date = date('Y-m-d', strtotime($request->workorder_date));
         $pr->workorder_amount = $request->workorder_amount;
@@ -76,25 +76,47 @@ class PaymentRequestController extends Controller
     }
 
 
-    public function edit(PaymentRequest $pr)
+    public function edit(PaymentRequest $payment_request)
     {
-        return view('payment_request.edit',compact('payment_request'));
+        $branches = branch_list();
+        $customer = customer_list();
+        $supplier = supplier_list();
+        $product=product_list();
+        $expected_days =[30=>30,45=>45,60=>60,75=>75,90=>90];
+        $transaction_methods = TransactionMethod::orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Method', '')->toArray();
+
+        return view('payment_request.edit',compact('payment_request','customer','supplier','product','expected_days','transaction_methods','branches'));
     }
 
-    public function update(Request $request, PaymentRequest $pr)
+    public function update(Request $request, PaymentRequest $payment_request)
     {
 //        dd($request);
         $this->validate($request, [
-            'title' => 'required|unique:payment_requests,title,' . $pr->id . ',id',
-            'code_no' => 'nullable|unique:payment_requests,code_no,' . $pr->id . ',id',
+//            'title' => 'required|unique:payment_requests,title,' . $pr->id . ',id',
+//            'code_no' => 'nullable|unique:payment_requests,code_no,' . $pr->id . ',id',
         ]);
-        $pr->title = $request->title;
-        $pr->code_no = $request->code_no;
-        $pr->address = $request->address;
-        $pr->contact_no1 = $request->contact_no1;
-        $pr->contact_no2 = $request->contact_no2;
-        $pr->status = $request->status;
-        $pr->update();
+        $payment_request->branch_id = $request->branch;
+        $payment_request->req_date = date('Y-m-d', strtotime($request->request_date)) . date(' H:i:s');
+
+        $payment_request->customer_id = $request->customer;
+        $payment_request->product_id = $request->product;
+        $payment_request->model = $request->model;
+        $payment_request->workorder_refno = $request->workorder_refno;
+        $payment_request->workorder_date = date('Y-m-d', strtotime($request->workorder_date));
+        $payment_request->workorder_amount = $request->workorder_amount;
+
+        $payment_request->supplier_id = $request->supplier;
+        $payment_request->contact_person = $request->contact_person;
+        $payment_request->contact_no = $request->contact_no;
+        $payment_request->amount = $request->amount;
+
+        $payment_request->account_name = $request->account_name;
+        $payment_request->bank_name = $request->bank_name;
+        $payment_request->account_no = $request->account_no;
+        $payment_request->transaction_method_id = $request->transaction_method;
+        $payment_request->expected_bill = $request->expected_bill;
+        $payment_request->expected_day = $request->expected_day;
+        $payment_request->update();
 
         \Session::flash('flash_message', 'Successfully Updated');
         return redirect('payment_request');
