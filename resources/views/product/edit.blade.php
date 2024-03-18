@@ -41,7 +41,7 @@
                             <label class="control-label col-md-4 text-right">Product Type/Category :</label>
                             <div class="col-md-6">
                                 {{ Form::select('product_type_id', $product_types,null, ['class'=>'form-control select2', 'required', 'data-live-search'=>'true'] ) }}
-                                </select>
+
                                 @if ($errors->has('product_type_id'))
                                     <span class="help-block">
                                     <strong>{{ $errors->first('product_type_id') }}</strong>
@@ -85,7 +85,7 @@
                                 @endif
                             </div>
                         </div>
-                        <div class="form-group row{{ $errors->has('unitbuy_price') ? 'has-error' : '' }}">
+                        <div class="form-group row{{ $errors->has('unitbuy_price') ? 'has-error' : '' }} d-none">
                             <label class="col-md-4 control-label text-md-right" for="unitbuy_price">Unit Buy Price :<span class="required"> * </span></label>
                             <input type="number" id="unitbuy_price" name="unitbuy_price" class="form-control col-md-6" step="any" min="0.0"
                                    value="{{ old('unitbuy_price', isset($product) ? $product->unitbuy_price : '') }}" required>
@@ -95,7 +95,7 @@
                                 </em>
                             @endif
                         </div>
-                        <div class="form-group row{{ $errors->has('unitsell_price') ? 'has-error' : '' }}">
+                        <div class="form-group row{{ $errors->has('unitsell_price') ? 'has-error' : '' }} d-none">
                             <label class="col-md-4 control-label text-md-right" for="unitsell_price">Unit Sell Price :<span class="required"> * </span></label>
                             <input type="number" id="unitsell_price" name="unitsell_price" class="form-control col-md-6" step="any" min="0.0"
                                    value="{{ old('unitsell_price', isset($product) ? $product->unitsell_price : '') }}" required>

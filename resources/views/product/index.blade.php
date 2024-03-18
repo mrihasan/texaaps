@@ -67,12 +67,12 @@
                     <th>
                         Unit
                     </th>
-                    <th>
-                        Buy Price
-                    </th>
-                    <th>
-                        Sell Price
-                    </th>
+                    {{--<th>--}}
+                        {{--Buy Price--}}
+                    {{--</th>--}}
+                    {{--<th>--}}
+                        {{--Sell Price--}}
+                    {{--</th>--}}
                     <th>
                         Status
                     </th>
@@ -126,8 +126,8 @@
                     {data: 'company_name.title', defaultContent: "-"},
                     {data: 'brand.title', defaultContent: "-"},
                     {data: 'unit.title', defaultContent: "-"},
-                    {data: 'unitbuy_price', defaultContent: "-"},
-                    {data: 'unitsell_price', defaultContent: "-"},
+//                    {data: 'unitbuy_price', defaultContent: "-"},
+//                    {data: 'unitsell_price', defaultContent: "-"},
                     {data: 'status', name: 'status'},
                     {data: 'action'},
                 ],

@@ -25,6 +25,8 @@
                     <h3 class="card-title">Add Product</h3>
                 </div>
                 <form action="{{ route("product.store") }}" method="POST" enctype="multipart/form-data" id="saveForm">
+                    {!! Form::hidden('unitbuy_price', 0 )!!}
+                    {!! Form::hidden('unitsell_price', 0 )!!}
                     @csrf
                     <div class="card-body">
                         <div class="form-group row{{ $errors->has('title') ? 'has-error' : '' }}">
@@ -101,26 +103,26 @@
                                 @endif
                             </div>
                         </div>
-                        <div class="form-group row{{ $errors->has('unitbuy_price') ? 'has-error' : '' }}">
-                            <label class="col-md-4 control-label text-md-right" for="unitbuy_price">Unit Buy Price :<span class="required"> * </span></label>
-                            <input type="number" id="unitbuy_price" name="unitbuy_price" class="form-control col-md-6" step="any" min="0.0"
-                                   value="{{ old('unitbuy_price', isset($product) ? $product->unitbuy_price : '') }}" required>
-                            @if($errors->has('unitbuy_price'))
-                                <em class="invalid-feedback">
-                                    {{ $errors->first('unitbuy_price') }}
-                                </em>
-                            @endif
-                        </div>
-                        <div class="form-group row{{ $errors->has('unitsell_price') ? 'has-error' : '' }}">
-                            <label class="col-md-4 control-label text-md-right" for="unitsell_price">Unit Sell Price :<span class="required"> * </span></label>
-                            <input type="number" id="unitsell_price" name="unitsell_price" class="form-control col-md-6" step="any" min="0.0"
-                                   value="{{ old('unitsell_price', isset($product) ? $product->unitsell_price : '') }}" required>
-                            @if($errors->has('unitsell_price'))
-                                <em class="invalid-feedback">
-                                    {{ $errors->first('unitsell_price') }}
-                                </em>
-                            @endif
-                        </div>
+                        {{--<div class="form-group row{{ $errors->has('unitbuy_price') ? 'has-error' : '' }} d-none">--}}
+                            {{--<label class="col-md-4 control-label text-md-right" for="unitbuy_price">Unit Buy Price :<span class="required"> * </span></label>--}}
+                            {{--<input type="number" id="unitbuy_price" name="unitbuy_price" class="form-control col-md-6" step="any" min="0.0"--}}
+                                   {{--value="{{ old('unitbuy_price', isset($product) ? $product->unitbuy_price : '') }}" >--}}
+                            {{--@if($errors->has('unitbuy_price'))--}}
+                                {{--<em class="invalid-feedback">--}}
+                                    {{--{{ $errors->first('unitbuy_price') }}--}}
+                                {{--</em>--}}
+                            {{--@endif--}}
+                        {{--</div>--}}
+                        {{--<div class="form-group row{{ $errors->has('unitsell_price') ? 'has-error' : '' }} d-none">--}}
+                            {{--<label class="col-md-4 control-label text-md-right" for="unitsell_price">Unit Sell Price :<span class="required"> * </span></label>--}}
+                            {{--<input type="number" id="unitsell_price" name="unitsell_price" class="form-control col-md-6" step="any" min="0.0"--}}
+                                   {{--value="{{ old('unitsell_price', isset($product) ? $product->unitsell_price : '') }}" >--}}
+                            {{--@if($errors->has('unitsell_price'))--}}
+                                {{--<em class="invalid-feedback">--}}
+                                    {{--{{ $errors->first('unitsell_price') }}--}}
+                                {{--</em>--}}
+                            {{--@endif--}}
+                        {{--</div>--}}
                         <div class="form-group row{{ $errors->has('low_stock') ? 'has-error' : '' }}">
                             <label class="col-md-4 control-label text-md-right" for="low_stock">Low stock Alert :<span class="required"> * </span></label>
                             <input type="number" id="low_stock" name="low_stock" class="form-control col-md-6" min="1"

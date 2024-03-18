@@ -20,8 +20,8 @@ return new class extends Migration
             $table->integer('product_type_id')->nullable();
             $table->integer('brand_id')->nullable();
             $table->integer('unit_id');
-            $table->float('unitbuy_price',9,1);
-            $table->float('unitsell_price',9,1);
+            $table->float('unitbuy_price',9,1)->nullable();
+            $table->float('unitsell_price',9,1)->nullable();
             $table->integer('low_stock')->default(10);
             $table->text('description')->nullable();
             $table->enum('status',['Active','Inactive'])->default('Active');

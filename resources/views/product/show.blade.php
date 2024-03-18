@@ -71,14 +71,14 @@
                             <th>Unit</th>
                             <td>{{ $product->unit->title }}</td>
                         </tr>
-                        <tr>
-                            <th>Unit Buy Price</th>
-                            <td>{{ $product->unitbuy_price }}</td>
-                        </tr>
-                        <tr>
-                            <th>Unit Sell Price</th>
-                            <td>{{ $product->unitsell_price }}</td>
-                        </tr>
+                        {{--<tr>--}}
+                            {{--<th>Unit Buy Price</th>--}}
+                            {{--<td>{{ $product->unitbuy_price }}</td>--}}
+                        {{--</tr>--}}
+                        {{--<tr>--}}
+                            {{--<th>Unit Sell Price</th>--}}
+                            {{--<td>{{ $product->unitsell_price }}</td>--}}
+                        {{--</tr>--}}
                         <tr>
                             <th>Low Stock Alert</th>
                             <td>{{ $product->low_stock }}</td>

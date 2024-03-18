@@ -70,12 +70,12 @@ class ProductsDataTable extends DataTable
             Column::make('unit.title')
                 ->title('Unit')
                 ->addClass('text-center'),
-            Column::make('unitbuy_price')
-                ->title('Unit Buy Price')
-                ->addClass('text-center'),
-            Column::make('unitsell_price')
-                ->title('Unit Sell Price')
-                ->addClass('text-center'),
+//            Column::make('unitbuy_price')
+//                ->title('Unit Buy Price')
+//                ->addClass('text-center'),
+//            Column::make('unitsell_price')
+//                ->title('Unit Sell Price')
+//                ->addClass('text-center'),
             Column::make('status')
                 ->title('Status')
                 ->addClass('text-center'),
