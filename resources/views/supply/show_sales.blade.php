@@ -211,7 +211,8 @@
                                         <td>{{ $key+1 }}</td>
 
                                         <td>
-                                            {{ $details->product_title }}
+                                            {{ $details->product_title }}<br/>
+                                            {{ $details->brand_title }}<br/>
                                         </td>
                                         <td style="text-align:center">{{ $details->qty}} </td>
                                         <td style="text-align:center">{{ $details->unit_name}}</td>

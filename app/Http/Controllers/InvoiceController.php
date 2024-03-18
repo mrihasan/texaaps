@@ -200,9 +200,10 @@ class InvoiceController extends Controller
             $related_customer = null;
         $transactionDetails = DB::table('invoice_details')
             ->select('invoice_details.id', 'invoice_details.qty', 'invoice_details.unit_name', 'invoice_details.usell_price',
-                'invoice_details.ubuy_price', 'invoice_details.status', 'invoice_details.line_total',
+                'invoice_details.ubuy_price', 'invoice_details.status', 'invoice_details.line_total', 'brands.title as brand_title',
                 'products.title as product_title', 'product_types.title as product_type_title', 'invoice_details.product_id')
             ->join('products', 'products.id', '=', 'invoice_details.product_id')
+            ->join('brands', 'brands.id', '=', 'products.brand_id')
             ->join('product_types', 'product_types.id', '=', 'products.product_type_id')
             ->groupBy(DB::raw('product_id'))
             ->where('invoice_details.invoice_id', $invoice->id)

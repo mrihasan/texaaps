@@ -1,4 +1,4 @@
-@extends('layouts.al305_main')0
+@extends('layouts.al305_main')
 @section('accounting_mo','menu-open')
 @section('accounting','active')
 @section('manage_payment_request','active')
@@ -81,22 +81,23 @@
                                     @if($data->checked_by == null)
                                         <span class="right badge badge-danger">Not Yet Verified</span>
                                     @else
-                                    @if( $data->approved_by == null && Auth::user()->hasRole('Approval'))
-                                        <button class="btn btn-warning btn-xs" title="Approve" type="button"
-                                                onclick="approvedPost({{$data->id}})">
-                                            <i class="fa fa-check-circle"></i>
-                                            <span>Approve</span>
-                                        </button>
-                                        <form method="post" action="{{route('payment_request_approved', $data->id)}}"
-                                              id="approve-form{{$data->id}}" style="display: none;">
-                                            @csrf
-                                            @method('PUT')
-                                        </form>
-                                    @elseif( $data->approved_by == null)
-                                        <span class="right badge badge-danger">Not Yet Approved</span>
-                                    @else
-                                        {{$data->approvedBy->name}}
-                                    @endif
+                                        @if( $data->approved_by == null && Auth::user()->hasRole('Approval'))
+                                            <button class="btn btn-warning btn-xs" title="Approve" type="button"
+                                                    onclick="approvedPost({{$data->id}})">
+                                                <i class="fa fa-check-circle"></i>
+                                                <span>Approve</span>
+                                            </button>
+                                            <form method="post"
+                                                  action="{{route('payment_request_approved', $data->id)}}"
+                                                  id="approve-form{{$data->id}}" style="display: none;">
+                                                @csrf
+                                                @method('PUT')
+                                            </form>
+                                        @elseif( $data->approved_by == null)
+                                            <span class="right badge badge-danger">Not Yet Approved</span>
+                                        @else
+                                            {{$data->approvedBy->name}}
+                                        @endif
                                     @endif
                                 </td>
 
@@ -104,20 +105,22 @@
                                     {{--@can('AccountMgtAccess')--}}
                                     <a href="{{ url('payment_request/'.$data->id) }}" class="btn btn-success btn-xs"
                                        title="View "><span class="far fa-eye" aria-hidden="true"></span></a>
-                                    <a href="{{ url('payment_request/' . $data->id . '/edit') }}" class="btn btn-info btn-xs" title="Edit"><span class="far fa-edit" aria-hidden="true"></span></a>
+                                    <a href="{{ url('payment_request/' . $data->id . '/edit') }}"
+                                       class="btn btn-info btn-xs" title="Edit"><span class="far fa-edit"
+                                                                                      aria-hidden="true"></span></a>
 
-                                    {{--{!! Form::open([--}}
-                                    {{--'method'=>'DELETE',--}}
-                                    {{--'url' => ['bank_account', $data->id],--}}
-                                    {{--'style' => 'display:inline'--}}
-                                    {{--]) !!}--}}
-                                    {{--{!! Form::button('<span class="far fa-trash-alt" aria-hidden="true" title="Delete" />', array(--}}
-                                    {{--'type' => 'submit',--}}
-                                    {{--'class' => 'btn btn-danger btn-xs',--}}
-                                    {{--'title' => 'Delete',--}}
-                                    {{--'onclick'=>'return confirm("Confirm delete?")'--}}
-                                    {{--))!!}--}}
-                                    {{--{!! Form::close() !!}--}}
+                                    {!! Form::open([
+                                    'method'=>'DELETE',
+                                    'url' => ['payment_request', $data->id],
+                                    'style' => 'display:inline'
+                                    ]) !!}
+                                    {!! Form::button('<span class="far fa-trash-alt" aria-hidden="true" title="Delete" />', array(
+                                    'type' => 'submit',
+                                    'class' => 'btn btn-danger btn-xs',
+                                    'title' => 'Delete',
+                                    'onclick'=>'return confirm("Confirm delete?")'
+                                    ))!!}
+                                    {!! Form::close() !!}
                                     {{--@endcan--}}
                                 </td>
                             </tr>
@@ -152,7 +155,7 @@
             confirmButtonText: 'Yes, Verify it!',
             cancelButtonText: 'No, cancel!',
             reverseButtons: true
-        }).then((result) => {
+        }).then((result) = > {
             if (result.value
     )
         {
@@ -191,7 +194,7 @@
             confirmButtonText: 'Yes, Approve it!',
             cancelButtonText: 'No, cancel!',
             reverseButtons: true
-        }).then((result) => {
+        }).then((result) = > {
             if (result.value
     )
         {

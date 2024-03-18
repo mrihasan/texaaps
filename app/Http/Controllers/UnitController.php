@@ -16,7 +16,7 @@ class UnitController extends Controller
     public function index()
     {
 //        abort_if(Gate::denies('unit-access'), redirect('error'));
-        $units = Unit::orderBy('title','asc')->get();
+        $units = Unit::orderBy('title', 'asc')->get();
         return view('unit.index', compact('units'));
     }
 
@@ -48,7 +48,7 @@ class UnitController extends Controller
     {
         abort_if(Gate::denies('ProductMgtAccess'), redirect('error'));
         $this->validate($request, [
-            'title' => 'required|unique:units,title,'. $unit->id . ',id',
+            'title' => 'required|unique:units,title,' . $unit->id . ',id',
         ]);
         $unit->update($request->all());
 
@@ -68,11 +68,11 @@ class UnitController extends Controller
             \Session::flash('flash_error', 'Can\'t Delete this, ' . $unit->products->count() . ' nos used in product');
             return redirect()->back();
         } else {
-        $unit->delete();
-        \Session::flash('flash_message', 'Successfully Deleted');
+            $unit->delete();
+            \Session::flash('flash_message', 'Successfully Deleted');
 
-        return back();
-    }
+            return back();
+        }
     }
 
 }

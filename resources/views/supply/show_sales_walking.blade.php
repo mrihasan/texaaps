@@ -150,7 +150,9 @@
                                         <br/>{{$invoice->user->profile->address2}}<br/>
                                     @endif
                                     <strong>
-                                        {{'Bill No: '.$invoice->transaction_code}}
+                                        {{'Bill No: '.$invoice->sl_no}}
+                                        <br/>
+                                        <small>{{'Tracking No: '.$invoice->transaction_code}}</small>
                                         <br/>
                                         {{' Date: '.Carbon\Carbon::parse($invoice->transaction_date)->format('d-M-Y').','}}
                                         {{' By: '.($invoice->entryBy->name)}}

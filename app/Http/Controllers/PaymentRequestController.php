@@ -31,10 +31,10 @@ class PaymentRequestController extends Controller
         $branches = branch_list();
         $customer = customer_list();
         $supplier = supplier_list();
-        $product=product_list();
-        $expected_days =[30=>30,45=>45,60=>60,75=>75,90=>90];
+        $product = product_list();
+        $expected_days = [30 => 30, 45 => 45, 60 => 60, 75 => 75, 90 => 90];
         $transaction_methods = TransactionMethod::orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Method', '')->toArray();
-        return view('payment_request.create',compact('customer','supplier','product','expected_days','transaction_methods','branches'));
+        return view('payment_request.create', compact('customer', 'supplier', 'product', 'expected_days', 'transaction_methods', 'branches'));
     }
 
     public function store(Request $request)
@@ -46,14 +46,14 @@ class PaymentRequestController extends Controller
 //            'code_no' => 'nullable|unique:payment_requests',
 //        ]);
 
-        $td1= date('Y-m-d', strtotime($request->request_date)) . date(' H:i:s');
+        $td1 = date('Y-m-d', strtotime($request->request_date)) . date(' H:i:s');
         $td = new DateTime($td1);
 
         $pr = new PaymentRequest();
         $pr->branch_id = $request->branch;
         $pr->user_id = Auth::user()->id;
         $pr->tracking_code = autoTimeStampCode('PR');
-        $pr->req_no = prSl('TA-PR-',$td);
+        $pr->req_no = prSl('TA-PR-', $td);
         $pr->req_date = $td;
 
         $pr->customer_id = $request->customer;
@@ -62,7 +62,7 @@ class PaymentRequestController extends Controller
         $pr->workorder_refno = $request->workorder_refno;
         $pr->workorder_date = date('Y-m-d', strtotime($request->workorder_date));
         $pr->workorder_amount = $request->workorder_amount;
-        
+
         $pr->supplier_id = $request->supplier;
         $pr->contact_person = $request->contact_person;
         $pr->contact_no = $request->contact_no;
@@ -75,7 +75,7 @@ class PaymentRequestController extends Controller
         $pr->expected_bill = $request->expected_bill;
         $pr->expected_day = $request->expected_day;
         $pr->save();
-        
+
         \Session::flash('flash_message', 'Successfully Added');
         return redirect('payment_request');
     }
@@ -86,11 +86,11 @@ class PaymentRequestController extends Controller
         $branches = branch_list();
         $customer = customer_list();
         $supplier = supplier_list();
-        $product=product_list();
-        $expected_days =[30=>30,45=>45,60=>60,75=>75,90=>90];
+        $product = product_list();
+        $expected_days = [30 => 30, 45 => 45, 60 => 60, 75 => 75, 90 => 90];
         $transaction_methods = TransactionMethod::orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Method', '')->toArray();
 
-        return view('payment_request.edit',compact('payment_request','customer','supplier','product','expected_days','transaction_methods','branches'));
+        return view('payment_request.edit', compact('payment_request', 'customer', 'supplier', 'product', 'expected_days', 'transaction_methods', 'branches'));
     }
 
     public function update(Request $request, PaymentRequest $payment_request)
@@ -137,24 +137,34 @@ class PaymentRequestController extends Controller
 //        dd($id);
 //        abort_if(Gate::denies('$payment_request-approval'), redirect('error'));
         $payment_request = PaymentRequest::find($id);
-            $payment_request->checked_by = Auth::user()->id;
-            $payment_request->save();
+        $payment_request->checked_by = Auth::user()->id;
+        $payment_request->save();
 
-            \Session::flash('flash_message', 'Successfully Saved');
+        \Session::flash('flash_message', 'Successfully Saved');
 
         return redirect()->back();
     }
+
     public function payment_request_approved($id)
     {
 //        dd($id);
 //        abort_if(Gate::denies('$payment_request-approval'), redirect('error'));
         $payment_request = PaymentRequest::find($id);
-            $payment_request->approved_by = Auth::user()->id;
-            $payment_request->save();
+        $payment_request->approved_by = Auth::user()->id;
+        $payment_request->save();
 
-            \Session::flash('flash_message', 'Successfully Saved');
+        \Session::flash('flash_message', 'Successfully Saved');
 
         return redirect()->back();
+    }
+
+    public function destroy(PaymentRequest $payment_request)
+    {
+//        abort_if(Gate::denies('ProductMgtDelete'), redirect('error'));
+        $payment_request->delete();
+        \Session::flash('flash_message', 'Successfully Deleted');
+
+        return back();
     }
 
 }
