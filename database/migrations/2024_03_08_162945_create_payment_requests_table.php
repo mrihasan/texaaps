@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreign('user_id')
                 ->references('id')->on('users')
                 ->onDelete('cascade');
+            $table->string('tracking_code');
             $table->string('req_no');
             $table->timestamp('req_date');
 

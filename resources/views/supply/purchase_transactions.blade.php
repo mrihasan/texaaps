@@ -2,7 +2,7 @@
 @section('supply_mo','menu-open')
 @section('supply','active')
 @section('manage_purchase','active')
-@section('title','Manage Purchase')
+@section('title',$title_date_range)
 @section('breadcrumb')
     <li class="nav-item d-none d-sm-inline-block">
         <a href="{{url('purchaseTransaction')}}" class="nav-link">{{ __('all_settings.Purchase') }}</a>
@@ -25,7 +25,7 @@
                 <li class="nav-item">
                     <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill"
                        href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home"
-                       aria-selected="true">{{ __('all_settings.Manage Purchase') }} </a>
+                       aria-selected="true">{{ $title_date_range }} </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="custom-tabs-one-profile-tab" data-toggle="pill"
@@ -43,7 +43,7 @@
                         <thead>
                         <tr>
                             <th class="col-md-1"> Date</th>
-                            <th> {{ __('all_settings.Transaction') }}<br/>No</th>
+                            <th> Sl No</th>
                             <th class="col-md-3">Customer<br/>Info</th>
                             <th>{{ __('all_settings.Transaction') }}<br/>{{ __('all_settings.Made By') }}</th>
                             <th>{{ __('all_settings.Transaction') }}<br/>Updated By</th>
@@ -62,7 +62,7 @@
                         @foreach($transactionPurchase as $data)
                             <tr>
                                 <td>{{ Carbon\Carbon::parse($data->transaction_date)->format('d-M-Y') }}</td>
-                                <td>{{ $data->transaction_code }}</td>
+                                <td>{{ $data->sl_no }}</td>
 
                                 {{--                                <td>{{$data->user_name.', '.$data->org_name.', '.$data->mobile}}</td>--}}
                                 <td>

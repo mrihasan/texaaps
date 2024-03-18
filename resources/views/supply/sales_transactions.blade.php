@@ -43,7 +43,7 @@
                         <thead>
                         <tr>
                             <th class="col-md-1"> Date</th>
-                            <th> {{ __('all_settings.Transaction') }}<br/>No</th>
+                            <th> Sl No</th>
                             <th class="col-md-3">Customer<br/>Info</th>
                             <th>{{ __('all_settings.Transaction') }}<br/>{{ __('all_settings.Made By') }}</th>
                             <th>{{ __('all_settings.Transaction') }}<br/>Updated By</th>
@@ -62,7 +62,7 @@
                         @foreach($transactionSales as $data)
                             <tr>
                                 <td>{{ Carbon\Carbon::parse($data->transaction_date)->format('d-M-Y') }}</td>
-                                <td>{{ $data->transaction_code }}</td>
+                                <td>{{ $data->sl_no }}</td>
                                 <td>
                                     <a href="{{ route('user.show',$data->user->id) }}" class="btn btn-success btn-xs"
                                        title="User Profile View"><span class="far fa-user-circle" aria-hidden="true"></span></a>

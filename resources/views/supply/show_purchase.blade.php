@@ -149,7 +149,8 @@
                                     <td style="text-align:center; border: none" width="35%">
                                         <div class="company-address"
                                              style="text-align: right; color: blue; font-size:12px">
-                                            {{'Code: '.$invoice->transaction_code}}
+                                            {{'Sl No: '.$invoice->sl_no}}<br/>
+                                            <small>{{'Tracking Code: '.$invoice->transaction_code}}</small>
                                             <br/>
                                             {{' Date: '.Carbon\Carbon::parse($invoice->transaction_date)->format('d-M-Y').','}}<br/>
                                             {{' By: '.($invoice->entryBy->name)}}

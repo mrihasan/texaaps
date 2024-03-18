@@ -183,7 +183,7 @@
                         <div class="form-group row {{ $errors->has('reference') ? ' has-error' : '' }}">
                             <label class="col-md-12 control-label text-md-left">Reference :</label>
                             <div class="col-md-12">
-                                {!! Form::number('reference', null,['class'=>'form-control ', 'placeholder'=>'Enter Reference']) !!}
+                                {!! Form::text('reference', null,['class'=>'form-control ', 'placeholder'=>'Enter Reference']) !!}
                                 @if ($errors->has('reference'))
                                     <span class="help-block">
                                         <strong>{{ $errors->first('reference') }}</strong>

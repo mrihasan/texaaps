@@ -116,7 +116,7 @@ class InvoiceDetailController extends Controller
             $jd = new DateTime($supplier->profile->joining_date);
 
             if ($supplier_count <= 0) {
-                return redirect('user/create')->withErrors(['error' => 'Please Create Suppliers First']);
+                return redirect('/addSupplier')->withErrors(['error' => 'Please Create Suppliers First']);
             }
             if ($request->productId[0] == null) {
                 return redirect('/purchaseCreate')->withErrors(['error' => 'Minimum one Product required']);
@@ -170,7 +170,8 @@ class InvoiceDetailController extends Controller
 
             $inventory_transaction_account = new Invoice();
             $inventory_transaction_account->transaction_date = $td;
-            $inventory_transaction_account->transaction_code = autoTimeStampCode('PUR');
+            $inventory_transaction_account->transaction_code = autoTimeStampCode('TAP');
+            $inventory_transaction_account->sl_no = invoiceSl('TA-PUR-','Purchase', $td);
             $inventory_transaction_account->reference = $request->reference;
             $inventory_transaction_account->user_id = $request->supplier_id;
             $inventory_transaction_account->branch_id = $request->branch;
@@ -239,7 +240,7 @@ class InvoiceDetailController extends Controller
             $customer_count = User::where('user_type_id', 3)->count();
             $customer = User::where('id', $request->customer_id)->first();
             if ($customer_count <= 0) {
-                return redirect('user/create')->withErrors(['error' => 'Please Create Customer First']);
+                return redirect('/addClient')->withErrors(['error' => 'Please Create Customer First']);
             }
             if ($request->productId[0] == null) {
                 return redirect('purchaseCreate')->withErrors(['error' => 'Minimum one Product required']);
@@ -306,7 +307,8 @@ class InvoiceDetailController extends Controller
 //            dd($count_ids);
             $inventory_transaction_account = new Invoice();
             $inventory_transaction_account->transaction_date = $td;
-            $inventory_transaction_account->transaction_code = autoTimeStampCode('SAL');;
+            $inventory_transaction_account->transaction_code = autoTimeStampCode('TAS');
+            $inventory_transaction_account->sl_no = invoiceSl('TA-SAL-','Sales',$td);
             $inventory_transaction_account->reference = $request->reference;
             $inventory_transaction_account->user_id = $request->customer_id;
             $inventory_transaction_account->branch_id = $request->branch;
@@ -945,5 +947,83 @@ class InvoiceDetailController extends Controller
         }
     }
 
+    public function createSlug($id = 0)
+    {
+        $monthly_count_invoice=Invoice::whereYear('created_at', now()->year)
+            ->whereMonth('created_at', now()->month)
+            ->count();
+        $prefix = 'SERIAL'; // Prefix for the serial number
+        $date = date('ym'); // Current month and year
+        $slug = $prefix . $date . '-' . str_pad($monthly_count_invoice+1, 4, '0', STR_PAD_LEFT);
+
+        $allSlugs = $this->getRelatedSlugs($slug, $id);
+
+        if (! $allSlugs->contains('transaction_code', $slug)){
+            return $slug;
+        }
+        // Just append numbers like a savage until we find not used.
+        for ($i = 1; $i <= 10; $i++) {
+            $newSlug = $slug.'-'.$i;
+            if (! $allSlugs->contains('slug', $newSlug)) {
+                return $newSlug;
+            }
+        }
+        throw new \Exception('Can not create a unique slug');
+    }
+
+    protected function getRelatedSlugs($slug, $id = 0)
+    {
+        return Invoice::select('transaction_code')->where('transaction_code', 'like', $slug.'%')
+            ->where('id', '<>', $id)
+            ->get();
+    }
+
+    function auto_sl_no(){
+        $monthly_count_invoice=Invoice::whereYear('created_at', now()->year)
+            ->whereMonth('created_at', now()->month)
+            ->count();
+
+        $prefix = 'SERIAL'; // Prefix for the serial number
+        $date = date('ym'); // Current month and year
+        $serialNumber = $prefix . $date . '-' . str_pad($monthly_count_invoice, 4, '0', STR_PAD_LEFT);
+        $duplicate_check=Invoice::where('transaction_code', $serialNumber)->exists();
+    }
+
+
+//// Function to generate a sequential serial number
+//    function generateSequentialSerialNumber($invoiceCount) {
+//        $prefix = 'SERIAL'; // Prefix for the serial number
+//        $date = date('ym'); // Current month and year
+//        $serialNumber = $prefix . $date . '-' . str_pad($invoiceCount, 4, '0', STR_PAD_LEFT);
+//        return $serialNumber;
+//    }
+//
+//// Function to get the count of invoices for the current month
+//    function getInvoiceCountForCurrentMonth() {
+//        $s_year = date('Y-m') . '-00 00:00:00';
+//        $e_year = date('Y-m') . '-31 23:59:59';
+//        $invoiceCount = DB::table('invoices')
+//            ->whereBetween('created_at', [$s_year, $e_year])->count('id');
+//        return $invoiceCount;
+//    }
+//// Function to check if a serial number has been used before
+//    function isSerialNumberUsed($serialNumber) {
+//        // Query your database to check if the serial number exists in the used_serial_numbers table
+//        // Example query: SELECT COUNT(*) FROM used_serial_numbers WHERE serial_number = '$serialNumber'
+//        // Execute the query and check if the count is greater than 0
+//        $invoiceSerial = DB::table('invoices')->where('transaction_code',$serialNumber)->count();
+//        $isUsed = true; // Replace this with the actual query result
+//        return $isUsed;
+//    }
+//// Generate and store serial number
+//    function generateAndStoreSerialNumber() {
+//        $invoiceCount = $this->getInvoiceCountForCurrentMonth();
+//        do {
+//            $serialNumber = $this->generateSequentialSerialNumber($invoiceCount + 1);
+//        } while ($this->isSerialNumberUsed($serialNumber));
+//        // Store the serial number along with the invoice record in your database
+//        return $serialNumber;
+//    }
+//// Generate and store a new ser
 
 }

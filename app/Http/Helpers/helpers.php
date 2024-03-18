@@ -475,3 +475,97 @@ function ledger_account_all($start_date, $end_date)
 //dd($ledger);
     return $ledger;
 }
+
+//_________________All
+if (!function_exists('createSl')) {
+    function createSl($initial, $table)
+    {
+        $monthly_count_invoice = DB::table($table)->whereYear('created_at', now()->year)
+            ->whereMonth('created_at', now()->month)
+            ->count();
+        $date = date('ym'); // Current month and year
+        $sl = $initial . $date . '-' . str_pad($monthly_count_invoice + 1, 4, '0', STR_PAD_LEFT);
+        $allSls = getRelatedSls($sl, $table);
+        if (!$allSls->contains('sl_no', $sl)) {
+            return $sl;
+        }
+        // Just append numbers like a savage until we find not used.
+        for ($i = 1; $i <= 10; $i++) {
+            $newSl = $sl . '-' . $i;
+            if (!$allSls->contains('sl_no', $newSl)) {
+                return $newSl;
+            }
+        }
+        throw new \Exception('Can not create a unique sl');
+    }
+}
+if (!function_exists('getRelatedSls')) {
+    function getRelatedSls($sl, $table)
+    {
+        return DB::table($table)->select('sl_no')->where('sl_no', 'like', $sl . '%')
+            ->get();
+    }
+}
+//_________________PaymentRequest
+if (!function_exists('prSl')) {
+    function prSl($initial, $req_date)
+    {
+        $monthly_count_invoice = DB::table('payment_requests')
+            ->whereYear('req_date', $req_date->format('Y'))
+            ->whereMonth('req_date', $req_date->format('m'))
+            ->count();
+        $date = $req_date->format('ym'); // Current month and year
+        $sl = $initial . $date . '-' . str_pad($monthly_count_invoice + 1, 4, '0', STR_PAD_LEFT);
+        $allSls = getPrSls($sl);
+        if (!$allSls->contains('req_no', $sl)) {
+            return $sl;
+        }
+        // Just append numbers like a savage until we find not used.
+        for ($i = 1; $i <= 10; $i++) {
+            $newSl = $sl . '-' . $i;
+            if (!$allSls->contains('req_no', $newSl)) {
+                return $newSl;
+            }
+        }
+        throw new \Exception('Can not create a unique sl');
+    }
+}
+if (!function_exists('getPrSls')) {
+    function getPrSls($sl)
+    {
+        return DB::table('payment_requests')->select('req_no')->where('req_no', 'like', $sl . '%')
+            ->get();
+    }
+}
+//_________________
+if (!function_exists('invoiceSl')) {
+    function invoiceSl($initial, $transaction_type, $transaction_date )
+    {
+        $monthly_count_invoice = DB::table('invoices')
+            ->where('transaction_type', $transaction_type)
+            ->whereYear('transaction_date', $transaction_date->format('Y'))
+            ->whereMonth('transaction_date', $transaction_date->format('m'))
+            ->count();
+        $date = $transaction_date->format('ym'); // Current month and year
+        $sl = $initial . $date . '-' . str_pad($monthly_count_invoice + 1, 4, '0', STR_PAD_LEFT);
+        $allSls = getInvoiceSls($sl);
+        if (!$allSls->contains('sl_no', $sl)) {
+            return $sl;
+        }
+        // Just append numbers like a savage until we find not used.
+        for ($i = 1; $i <= 10; $i++) {
+            $newSl = $sl . '-' . $i;
+            if (!$allSls->contains('sl_no', $newSl)) {
+                return $newSl;
+            }
+        }
+        throw new \Exception('Can not create a unique sl');
+    }
+}
+if (!function_exists('getInvoiceSls')) {
+    function getInvoiceSls($sl)
+    {
+        return DB::table('invoices')->select('sl_no')->where('sl_no', 'like', $sl . '%')
+            ->get();
+    }
+}

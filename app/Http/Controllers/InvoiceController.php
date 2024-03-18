@@ -827,7 +827,7 @@ class InvoiceController extends Controller
             return redirect()->back()->with('flash_message', 'You can not Delete a process order');
 
         $del_invoice_details = DB::table('invoice_details')
-            ->where('invoice_id', $invoice->details->id)->delete();
+            ->where('invoice_id', $invoice->id)->delete();
         $invoice->delete();
         \Session::flash('flash_message', 'Successfully Deleted');
         return redirect()->back();

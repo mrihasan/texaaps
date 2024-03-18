@@ -10,6 +10,7 @@ use DB;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Gate;
+use DateTime;
 
 class PaymentRequestController extends Controller
 {
@@ -45,11 +46,15 @@ class PaymentRequestController extends Controller
 //            'code_no' => 'nullable|unique:payment_requests',
 //        ]);
 
+        $td1= date('Y-m-d', strtotime($request->request_date)) . date(' H:i:s');
+        $td = new DateTime($td1);
+
         $pr = new PaymentRequest();
         $pr->branch_id = $request->branch;
         $pr->user_id = Auth::user()->id;
-        $pr->req_no = autoTimeStampCode('PR');
-        $pr->req_date = date('Y-m-d', strtotime($request->request_date)) . date(' H:i:s');
+        $pr->tracking_code = autoTimeStampCode('PR');
+        $pr->req_no = prSl('TA-PR-',$td);
+        $pr->req_date = $td;
 
         $pr->customer_id = $request->customer;
         $pr->product_id = $request->product;

@@ -123,7 +123,9 @@
                                     <td style="border: none; text-align: right" class="company-name">
                                         <strong>{{' Date: '.Carbon\Carbon::parse($invoice->transaction_date)->format('d-M-Y').','}}</strong><br/>
                                         <strong>
-                                            {{'Bill No: '.$invoice->transaction_code}}
+                                            {{'Bill No: '.$invoice->sl_no}}
+                                            <br/>
+                                            <small>{{'Tracking No: '.$invoice->transaction_code}}</small>
                                             <br/>
                                             {{' By: '.($invoice->entryBy->name)}}
                                             <br/>
