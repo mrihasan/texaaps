@@ -58,12 +58,12 @@
                             <th>
                                 Type
                             </th>
-                            <th>
-                                Company
-                            </th>
-                            <th>
-                                Brand
-                            </th>
+                            {{--<th>--}}
+                                {{--Company--}}
+                            {{--</th>--}}
+                            {{--<th>--}}
+                                {{--Brand--}}
+                            {{--</th>--}}
                             <th>
                                 Low Stock Alert
                             </th>
@@ -84,12 +84,12 @@
                                 <td>
                                     {{ $product['type'] ?? '' }}
                                 </td>
-                                <td>
-                                    {{ $product['company_name'] ?? '' }}
-                                </td>
-                                <td>
-                                    {{ $product['brand'] ?? '' }}
-                                </td>
+                                {{--<td>--}}
+                                    {{--{{ $product['company_name'] ?? '' }}--}}
+                                {{--</td>--}}
+                                {{--<td>--}}
+                                    {{--{{ $product['brand'] ?? '' }}--}}
+                                {{--</td>--}}
                                 <td>
                                     {{ $product['low_stock'] ?? '' }}
                                 </td>

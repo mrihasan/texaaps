@@ -43,7 +43,7 @@ class ProductController extends Controller
         abort_if(Gate::denies('ProductMgtAccess'), redirect('error'));
         $this->validate($request, [
             'title' => 'required|unique:products',
-            'company_name_id' => 'required',
+//            'company_name_id' => 'required',
         ]);
         $product = Product::create($request->all());
         \Session::flash('flash_message', 'Successfully Added');
@@ -102,9 +102,9 @@ class ProductController extends Controller
         abort_if(Gate::denies('ProductMgtAccess'), redirect('error'));
         $active_product = Product::where('status', 'Active')->get();
         $product['title'] = [];
-        $product['company_name'] = [];
+//        $product['company_name'] = [];
         $product['type'] = [];
-        $product['brand'] = [];
+//        $product['brand'] = [];
         $product['low_stock'] = [];
         $product['stock'] = [];
         for ($i = 0; $i < count($active_product); $i++) {
@@ -117,19 +117,19 @@ class ProductController extends Controller
             $product_info = \App\Models\Product::where('id', $active_product[$i]->id)->first();
             if ($in_stock <= $product_info->low_stock) {
                 $product['title'][] = $product_info->title;
-                $product['company_name'][] = $product_info->company_name->title??'';
+//                $product['company_name'][] = $product_info->company_name->title??'';
                 $product['type'][] = $product_info->product_type->title??'';
-                $product['brand'][] = $product_info->brand->title??'';
+//                $product['brand'][] = $product_info->brand->title??'';
                 $product['low_stock'][] = $product_info->low_stock;
                 $product['stock'][] = $in_stock;
             }
         }
-        array_multisort($product['stock'], $product['title'], $product['company_name'], $product['type'], $product['brand']);
+        array_multisort($product['stock'], $product['title'], $product['type']);
 //        dd($product);
         $products = [];
         for ($j = 0; $j < count($product['title']); $j++) {
-            $products[] = ['title' => $product['title'][$j], 'company_name' => $product['company_name'][$j], 'type' => $product['type'][$j],
-                'brand' => $product['brand'][$j], 'low_stock' => $product['low_stock'][$j], 'stock' => $product['stock'][$j]];
+            $products[] = ['title' => $product['title'][$j], 'type' => $product['type'][$j],
+                 'low_stock' => $product['low_stock'][$j], 'stock' => $product['stock'][$j]];
         }
 //        dd($products);
         return view('product.index_lowstock', compact('products'));

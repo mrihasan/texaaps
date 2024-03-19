@@ -50,9 +50,6 @@
                                 Brand Title
                             </th>
                             <th>
-                                Company
-                            </th>
-                            <th>
                                 Status
                             </th>
                             <th>
@@ -68,9 +65,6 @@
                                 </td>
                                 <td>
                                     {{ $brand->title ?? '' }}
-                                </td>
-                                <td>
-                                    {{ $brand->company_name->title ?? '' }}
                                 </td>
                                 <td>
                                     {{ $brand->status ?? '' }}

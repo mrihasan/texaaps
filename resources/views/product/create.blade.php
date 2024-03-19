@@ -55,38 +55,38 @@
                                 @endif
                             </div>
                         </div>
-                        <div class="form-group row {{ $errors->has('company_name_id') ? ' has-error' : '' }}">
-                            <label class="control-label col-md-4 text-right">Company :</label>
-                            <div class="col-md-6">
-                                <select name="company_name_id" class="form-control select2" id="company_name_id" >
-                                    <option value="">Select Company Name</option>
-                                    @foreach($company_names as $company_name)
-                                        <option value="{{$company_name->id}}">{{$company_name->title}}</option>
-                                    @endforeach
-                                </select>
-                                @if ($errors->has('company_name_id'))
-                                    <span class="help-block">
-                                    <strong>{{ $errors->first('company_name_id') }}</strong>
-                                </span>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="form-group row {{ $errors->has('brand_id') ? ' has-error' : '' }}">
-                            <label class="control-label col-md-4 text-right">Brand :</label>
-                            <div class="col-md-6">
-                                <select name="brand_id" class="form-control select2" id="brand_id" >
-                                    <option value="">Select Brand Name</option>
-                                    @foreach($brands as $brand)
-                                        <option value="{{$brand->id}}">{{$brand->title}}</option>
-                                    @endforeach
-                                </select>
-                                @if ($errors->has('brand_id'))
-                                    <span class="help-block">
-                                    <strong>{{ $errors->first('brand_id') }}</strong>
-                                </span>
-                                @endif
-                            </div>
-                        </div>
+                        {{--<div class="form-group row {{ $errors->has('company_name_id') ? ' has-error' : '' }}">--}}
+                            {{--<label class="control-label col-md-4 text-right">Company :</label>--}}
+                            {{--<div class="col-md-6">--}}
+                                {{--<select name="company_name_id" class="form-control select2" id="company_name_id" >--}}
+                                    {{--<option value="">Select Company Name</option>--}}
+                                    {{--@foreach($company_names as $company_name)--}}
+                                        {{--<option value="{{$company_name->id}}">{{$company_name->title}}</option>--}}
+                                    {{--@endforeach--}}
+                                {{--</select>--}}
+                                {{--@if ($errors->has('company_name_id'))--}}
+                                    {{--<span class="help-block">--}}
+                                    {{--<strong>{{ $errors->first('company_name_id') }}</strong>--}}
+                                {{--</span>--}}
+                                {{--@endif--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                        {{--<div class="form-group row {{ $errors->has('brand_id') ? ' has-error' : '' }}">--}}
+                            {{--<label class="control-label col-md-4 text-right">Brand :</label>--}}
+                            {{--<div class="col-md-6">--}}
+                                {{--<select name="brand_id" class="form-control select2" id="brand_id" >--}}
+                                    {{--<option value="">Select Brand Name</option>--}}
+                                    {{--@foreach($brands as $brand)--}}
+                                        {{--<option value="{{$brand->id}}">{{$brand->title}}</option>--}}
+                                    {{--@endforeach--}}
+                                {{--</select>--}}
+                                {{--@if ($errors->has('brand_id'))--}}
+                                    {{--<span class="help-block">--}}
+                                    {{--<strong>{{ $errors->first('brand_id') }}</strong>--}}
+                                {{--</span>--}}
+                                {{--@endif--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
                         <div class="form-group row {{ $errors->has('unit_id') ? ' has-error' : '' }}">
                             <label class="control-label col-md-4 text-right">Unit :<span class="required"> * </span></label>
                             <div class="col-md-6">

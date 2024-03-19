@@ -34,24 +34,6 @@
                                 </em>
                             @endif
                         </div>
-                        <div class="form-group row {{ $errors->has('company_name_id') ? ' has-error' : '' }}">
-                            <label class="control-label col-md-4 text-right">Company :
-                                <span class="required"> * </span>
-                            </label>
-                            <div class="col-md-6">
-                                <select name="company_name_id" class="form-control select2" id="company_name_id" required>
-                                    <option value="">Select Company Name</option>
-                                    @foreach($company_names as $company_name)
-                                        <option value="{{$company_name->id}}">{{$company_name->title}}</option>
-                                    @endforeach
-                                </select>
-                                @if ($errors->has('company_name_id'))
-                                    <span class="help-block">
-                                    <strong>{{ $errors->first('company_name_id') }}</strong>
-                                </span>
-                                @endif
-                            </div>
-                        </div>
 
                         <div class="form-group row {{ $errors->has('status') ? ' has-error' : '' }}">
                             <label class="col-md-4 control-label text-md-right">Status : <span

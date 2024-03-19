@@ -24,12 +24,7 @@
                 <li class="nav-item">
                     <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill"
                        href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home"
-                       aria-selected="true">Details of Company</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="custom-tabs-one-profile-tab" data-toggle="pill"
-                       href="#custom-tabs-one-profile" role="tab" aria-controls="custom-tabs-one-profile"
-                       aria-selected="false">Related Products</a>
+                       aria-selected="true">Details of Brand</a>
                 </li>
             </ul>
         </div>
@@ -37,107 +32,32 @@
 
             <div class="tab-content">
                 <div class="active tab-pane" id="custom-tabs-one-home">
-            <table class="table table-bordered table-striped">
-                <tbody>
-                <tr>
-                    <th>
-                        ID
-                    </th>
-                    <td>
-                        {{ $brand->id }}
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        Title
-                    </th>
-                    <td>
-                        {{ $brand->title }}
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        Company
-                    </th>
-                    <td>
-                        {{ $brand->company_name->title }}
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        Status
-                    </th>
-                    <td>
-                        {{ $brand->status }}
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-                </div>
-                <div class="tab-pane" id="custom-tabs-one-profile">
-                    <table class="table dataTables table-striped table-bordered table-hover" id="product-table">
-                        <thead>
-                        <tr style="background-color: #dff0d8">
+                    <table class="table table-bordered table-striped">
+                        <tbody>
+                        <tr>
                             <th>
-                                S/N
+                                ID
                             </th>
+                            <td>
+                                {{ $brand->id }}
+                            </td>
+                        </tr>
+                        <tr>
                             <th>
                                 Title
                             </th>
-                            <th>
-                                Product Type
-                            </th>
-                            <th>
-                                Company
-                            </th>
-                            <th>
-                                Unit
-                            </th>
-                            <th>
-                                Buy Price
-                            </th>
-                            <th>
-                                Sell Price
-                            </th>
+                            <td>
+                                {{ $brand->title }}
+                            </td>
+                        </tr>
+                        <tr>
                             <th>
                                 Status
                             </th>
+                            <td>
+                                {{ $brand->status }}
+                            </td>
                         </tr>
-                        </thead>
-                        <tbody>
-                        @foreach($brand->products as $key=>$product)
-                            <tr>
-                                <td>
-                                    {{ $key+1}}
-                                </td>
-                                <td>
-
-                                    <a href="{{ url('product/' . $product->id ) }}" class="btn btn-success btn-xs"
-                                       title="Show"><span class="far fa-eye" aria-hidden="true"></span></a>
-                                    {{ $product['title'] }}
-
-                                </td>
-                                <td>
-                                    {{ $product['product_type']->title ?? '' }}
-                                </td>
-                                <td>
-                                    {{ $product['company_name']->title ?? '' }}
-                                </td>
-                                <td>
-                                    {{ $product['unit']->title ?? '' }}
-                                </td>
-                                <td>
-                                    {{ $product['unitbuy_price'] ?? '' }}
-                                </td>
-                                <td>
-                                    {{ $product['unitsell_price'] ?? '' }}
-                                </td>
-                                <td>
-                                    {{ $product['status'] ?? '' }}
-                                </td>
-                            </tr>
-                        @endforeach
-
                         </tbody>
                     </table>
                 </div>
@@ -148,24 +68,24 @@
                         class="fa fa-arrow-left"
                         aria-hidden="true"></i>{{ __('all_settings.Back') }}</a>
             @can('ProductMgtDelete')
-            {!! Form::open([
-    'method'=>'DELETE',
-    'url' => ['brand', $brand->id],
-    'style' => 'display:inline'
-]) !!}
-            {!! Form::button('<span class="far fa-trash-alt" aria-hidden="true" title="Delete" />', array(
-                    'type' => 'submit',
-                    'class' => 'btn btn-danger btn-xs fa-pull-right',
-                    'title' => 'Delete',
-                    'onclick'=>'return confirm("Confirm delete?")'
-            ))!!}
-            {!! Form::close() !!}
+                {!! Form::open([
+        'method'=>'DELETE',
+        'url' => ['brand', $brand->id],
+        'style' => 'display:inline'
+    ]) !!}
+                {!! Form::button('<span class="far fa-trash-alt" aria-hidden="true" title="Delete" />', array(
+                        'type' => 'submit',
+                        'class' => 'btn btn-danger btn-xs fa-pull-right',
+                        'title' => 'Delete',
+                        'onclick'=>'return confirm("Confirm delete?")'
+                ))!!}
+                {!! Form::close() !!}
             @endcan
             @can('ProductMgtAccess')
-            <a href="{{ url('brand/' . $brand->id . '/edit') }}"
-               class="btn btn-info btn-xs fa-pull-right" title="Edit" style="margin-right: 10px"><span
-                        class="far fa-edit"
-                        aria-hidden="true"></span></a>
+                <a href="{{ url('brand/' . $brand->id . '/edit') }}"
+                   class="btn btn-info btn-xs fa-pull-right" title="Edit" style="margin-right: 10px"><span
+                            class="far fa-edit"
+                            aria-hidden="true"></span></a>
             @endcan
         </div>
     </div>

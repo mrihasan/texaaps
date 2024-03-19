@@ -25,8 +25,7 @@ class BrandController extends Controller
     public function create()
     {
         abort_if(Gate::denies('ProductMgtAccess'), redirect('error'));
-        $company_names = CompanyName::where('status', 'Active')->get();
-        return view('brand.create', compact('company_names'));
+        return view('brand.create');
     }
 
     public function store(Request $request)
@@ -34,7 +33,7 @@ class BrandController extends Controller
         abort_if(Gate::denies('ProductMgtAccess'), redirect('error'));
         $this->validate($request, [
             'title' => 'required|unique:brands',
-            'company_name_id' => 'required',
+//            'company_name_id' => 'required',
         ]);
         $brand = Brand::create($request->all());
         \Session::flash('flash_message', 'Successfully Added');

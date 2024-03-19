@@ -58,12 +58,12 @@
                     <th>
                         Type
                     </th>
-                    <th>
-                        Company
-                    </th>
-                    <th>
-                        Brand
-                    </th>
+                    {{--<th>--}}
+                        {{--Company--}}
+                    {{--</th>--}}
+                    {{--<th>--}}
+                        {{--Brand--}}
+                    {{--</th>--}}
                     <th>
                         Unit
                     </th>
@@ -123,8 +123,8 @@
                     },
                     {data: 'title', name: 'title'},
                     {data: 'product_type.title', defaultContent: "-"},
-                    {data: 'company_name.title', defaultContent: "-"},
-                    {data: 'brand.title', defaultContent: "-"},
+//                    {data: 'company_name.title', defaultContent: "-"},
+//                    {data: 'brand.title', defaultContent: "-"},
                     {data: 'unit.title', defaultContent: "-"},
 //                    {data: 'unitbuy_price', defaultContent: "-"},
 //                    {data: 'unitsell_price', defaultContent: "-"},

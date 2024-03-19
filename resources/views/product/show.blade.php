@@ -59,14 +59,14 @@
                             <th>Type/Category</th>
                             <td>{{ $product->product_type->title }}</td>
                         </tr>
-                        <tr>
-                            <th>Company</th>
-                            <td>{{ $product->company_name->title }}</td>
-                        </tr>
-                        <tr>
-                            <th>Brand</th>
-                            <td>{{ $product->brand->title }}</td>
-                        </tr>
+                        {{--<tr>--}}
+                            {{--<th>Company</th>--}}
+                            {{--<td>{{ $product->company_name->title }}</td>--}}
+                        {{--</tr>--}}
+                        {{--<tr>--}}
+                            {{--<th>Brand</th>--}}
+                            {{--<td>{{ $product->brand->title }}</td>--}}
+                        {{--</tr>--}}
                         <tr>
                             <th>Unit</th>
                             <td>{{ $product->unit->title }}</td>

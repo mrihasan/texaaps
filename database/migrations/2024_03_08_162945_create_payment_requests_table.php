@@ -26,6 +26,7 @@ return new class extends Migration
             $table->integer('branch_id')->nullable();
             $table->integer('customer_id')->nullable();
             $table->integer('product_id')->nullable();
+            $table->integer('brand_id')->nullable();
             $table->string('model')->nullable();
             $table->string('workorder_refno')->nullable();
             $table->date('workorder_date')->nullable();

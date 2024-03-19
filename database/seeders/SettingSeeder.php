@@ -19,7 +19,7 @@ class SettingSeeder extends Seeder
         \DB::table('company_names')->insert($company);
         $brand = [
             [
-                'title' => 'Brand1', 'company_name_id' => 1,
+                'title' => 'Brand1',
             ]
         ];
         \DB::table('brands')->insert($brand);
@@ -53,7 +53,11 @@ class SettingSeeder extends Seeder
         \DB::table('transaction_types')->insert($transaction_type);
 
         $transaction_method = [
-            ['title' => 'Cash'], ['title' => 'Bank Cheque'], ['title' => 'Bank Transfer'], ['title' => 'Mobile Banking'], ['title' => 'Others'],
+            ['title' => 'Cash'],
+            ['title' => 'Bank Cheque'],
+            ['title' => 'Bank Transfer'],
+            ['title' => 'Mobile Banking'],
+            ['title' => 'Others'],
         ];
         \DB::table('transaction_methods')->insert($transaction_method);
         $branch = [

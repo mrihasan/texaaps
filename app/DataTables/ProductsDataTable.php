@@ -61,12 +61,12 @@ class ProductsDataTable extends DataTable
             Column::make('product_type.title')
                 ->title('Type')
                 ->addClass('text-center'),
-            Column::make('company_name.title')
-                ->title('Company')
-                ->addClass('text-center'),
-            Column::make('brand.title')
-                ->title('Brand')
-                ->addClass('text-center'),
+//            Column::make('company_name.title')
+//                ->title('Company')
+//                ->addClass('text-center'),
+//            Column::make('brand.title')
+//                ->title('Brand')
+//                ->addClass('text-center'),
             Column::make('unit.title')
                 ->title('Unit')
                 ->addClass('text-center'),

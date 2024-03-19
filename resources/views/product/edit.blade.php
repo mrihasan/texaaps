@@ -49,31 +49,31 @@
                                 @endif
                             </div>
                         </div>
-                        <div class="form-group row {{ $errors->has('company_name_id') ? ' has-error' : '' }}">
-                            <label class="control-label col-md-4 text-right">Company :
-                                <span class="required"> * </span>
-                            </label>
-                            <div class="col-md-6">
-                                {{ Form::select('company_name_id', $company_names,null, ['class'=>'form-control select2', 'required', 'data-live-search'=>'true'] ) }}
-                                @if ($errors->has('company_name_id'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('company_name_id') }}</strong>
-                                    </span>
-                                @endif
+                        {{--<div class="form-group row {{ $errors->has('company_name_id') ? ' has-error' : '' }}">--}}
+                            {{--<label class="control-label col-md-4 text-right">Company :--}}
+                                {{--<span class="required"> * </span>--}}
+                            {{--</label>--}}
+                            {{--<div class="col-md-6">--}}
+                                {{--{{ Form::select('company_name_id', $company_names,null, ['class'=>'form-control select2', 'required', 'data-live-search'=>'true'] ) }}--}}
+                                {{--@if ($errors->has('company_name_id'))--}}
+                                    {{--<span class="help-block">--}}
+                                        {{--<strong>{{ $errors->first('company_name_id') }}</strong>--}}
+                                    {{--</span>--}}
+                                {{--@endif--}}
 
-                            </div>
-                        </div>
-                        <div class="form-group row {{ $errors->has('brand_id') ? ' has-error' : '' }}">
-                            <label class="control-label col-md-4 text-right">Brand :</label>
-                            <div class="col-md-6">
-                                {{ Form::select('brand_id', $brands,null, ['class'=>'form-control select2', 'required', 'data-live-search'=>'true'] ) }}
-                                @if ($errors->has('brand_id'))
-                                    <span class="help-block">
-                                    <strong>{{ $errors->first('brand_id') }}</strong>
-                                </span>
-                                @endif
-                            </div>
-                        </div>
+                            {{--</div>--}}
+                        {{--</div>--}}
+                        {{--<div class="form-group row {{ $errors->has('brand_id') ? ' has-error' : '' }}">--}}
+                            {{--<label class="control-label col-md-4 text-right">Brand :</label>--}}
+                            {{--<div class="col-md-6">--}}
+                                {{--{{ Form::select('brand_id', $brands,null, ['class'=>'form-control select2', 'required', 'data-live-search'=>'true'] ) }}--}}
+                                {{--@if ($errors->has('brand_id'))--}}
+                                    {{--<span class="help-block">--}}
+                                    {{--<strong>{{ $errors->first('brand_id') }}</strong>--}}
+                                {{--</span>--}}
+                                {{--@endif--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
                         <div class="form-group row {{ $errors->has('unit_id') ? ' has-error' : '' }}">
                             <label class="control-label col-md-4 text-right">Unit :<span class="required"> * </span></label>
                             <div class="col-md-6">

@@ -23,19 +23,14 @@ return new class extends Migration
             $table->foreign('product_id')
                 ->references('id')->on('products')
                 ->onDelete('cascade');
+            $table->integer('brand_id')->nullable();
+            $table->string('model')->nullable();
             $table->integer('branch_id')->unsigned();
             $table->enum('transaction_type', ['Sales', 'Purchase','Order','Return','Put Back']);
             $table->integer('qty');
             $table->string('unit_name');
-//            $table->float('mrpUnitPrice',8,1);
-//            $table->float('discountPercentage',8,1);
-//            $table->float('discountUnit',6,1);
-//            $table->float('discountedMrp',6,1);
-//            $table->float('mrpTotal',9,1);
-//            $table->float('discountTotal',8,1);
-//            $table->float('discountedTotalMrp',9,1);
-            $table->float('ubuy_price',8,1)->nullable();
-            $table->float('usell_price',8,1)->nullable();
+            $table->float('ubuy_price',9,1)->nullable();
+            $table->float('usell_price',9,1)->nullable();
             $table->float('line_total',9,1);
             $table->tinyInteger('status')->nullable();
 
