@@ -91,11 +91,13 @@ class BankLedgerController extends Controller
     {
         if ($request->transaction_type_id == 'account_transfer') {
 //            withdraw
+            $utime = round(microtime(true) * 1000); //1704696475337 milliseconds
+
             $ledger_banking = new BankLedger();
             $ledger_banking->branch_id = $request->branch;
             $ledger_banking->bank_account_id = $request->withdraw_account;
             $ledger_banking->transaction_date = date('Y-m-d', strtotime($request->transaction_date)) . date(' H:i:s');
-            $ledger_banking->transaction_code = autoTimeStampCode('AL');
+            $ledger_banking->transaction_code = 'W'.Auth::user()->id.'AL'.$utime;
             $ledger_banking->transaction_type_id = 9; //Withdraw=9
             $ledger_banking->transaction_method_id = $request->withdraw_method;
             $ledger_banking->amount = $request->amount;
@@ -110,7 +112,7 @@ class BankLedgerController extends Controller
             $ledger_banking->branch_id = $request->branch;
             $ledger_banking->bank_account_id = $request->deposit_account;
             $ledger_banking->transaction_date = date('Y-m-d', strtotime($request->transaction_date)) . date(' H:i:s');
-            $ledger_banking->transaction_code = autoTimeStampCode('AL');
+            $ledger_banking->transaction_code = 'D'.Auth::user()->id.'AL'.$utime;
             $ledger_banking->transaction_type_id = 8; //deposit=8
             $ledger_banking->transaction_method_id = $request->deposit_method;
             $ledger_banking->amount = $request->amount;
