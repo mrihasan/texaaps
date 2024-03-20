@@ -109,7 +109,7 @@
                             <label class="control-label col-md-12 text-left">Select Branch :<span
                                         class="required"> * </span></label>
                             <div class="col-md-12">
-                                {{ Form::select('branch', $branch,$invoice->branch, ['class'=>'form-control select2bs4 ', 'required'] ) }}
+                                {{ Form::select('branch', $branch,$invoice->branch_id, ['class'=>'form-control select2bs4 ', 'required'] ) }}
                                 @if ($errors->has('branch'))
                                     <span class="help-block">
                                     <strong>{{ $errors->first('branch') }}</strong>
@@ -168,31 +168,36 @@
                         </div>
                     </div>
                 </div>
-                <div class="row ">
-                        <div class="col-md-4">
-                            {!! Form::text('name', $related_customer->name,['class'=>'form-control ', 'placeholder'=>"Please Enter Customer Name",'style'=>"background-color: #cce5e5"]) !!}
-                        </div>
-                        <div class="col-md-4">
-                            {!! Form::text('mobile', $related_customer->mobile,['class'=>'form-control ', 'placeholder'=>"Please Enter Customer Mobile No",'style'=>"background-color: #cce5e5"]) !!}
-                        </div>
-                        <div class="col-md-4">
-                            {!! Form::text('address', $related_customer->address,['class'=>'form-control ', 'placeholder'=>"Please Enter Customer Address",'style'=>"background-color: #cce5e5"]) !!}
-                        </div>
+
+                <div class="row " style="padding-bottom: 10px">
+                    <div class="col-md-4">
+                        {!! Form::text('name', $related_customer->name,['class'=>'form-control ', 'placeholder'=>"Please Enter Customer Name",'style'=>"background-color: #cce5e5"]) !!}
+                    </div>
+                    <div class="col-md-4">
+                        {!! Form::text('mobile', $related_customer->mobile,['class'=>'form-control ', 'placeholder'=>"Please Enter Customer Mobile No",'style'=>"background-color: #cce5e5"]) !!}
+                    </div>
+                    <div class="col-md-4">
+                        {!! Form::text('address', $related_customer->address,['class'=>'form-control ', 'placeholder'=>"Please Enter Customer Address",'style'=>"background-color: #cce5e5"]) !!}
+                    </div>
                 </div>
+
 
                 <div class='row'>
                     <table class="table table-bordered table-hover ">
                         <thead>
                         <tr>
-                            <th style="text-align:center"><input id="check_all" class="formcontrol" type="checkbox"/></th>
-                            <th style="text-align:center; width: 30%">Title</th>
+                            <th style="text-align:center; background-color: #7adeee"><input id="check_all" class="formcontrol" type="checkbox"/></th>
+                            <th style="text-align:center; width: 30%; background-color: #7adeee">Title</th>
                             <th class="d-none">id</th>
-                            <th style="text-align:center; width:10%">Qty</th>
-                            <th style="text-align:center; width:10%">Unit</th>
-                            <th style="text-align:center; width:10%">In Stock</th>
-                            <th style="text-align:center; width:10%">Unit Buy Price</th>
-                            <th style="text-align:center">Unit Sell Price</th>
-                            <th style="text-align:center">Line Total</th>
+                            <th style="text-align:center; width:10%;background-color: #7adeee">Brand</th>
+                            <th style="text-align:center; width:15%;background-color: #7adeee">Model</th>
+
+                            <th style="text-align:center; width:10%; background-color: #7adeee">Qty</th>
+                            <th style="text-align:center; width:10%; background-color: #7adeee">Unit</th>
+                            <th style="text-align:center; width:10%; background-color: #7adeee">In Stock</th>
+                            {{--<th style="text-align:center; width:10%">Unit Buy Price</th>--}}
+                            <th style="text-align:center; background-color: #7adeee">Unit Sell Price</th>
+                            <th style="text-align:center; background-color: #7adeee">Line Total</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -209,6 +214,12 @@
                                                       id="productId_<?php echo $stu->id ?>"
                                                       class="form-control productID autocomplete_txt"
                                                       autocomplete="off"></td>
+                            <td>{{ Form::select('brandId[]', $brands, $stu->brand_id, ['class'=>'form-control', 'id'=>'brand_'.$stu->id] ) }}</td>
+                            <td><input type="text" name="model[]"
+                                       id="model_<?php echo $stu->id ?>" style="text-align:left"
+                                       value="<?php echo $stu->model ?>" class="form-control"
+                                       autocomplete="off"></td>
+
                             <td><input type="number" name="quantity[]" id="quantity_<?php echo $stu->id ?>"
                                        class="form-control changesNo "
                                        value="<?php echo $stu->qty ?>"
@@ -224,11 +235,6 @@
                             <td><input type="text" step="any" name="stock[]" id="stock_<?php echo $stu->id ?>" readonly
                                        value="<?php echo static_product_stock($stu->product_id)['stock']  ?>" class="form-control in_stock">
                             </td>
-                            <td><input type="text" data-type="unitBuyPrice" name="unitBuyPrice[]"
-                                       readonly value="<?php echo $stu->ubuy_price ?>"
-                                       id="unitBuyPrice_<?php echo $stu->id ?>" style="text-align:right"
-                                       class="form-control autocomplete_txt"
-                                       autocomplete="off"></td>
                             <td><input type="number" data-type="unitSellPrice" name="unitSellPrice[]"
                                        value="<?php echo $stu->usell_price ?>"
                                        id="unitSellPrice_<?php echo $stu->id ?>" style="text-align:right"
@@ -349,45 +355,6 @@
                         </div>
                     </div>
                 </div>
-                <hr/>
-                <div class="row">
-                    <div class='col-md-6'>
-                        <div>
-                            {!! Form::textarea('comments', $related_ledger->comments,['class'=>'form-control','placeholder'=>'Received Comments','rows'=>'4']) !!}
-                        </div>
-
-                    </div>
-                    <div class='col-md-2'></div>
-                    <div class='col-md-4'>
-                        <div class="form-group">
-                            <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"
-                                          style="background-color: #7adeee">Received Amount ৳</span>
-                                </div>
-                                <input type="number" class="form-control " name="received_amount"
-                                       id="paidAmount" value="<?php echo $related_ledger->amount ?>"
-                                       placeholder="Received Amount" style="text-align:right" value="0">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"
-                                          style="background-color: #7adeee">Transaction Method</span>
-                                </div>
-                                {{ Form::select('transaction_method', $transaction_methods, $related_ledger->transaction_method_id,['class'=>'form-control select2bs4'] ) }}
-                            </div>
-                            @if ($errors->has('transaction_method'))
-                                <span class="help-block">
-                                        <strong>{{ $errors->first('transaction_method') }}</strong>
-                                    </span>
-                            @endif
-
-                        </div>
-                    </div>
-                </div>
-
             </div>
             <div class="card-footer">
                 <a href="{{ url()->previous() }}" class="btn btn-outline-dark"><i
@@ -416,6 +383,10 @@
 
 <script src="{!! asset('alte305/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js')!!}"></script>
 <script src="{!! asset('alte305/plugins/select2/js/select2.full.min.js')!!}"></script>
+<script>
+    var brands = @json($brands); // Convert PHP array to JSON and make it accessible to the external script
+</script>
+
 <script src="{!! asset('supporting/invoice/auto_sales_sp.js')!!}"></script>
 
 <script>
@@ -438,14 +409,6 @@
         });
     })
 
-</script>
-<script>
-    $(document).ready(function () {
-        $(".suggestion").hide()
-        $('[name=customer_id]').on('change', function () {
-            $('.suggestion').toggle(this.value === '6');
-        })
-    });
 </script>
 
 <script>

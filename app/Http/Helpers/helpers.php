@@ -114,6 +114,16 @@ function product_list()
         ->prepend('Select Product', '')->toArray();
     return $products;
 }
+function brand_list()
+{
+    $brands = DB::table('brands')
+        ->select(['brands.id', 'brands.title'])
+        ->where('status', 'Active')
+        ->orderBy('title')->pluck('title', 'id')
+//        ->prepend('Select brand', '')
+        ->toArray();
+    return $brands;
+}
 
 function transaction_method()
 {

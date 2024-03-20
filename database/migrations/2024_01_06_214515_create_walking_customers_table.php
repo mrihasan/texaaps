@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('walking_customers', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('invoice_id');
-            $table->bigInteger('ledger_id');
+            $table->bigInteger('ledger_id')->nullable();
             $table->string('name')->nullable();
             $table->string('mobile')->nullable();
             $table->text('address')->nullable();

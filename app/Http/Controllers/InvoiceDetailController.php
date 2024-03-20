@@ -39,7 +39,8 @@ class InvoiceDetailController extends Controller
         $customers = customer_list();
         $transaction_methods = transaction_method();
         $branch = branch_list();
-        return view('supply.salesCreate', compact('customers', 'transaction_methods', 'branch'));
+        $brands = brand_list();
+        return view('supply.salesCreate', compact('customers', 'transaction_methods', 'branch','brands'));
 
     }
 
@@ -106,6 +107,7 @@ class InvoiceDetailController extends Controller
     public
     function store(Request $request)
     {
+//        dd($request);
         abort_if(Gate::denies('SupplyAccess'), redirect('error'));
         if ($request->transaction_type == 'Purchase') { //Purchase
             $supplier_count = User::where('user_type_id', 4)->count();
@@ -124,23 +126,16 @@ class InvoiceDetailController extends Controller
             if ($td < $jd) {
                 return redirect()->back()->withErrors(['error' => 'Transaction date must be latest than  Supplier Joining Date']);
             }
-            if ($request->paid_amount > 0) {
-                $this->validate($request, [
-                    'supplier_id' => 'required',
-                    'transaction_method' => 'required',
-                    'total_amount' => 'required',
-                    'less_amount' => 'required',
-                    'invoice_total' => 'required',
-                ]);
-            } else {
+
                 $this->validate($request, [
                     'supplier_id' => 'required',
                     'total_amount' => 'required',
                     'less_amount' => 'required',
                     'invoice_total' => 'required',
                 ]);
-            }
             $ProductID_a = [];
+            $BrandID_a = [];
+            $Model_a = [];
             $unitBuyPrice_a = [];
             $Qty_a = [];
             $unit_name_a = [];
@@ -150,6 +145,14 @@ class InvoiceDetailController extends Controller
                 $ProductID_a[] = $ProductID_;
             }
             $ProductID_e = $ProductID_a;
+            foreach ($request['brandId'] as $BrandID_) {
+                $BrandID_a[] = $BrandID_;
+            }
+            $BrandID_e = $BrandID_a;
+            foreach ($request['model'] as $Model_) {
+                $Model_a[] = $Model_;
+            }
+            $Model_e = $Model_a;
             foreach ($request['unitBuyPrice'] as $unitBuyPrice_) {
                 $unitBuyPrice_a[] = $unitBuyPrice_;
             }
@@ -198,6 +201,8 @@ class InvoiceDetailController extends Controller
                 $inventory_transaction->invoice_id = $inventory_transaction_account->id;
                 $inventory_transaction->branch_id = $request->branch;
                 $inventory_transaction->product_id = $ProductID_e[$i];
+                $inventory_transaction->brand_id = $BrandID_e[$i];
+                $inventory_transaction->model = $Model_e[$i];
                 $inventory_transaction->ubuy_price = $unitBuyPrice_e[$i];
                 $inventory_transaction->qty = $Qty_e[$i];
                 $inventory_transaction->unit_name = $unit_name_e[$i];
@@ -206,37 +211,10 @@ class InvoiceDetailController extends Controller
                 $inventory_transaction->save();
             }
 
-            if ($request->paid_amount > 0) {
-
-                $transaction_code=autoTimeStampCode('LPP');
-                $ledger = new Ledger();
-                $ledger->transaction_date = $td;
-                $ledger->user_id = $request->supplier_id;
-                $ledger->branch_id = $request->branch;
-                $ledger->transaction_type_id = 4;//'Payment'
-                $ledger->amount = $request->paid_amount;
-                $ledger->transaction_method_id = $request->transaction_method;
-                $ledger->transaction_code = $transaction_code;
-                $ledger->comments = $request->comments;
-                $ledger->entry_by = Auth::id();
-                $ledger->save();
-
-                $ledger_banking=new BranchLedger();
-                $ledger_banking->branch_id = $request->branch;
-                $ledger_banking->transaction_date = $td;
-                $ledger_banking->amount = $request->paid_amount;
-                $ledger_banking->transaction_method_id = $request->transaction_method;
-                $ledger_banking->comments = $request->comments;
-                $ledger_banking->entry_by = Auth::user()->id;
-                $ledger_banking->approve_status = 'Approved';
-                $ledger_banking->transaction_code = $transaction_code;
-                $ledger_banking->transaction_type_id = 4;//4=payment
-                $ledger_banking->save();
-            }
-
             \Session::flash('flash_message', 'Successfully Added');
             return redirect('invoice/' . $inventory_transaction_account->id);
-        } elseif ($request->transaction_type == 'Sales') { //Sales
+        }
+        elseif ($request->transaction_type == 'Sales') { //Sales
             $customer_count = User::where('user_type_id', 3)->count();
             $customer = User::where('id', $request->customer_id)->first();
             if ($customer_count <= 0) {
@@ -251,28 +229,16 @@ class InvoiceDetailController extends Controller
             if ($td < $jd) {
                 return redirect()->back()->withErrors(['error' => 'Transaction date must be latest than  Customer Joining Date']);
             }
-            if ($request->customer_id == 6 && $request->invoice_total != $request->received_amount) {
-                \Session::flash('flash_error', 'Received Amount must be same while Customer is Walking Customer');
-                return redirect()->back();
-            }
-            if ($request->paid_amount > 0) {
-                $this->validate($request, [
-                    'customer_id' => 'required',
-                    'transaction_method' => 'required',
-                    'total_amount' => 'required',
-                    'less_amount' => 'required',
-                    'invoice_total' => 'required',
-                ]);
-            } else {
                 $this->validate($request, [
                     'customer_id' => 'required',
                     'total_amount' => 'required',
                     'less_amount' => 'required',
                     'invoice_total' => 'required',
                 ]);
-            }
             $ProductID_a = [];
-            $unitBuyPrice_a = [];
+            $BrandID_a = [];
+            $Model_a = [];
+//            $unitBuyPrice_a = [];
             $unitSellPrice_a = [];
             $Qty_a = [];
             $unit_name_a = [];
@@ -282,13 +248,21 @@ class InvoiceDetailController extends Controller
                 $ProductID_a[] = $ProductID_;
             }
             $ProductID_e = $ProductID_a;
+            foreach ($request['brandId'] as $BrandID_) {
+                $BrandID_a[] = $BrandID_;
+            }
+            $BrandID_e = $BrandID_a;
+            foreach ($request['model'] as $Model_) {
+                $Model_a[] = $Model_;
+            }
+            $Model_e = $Model_a;
             foreach ($request['unitSellPrice'] as $unitSellPrice_) {
                 $unitSellPrice_a[] = $unitSellPrice_;
             }
-            foreach ($request['unitBuyPrice'] as $unitBuyPrice_) {
-                $unitBuyPrice_a[] = $unitBuyPrice_;
-            }
-            $unitBuyPrice_e = $unitBuyPrice_a;
+//            foreach ($request['unitBuyPrice'] as $unitBuyPrice_) {
+//                $unitBuyPrice_a[] = $unitBuyPrice_;
+//            }
+//            $unitBuyPrice_e = $unitBuyPrice_a;
             $unitSellPrice_e = $unitSellPrice_a;
             foreach ($request['quantity'] as $Qty_) {
                 $Qty_a[] = $Qty_;
@@ -333,7 +307,9 @@ class InvoiceDetailController extends Controller
                 $inventory_transaction->invoice_id = $inventory_transaction_account->id;
                 $inventory_transaction->branch_id = $request->branch;
                 $inventory_transaction->product_id = $ProductID_e[$i];
-                $inventory_transaction->ubuy_price = $unitBuyPrice_e[$i];
+                $inventory_transaction->brand_id = $BrandID_e[$i];
+                $inventory_transaction->model = $Model_e[$i];
+//                $inventory_transaction->ubuy_price = $unitBuyPrice_e[$i];
                 $inventory_transaction->usell_price = $unitSellPrice_e[$i];
                 $inventory_transaction->qty = $Qty_e[$i];
                 $inventory_transaction->unit_name = $unit_name_e[$i];
@@ -342,48 +318,21 @@ class InvoiceDetailController extends Controller
                 $inventory_transaction->save();
             }
 
-            if ($request->received_amount > 0) {
-
-                $transaction_code=autoTimeStampCode('LSR');
-                $ledger = new Ledger();
-                $ledger->transaction_date = $td;
-                $ledger->user_id = $request->customer_id;
-                $ledger->branch_id = $request->branch;
-                $ledger->transaction_type_id = 3;//Received
-                $ledger->amount = $request->received_amount;
-                $ledger->transaction_method_id = $request->transaction_method;
-                $ledger->transaction_code = $transaction_code;
-                $ledger->comments = $request->comments;
-                $ledger->entry_by = Auth::id();
-                $ledger->save();
-
-                $ledger_banking=new BranchLedger();
-                $ledger_banking->branch_id = $request->branch;
-                $ledger_banking->transaction_date = $td;
-                $ledger_banking->amount = $request->received_amount;
-                $ledger_banking->transaction_method_id = $request->transaction_method;
-                $ledger_banking->comments = $request->comments;
-                $ledger_banking->entry_by = Auth::user()->id;
-                $ledger_banking->approve_status = 'Approved';
-                $ledger_banking->transaction_code = $transaction_code;
-                $ledger_banking->transaction_type_id = 3;//Received
-                $ledger_banking->save();
-
                 if ($request->customer_id == 6) {
                     $customer = new WalkingCustomer();
                     $customer->invoice_id = $inventory_transaction_account->id;
-                    $customer->ledger_id = $ledger->id;
+                    $customer->ledger_id = null;
                     $customer->name = $request->name;
                     $customer->mobile = $request->mobile;
                     $customer->address = $request->address;
                     $customer->save();
                 }
-            }
             $last_insert_id = $inventory_transaction_account->id;
 
             \Session::flash('flash_message', 'Successfully Added');
             return redirect('invoice/' . $last_insert_id);
-        } elseif ($request->transaction_type == 'Order') { //Order create
+        }
+        elseif ($request->transaction_type == 'Order') { //Order create
 //            dd($request);
             $customer_count = User::where('user_type', 'Customer')->count();
             $customer = User::where('id', $request->customer_id)->first();
@@ -557,7 +506,8 @@ class InvoiceDetailController extends Controller
 
             \Session::flash('flash_message', 'Successfully Added');
             return redirect('inventory_transaction_account/' . $last_insert_id);
-        } elseif ($request->transaction_type == 21) { //Order Process
+        }
+        elseif ($request->transaction_type == 21) { //Order Process
 //            dd($request);
             $s_year = date('Y-m') . '-00 00:00:00';
             $e_year = date('Y-m') . '-31 23:59:59';
@@ -693,7 +643,8 @@ class InvoiceDetailController extends Controller
 
             \Session::flash('flash_message', 'Successfully Added');
             return redirect('inventory_transaction_account/' . $last_insert_id);
-        } elseif ($request->transaction_type == 'Return') { //Return
+        }
+        elseif ($request->transaction_type == 'Return') { //Return
             $customer = User::where('id', $request->customer_id)->first();
             $td = new DateTime($request->transaction_date);
             $jd = new DateTime($customer->profile->joining_date);
@@ -814,7 +765,8 @@ class InvoiceDetailController extends Controller
 
             \Session::flash('flash_message', 'Successfully Added');
             return redirect('inventory_transaction_account/' . $last_insert_id);
-        } elseif ($request->transaction_type == 'Put Back') { //Put Back
+        }
+        elseif ($request->transaction_type == 'Put Back') { //Put Back
 //            dd($request);
             $supplier_count = User::where('user_type', 'Supplier')->count();
             $supplier = User::where('id', $request->supplier_id)->first();

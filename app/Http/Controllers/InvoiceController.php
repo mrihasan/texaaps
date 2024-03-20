@@ -201,9 +201,9 @@ class InvoiceController extends Controller
         $transactionDetails = DB::table('invoice_details')
             ->select('invoice_details.id', 'invoice_details.qty', 'invoice_details.unit_name', 'invoice_details.usell_price',
                 'invoice_details.ubuy_price', 'invoice_details.status', 'invoice_details.line_total', 'brands.title as brand_title',
-                'products.title as product_title', 'product_types.title as product_type_title', 'invoice_details.product_id')
+                'products.title as product_title', 'product_types.title as product_type_title', 'invoice_details.product_id', 'invoice_details.model')
             ->join('products', 'products.id', '=', 'invoice_details.product_id')
-            ->join('brands', 'brands.id', '=', 'products.brand_id')
+            ->join('brands', 'brands.id', '=', 'invoice_details.brand_id')
             ->join('product_types', 'product_types.id', '=', 'products.product_type_id')
             ->groupBy(DB::raw('product_id'))
             ->where('invoice_details.invoice_id', $invoice->id)
@@ -333,17 +333,16 @@ class InvoiceController extends Controller
             $supplier = supplier_list();
             $customers = customer_list();
             $branch = branch_list();
+            $brands = brand_list();
             $transaction_methods = transaction_method();
             if ($invoice->transaction_type == 'Purchase')
                 return view('supply.purchaseEdit', compact('invoice', 'inventory', 'supplier', 'branch'));
             else if ($invoice->transaction_type == 'Sales') {
                 if ($invoice->user_id == 6) {
                     $related_customer = WalkingCustomer::where('invoice_id', $invoice->id)->first();
-                    $related_ledger = Ledger::where('id', $related_customer->ledger_id)->first();
-//                    dd($related_customer);
-                    return view('supply.salesEditWalking', compact('invoice', 'inventory', 'branch', 'customers', 'supplier', 'related_customer', 'related_ledger', 'transaction_methods'));
+                    return view('supply.salesEditWalking', compact('invoice', 'inventory', 'branch', 'customers', 'supplier', 'related_customer', 'transaction_methods','brands'));
                 } else
-                    return view('supply.salesEdit', compact('invoice', 'inventory', 'customers', 'supplier', 'branch', 'transaction_methods'));
+                    return view('supply.salesEdit', compact('invoice', 'inventory', 'customers', 'supplier', 'branch', 'transaction_methods','brands'));
             } elseif ($invoice->transaction_type == 'Return')
                 return view('supply.edit_return', compact('inventory_transaction_account', 'invoice', 'inventory', 'customer', 'supplier'));
             elseif ($invoice->transaction_type == 'Put Back')
@@ -432,11 +431,8 @@ class InvoiceController extends Controller
 
             \Session::flash('flash_message', 'Successfully Updated');
             return redirect('invoice/' . $last_insert_id);
-        } elseif ($request->transaction_type == 'Sales' && $request->customer_id == 6) { //Sales Walking customer
-            if ($request->invoice_total != $request->received_amount || $request->received_amount < 0) {
-                \Session::flash('flash_error', 'Received Amount must be same while Customer is Walking Customer');
-                return redirect()->back();
-            }
+        }
+        elseif ($request->transaction_type == 'Sales' && $request->customer_id == 6) { //Sales Walking customer
             $this->validate($request, [
                 'customer_id' => 'required',
                 'total_amount' => 'required',
@@ -444,7 +440,8 @@ class InvoiceController extends Controller
                 'invoice_total' => 'required',
             ]);
             $ProductID_a = [];
-            $unitBuyPrice_a = [];
+            $BrandID_a = [];
+            $Model_a = [];
             $unitSellPrice_a = [];
             $Qty_a = [];
             $unit_name_a = [];
@@ -457,10 +454,14 @@ class InvoiceController extends Controller
             foreach ($request['unitSellPrice'] as $unitSellPrice_) {
                 $unitSellPrice_a[] = $unitSellPrice_;
             }
-            foreach ($request['unitBuyPrice'] as $unitBuyPrice_) {
-                $unitBuyPrice_a[] = $unitBuyPrice_;
+            foreach ($request['brandId'] as $BrandID_) {
+                $BrandID_a[] = $BrandID_;
             }
-            $unitBuyPrice_e = $unitBuyPrice_a;
+            $BrandID_e = $BrandID_a;
+            foreach ($request['model'] as $Model_) {
+                $Model_a[] = $Model_;
+            }
+            $Model_e = $Model_a;
             $unitSellPrice_e = $unitSellPrice_a;
             foreach ($request['quantity'] as $Qty_) {
                 $Qty_a[] = $Qty_;
@@ -478,10 +479,6 @@ class InvoiceController extends Controller
             $related_customer = WalkingCustomer::where('invoice_id', $invoice->id)->first(); //invoice_id, ledger_id
             $related_ledger = Ledger::where('id', $related_customer->ledger_id)->first();
 
-            $del_branchLedger = DB::table('branch_ledgers')
-                ->where('transaction_code', $related_ledger->transaction_code)->delete();
-            $del_ledger = DB::table('ledgers')
-                ->where('id', $related_customer->ledger_id)->delete();
             $del_walking_customer = DB::table('walking_customers')
                 ->where('invoice_id', $invoice->id)->delete();
             $del_invoice_details = DB::table('invoice_details')
@@ -510,7 +507,8 @@ class InvoiceController extends Controller
                 $inventory_transaction->invoice_id = $invoice->id;
                 $inventory_transaction->branch_id = $request->branch;
                 $inventory_transaction->product_id = $ProductID_e[$i];
-                $inventory_transaction->ubuy_price = $unitBuyPrice_e[$i];
+                $inventory_transaction->brand_id = $BrandID_e[$i];
+                $inventory_transaction->model = $Model_e[$i];
                 $inventory_transaction->usell_price = $unitSellPrice_e[$i];
                 $inventory_transaction->qty = $Qty_e[$i];
                 $inventory_transaction->unit_name = $unit_name_e[$i];
@@ -519,34 +517,9 @@ class InvoiceController extends Controller
                 $inventory_transaction->save();
             }
 
-            $transaction_code = autoTimeStampCode('LSR');
-            $ledger = new Ledger();
-            $ledger->transaction_date = $invoice->transaction_date;
-            $ledger->user_id = $request->customer_id;
-            $ledger->branch_id = $request->branch;
-            $ledger->transaction_type_id = 3;//Received
-            $ledger->amount = $request->received_amount;
-            $ledger->transaction_method_id = $request->transaction_method;
-            $ledger->transaction_code = $transaction_code;
-            $ledger->comments = $request->comments;
-            $ledger->entry_by = Auth::id();
-            $ledger->save();
-
-            $ledger_banking = new BranchLedger();
-            $ledger_banking->branch_id = $request->branch;
-            $ledger_banking->transaction_date = $invoice->transaction_date;
-            $ledger_banking->amount = $request->received_amount;
-            $ledger_banking->transaction_method_id = $request->transaction_method;
-            $ledger_banking->comments = $request->comments;
-            $ledger_banking->entry_by = Auth::user()->id;
-            $ledger_banking->approve_status = 'Approved';
-            $ledger_banking->transaction_code = $transaction_code;
-            $ledger_banking->transaction_type_id = 3;//Received
-            $ledger_banking->save();
-
             $customer = new WalkingCustomer();
             $customer->invoice_id = $invoice->id;
-            $customer->ledger_id = $ledger->id;
+            $customer->ledger_id = null;
             $customer->name = $request->name;
             $customer->mobile = $request->mobile;
             $customer->address = $request->address;
@@ -556,7 +529,8 @@ class InvoiceController extends Controller
 
             \Session::flash('flash_message', 'Successfully Updated');
             return redirect('invoice/' . $last_insert_id);
-        } elseif ($request->transaction_type == 'Sales') { //Sales Walking customer
+        }
+        elseif ($request->transaction_type == 'Sales') { //Sales Walking customer
 //            dd($request);
             $this->validate($request, [
                 'customer_id' => 'required',
@@ -565,7 +539,8 @@ class InvoiceController extends Controller
                 'invoice_total' => 'required',
             ]);
             $ProductID_a = [];
-            $unitBuyPrice_a = [];
+            $BrandID_a = [];
+            $Model_a = [];
             $unitSellPrice_a = [];
             $Qty_a = [];
             $unit_name_a = [];
@@ -578,10 +553,14 @@ class InvoiceController extends Controller
             foreach ($request['unitSellPrice'] as $unitSellPrice_) {
                 $unitSellPrice_a[] = $unitSellPrice_;
             }
-            foreach ($request['unitBuyPrice'] as $unitBuyPrice_) {
-                $unitBuyPrice_a[] = $unitBuyPrice_;
+            foreach ($request['brandId'] as $BrandID_) {
+                $BrandID_a[] = $BrandID_;
             }
-            $unitBuyPrice_e = $unitBuyPrice_a;
+            $BrandID_e = $BrandID_a;
+            foreach ($request['model'] as $Model_) {
+                $Model_a[] = $Model_;
+            }
+            $Model_e = $Model_a;
             $unitSellPrice_e = $unitSellPrice_a;
             foreach ($request['quantity'] as $Qty_) {
                 $Qty_a[] = $Qty_;
@@ -622,7 +601,8 @@ class InvoiceController extends Controller
                 $inventory_transaction->invoice_id = $invoice->id;
                 $inventory_transaction->branch_id = $request->branch;
                 $inventory_transaction->product_id = $ProductID_e[$i];
-                $inventory_transaction->ubuy_price = $unitBuyPrice_e[$i];
+                $inventory_transaction->brand_id = $BrandID_e[$i];
+                $inventory_transaction->model = $Model_e[$i];
                 $inventory_transaction->usell_price = $unitSellPrice_e[$i];
                 $inventory_transaction->qty = $Qty_e[$i];
                 $inventory_transaction->unit_name = $unit_name_e[$i];

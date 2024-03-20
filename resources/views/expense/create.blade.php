@@ -35,7 +35,6 @@
                                 class="required"> * </span></label>
                     <div class="col-md-6">
                         <select name="branch" class="form-control select2" style="width: 100%;" id="branch">
-                            {{--<option>Select Branch</option>--}}
                             @foreach($branches as $key=>$branch)
                                 <option value="{{ $key }}" {{ (session()->get('brand')) == $key ? 'selected' : '' }}>{{ $branch}}</option>
                             @endforeach

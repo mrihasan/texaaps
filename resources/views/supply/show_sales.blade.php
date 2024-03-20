@@ -211,8 +211,9 @@
                                         <td>{{ $key+1 }}</td>
 
                                         <td>
-                                            {{ $details->product_title }}<br/>
-                                            {{ $details->brand_title }}<br/>
+                                            <strong>Product : </strong>{{ $details->product_title }}<br/>
+                                            <strong>Brand : </strong>{{ $details->brand_title }}<br/>
+                                            <strong>Model : </strong>{{ $details->model }}<br/>
                                         </td>
                                         <td style="text-align:center">{{ $details->qty}} </td>
                                         <td style="text-align:center">{{ $details->unit_name}}</td>
@@ -461,7 +462,10 @@
                                         <td>{{ $key+1 }}</td>
 
                                         <td>
-                                            {{ $details->product_title }}
+                                            <strong>Product : </strong>{{ $details->product_title }}<br/>
+                                            <strong>Brand : </strong>{{ $details->brand_title }}<br/>
+                                            <strong>Model : </strong>{{ $details->model }}<br/>
+
                                         </td>
                                         <td style="text-align:center">{{ $details->qty}} </td>
                                         <td style="text-align:center">{{ $details->unit_name}}</td>

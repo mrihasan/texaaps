@@ -228,20 +228,15 @@
                             <th style="text-align:center;background-color: #7adeee"><input id="check_all"
                                                                                            class="formcontrol"
                                                                                            type="checkbox"/></th>
-                            <th style="text-align:center; width: 30%;background-color: #7adeee">Title</th>
+                            <th style="text-align:center; width: 25%;background-color: #7adeee">Title</th>
                             <th class="d-none">id</th>
+                            <th style="text-align:center; width:10%;background-color: #7adeee">Brand</th>
+                            <th style="text-align:center; width:15%;background-color: #7adeee">Model</th>
                             <th style="text-align:center; width:10%;background-color: #7adeee">Qty</th>
                             <th style="text-align:center; width:10%;background-color: #7adeee">Unit</th>
                             <th style="text-align:center; width:10%;background-color: #7adeee">In Stock</th>
-                            <th style="text-align:center; width:10%;background-color: #7adeee">UBP Alt+U</th>
                             <th style="text-align:center;background-color: #7adeee">Unit Sell Price</th>
-                            {{--<th style="text-align:center">Discount</br>(%)</th>--}}
-                            {{--<th style="text-align:center">Discount</br>Amount</th>--}}
-                            {{--<th style="text-align:center">Discounted</br> MRP</th>--}}
                             <th style="text-align:center;background-color: #7adeee">Line Total</th>
-                            {{--<th style="text-align:center">Discount</br>Total</th>--}}
-                            {{--<th style="text-align:center">Discounted</br> Total MRP</th>--}}
-                            {{--<th style="text-align:center">TBP</th>--}}
 
                         </tr>
                         </thead>
@@ -258,6 +253,12 @@
                                                       class="form-control productID autocomplete_txt"
                                                       autocomplete="off"></td>
 
+{{--                            <td>{{ Form::select('brand[]', $brands,null, ['class'=>'form-control', 'id'=>'brand_1'] ) }}</td>--}}
+                            <td>{{ Form::select('brandId[]', ['' => 'Select brand'] + $brands, null, ['class'=>'form-control', 'id'=>'brand_1'] ) }}</td>
+                            <td><input type="text" name="model[]"
+                                       id="model_1" style="text-align:left"
+                                       class="form-control"
+                                       autocomplete="off"></td>
                             <td><input type="number" name="quantity[]" id="quantity_1"
                                        class="form-control changesNo "
                                        autocomplete="off" step="any"
@@ -272,11 +273,11 @@
                                        class="form-control in_stock">
                             </td>
 
-                            <td><input type="text" data-type="unitBuyPrice" name="unitBuyPrice[]"
-                                       readonly
-                                       id="unitBuyPrice_1" style="text-align:right"
-                                       class="form-control autocomplete_txt unitBuyPrice"
-                                       autocomplete="off"></td>
+                            {{--<td><input type="text" data-type="unitBuyPrice" name="unitBuyPrice[]"--}}
+                                       {{--readonly--}}
+                                       {{--id="unitBuyPrice_1" style="text-align:right"--}}
+                                       {{--class="form-control autocomplete_txt unitBuyPrice"--}}
+                                       {{--autocomplete="off"></td>--}}
                             <td><input type="number" data-type="unitSellPrice" name="unitSellPrice[]"
                                        id="unitSellPrice_1" style="text-align:right"
                                        class="form-control autocomplete_txt changesNo"
@@ -463,6 +464,9 @@
 
 <script src="{!! asset('alte305/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js')!!}"></script>
 <script src="{!! asset('alte305/plugins/select2/js/select2.full.min.js')!!}"></script>
+<script>
+    var brands = @json($brands); // Convert PHP array to JSON and make it accessible to the external script
+</script>
 <script src="{!! asset('supporting/invoice/auto_sales_sp.js')!!}"></script>
 
 <script>

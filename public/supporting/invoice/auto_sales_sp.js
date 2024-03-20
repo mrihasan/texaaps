@@ -1,4 +1,5 @@
 //adds extra table rows
+
 var i = $('table tr').length;
 // $(".addmore").on('click',function(){
 function addNewRow() {
@@ -6,10 +7,18 @@ function addNewRow() {
     html += '<td><input class="case" type="checkbox"/></td>';
     html += '<td><input type="text" data-type="title" custom="doup" name="itemName[]" id="itemName_' + i + '" class="form-control autocomplete_txt" autocomplete="off" required ></td>';
     html += '<td class = "d-none"><input type="text" data-type="productId" name="productId[]" id="productId_' + i + '" class="form-control autocomplete_txt productID" autocomplete="off"></td>';
+    // html += '<td></td>';
+    html += '<td><select name="brandId[]" class="form-control" id="brand_' + i + '">';
+    html += '<option value="">Select Brand</option>';
+    for (var brandId in brands) {
+        html += '<option value="' + brandId + '">' + brands[brandId] + '</option>';
+    }
+    html += '</select></td>';
+    html += '<td><input type="text" name="model[]" id="model_' + i + '" class="form-control" autocomplete="off" ondrop="return false;" style="text-align:left;"></td>';
     html += '<td><input type="number" name="quantity[]" id="quantity_' + i + '" step="any" class="form-control changesNo qtynumber" autocomplete="off"  onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" style="text-align:right;"></td>';
     html += '<td><input type="text" name="unit_name[]" id="unit_name_' + i + '" class="form-control " autocomplete="off" ondrop="return false;" style="text-align:center;" readonly></td>';
     html += '<td><input type="text" name="stock[]" id="stock_' + i + '" class="form-control in_stock"  disabled="disabled"></td>';
-    html += '<td><input type="text" step="any" name="unitBuyPrice[]" id="unitBuyPrice_' + i + '" class="form-control changesNo unitBuyPrice" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" style="text-align:right;" readonly></td>';
+    // html += '<td><input type="text" step="any" name="unitBuyPrice[]" id="unitBuyPrice_' + i + '" class="form-control changesNo unitBuyPrice" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" style="text-align:right;" readonly></td>';
     html += '<td><input type="number" step="any" name="unitSellPrice[]" id="unitSellPrice_' + i + '" class="form-control changesNo" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" style="text-align:right;"></td>';
     html += '<td><input type="number" step="any" name="mrpTotal[]" id="mrpTotal_' + i + '" class="form-control changesNo mrpTotal" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" style="text-align:right;" readonly></td>';
     html += '<td class = "d-none"><input type="text" step="any" name="totalBuyPrice[]" id="totalBuyPrice_' + i + '" class="form-control changesNo totalBuyPrice" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" style="text-align:right;" readonly></td>';
