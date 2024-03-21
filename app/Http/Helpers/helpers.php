@@ -349,10 +349,12 @@ function ledger_account($account_id, $start_date, $end_date)
         'bank_ledgers.ref_date', 'bank_ledgers.ref_no', 'bank_ledgers.created_at')
         ->join('transaction_types', 'transaction_types.id', '=', 'bank_ledgers.transaction_type_id')
         ->where('bank_ledgers.bank_account_id', $account_id)
-        ->whereBetween('bank_ledgers.transaction_date', [$start_date, $end_date])->get();
+        ->whereBetween('bank_ledgers.transaction_date', [$start_date, $end_date])
+        ->orderBy('bank_ledgers.transaction_date')->get();
 
-    $myall = $ledger;
-    $merged_ledger = collect($myall)->sortBy('transaction_date')->sortBy('created_at');
+//    $myall = $ledger;
+//    $merged_ledger = collect($myall)->sortBy('transaction_date')->sortBy('created_at');
+    $merged_ledger = $ledger;
     $sort_array = [];
     foreach ($merged_ledger as $key => $data)
         $sort_array[] = $data;
@@ -421,11 +423,13 @@ function ledger_account_all($start_date, $end_date)
         ->join('transaction_types', 'transaction_types.id', '=', 'bank_ledgers.transaction_type_id')
         ->join('branches', 'branches.id', '=', 'bank_ledgers.branch_id')
         ->join('bank_accounts', 'bank_accounts.id', '=', 'bank_ledgers.bank_account_id')
-        ->whereBetween('bank_ledgers.transaction_date', [$start_date, $end_date])->get();
+        ->whereBetween('bank_ledgers.transaction_date', [$start_date, $end_date])
+        ->orderBy('bank_ledgers.transaction_date')->get();
 
-    $myall = $ledger;
+//    $myall = $ledger;
 //    dd($myall);
-    $merged_ledger = collect($myall)->sortBy('transaction_date')->sortBy('created_at');
+//    $merged_ledger = collect($myall)->sortBy('transaction_date')->sortBy('created_at');
+    $merged_ledger = $ledger;
     $sort_array = [];
     foreach ($merged_ledger as $key => $data)
         $sort_array[] = $data;

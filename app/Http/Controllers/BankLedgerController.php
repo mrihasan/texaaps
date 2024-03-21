@@ -25,7 +25,7 @@ class BankLedgerController extends Controller
     {
 //        abort_if(Gate::denies('payment-access'), redirect('error'));
         if ($request->start_date == null) {
-            $start_date = Carbon::now()->subDays(30)->format('Y-m-d') . ' 00:00:00';
+            $start_date = Carbon::now()->subDays(90)->format('Y-m-d') . ' 00:00:00';
             $end_date = date('Y-m-d') . ' 23:59:59';
         } else {
             $start_date = date('Y-m-d', strtotime($request->start_date)) . ' 00:00:00';
@@ -41,7 +41,7 @@ class BankLedgerController extends Controller
     {
 //        abort_if(Gate::denies('payment-access'), redirect('error'));
         if ($request->start_date == null) {
-            $start_date = Carbon::now()->subDays(30)->format('Y-m-d') . ' 00:00:00';
+            $start_date = Carbon::now()->subDays(90)->format('Y-m-d') . ' 00:00:00';
             $end_date = date('Y-m-d') . ' 23:59:59';
             $account_id = 1;
         } else {
@@ -264,5 +264,33 @@ class BankLedgerController extends Controller
         \Session::flash('flash_message', 'Successfully Updated');
         return redirect('bank_ledger');
     }
+    public function show($transaction_code)
+    {
+//        dd($bank_ledger);
+        $bank_ledger = BankLedger::where('transaction_code', $transaction_code)->first();
+
+        return view('banking.show_account_ledger', compact('bank_ledger'));
+    }
+
+    public function destroy($transaction_code)
+    {
+        abort_if(Gate::denies('AccountMgtDelete'), redirect('error'));
+
+        if (substr($transaction_code, 0, 1) === 'W' || substr($transaction_code, 0, 1) === 'D') {
+            $bank_ledger = DB::table('bank_ledgers')->where('transaction_code', 'W'.substr($transaction_code, 1))->delete();
+            $deposit_ledger = DB::table('bank_ledgers')->where('transaction_code', 'D'.substr($transaction_code, 1))->delete();
+        } else {
+            $bank_ledger = DB::table('bank_ledgers')->where('transaction_code', $transaction_code)->first();
+
+            $ledger = DB::table('ledgers')->where('transaction_code', $transaction_code)->delete();
+            $del_lb = DB::table('branch_ledgers')->where('transaction_code', $transaction_code)->delete();
+            $del_bl = DB::table('bank_ledgers')->where('transaction_code', $transaction_code)->delete();
+        }
+
+        \Session::flash('flash_message', 'Successfully Deleted');
+
+        return back();
+    }
+
 
 }

@@ -69,9 +69,8 @@
                                 <td>{{ $data->entryby->name}}</td>
                                 <td>{{ $data->comments }}</td>
                                 <td class="noprint">
-                                    {{--<a href="{{ url('ledger/' . $data->id ) }}" class="btn btn-success btn-xs"--}}
-                                    {{--title="Show"><span class="far fa-eye" aria-hidden="true"></span></a>--}}
-                                    {{--                                    @can('brand-access')--}}
+                                    <a href="{{ url('ledger/' . $data->id ) }}" class="btn btn-success btn-xs"
+                                    title="Show"><span class="far fa-eye" aria-hidden="true"></span></a>
                                     @can('AccountMgtAccess')
                                         <a href="{{ url('ledger/' . $data->id . '/edit') }}"
                                        class="btn btn-info btn-xs" title="Edit"><span class="far fa-edit"

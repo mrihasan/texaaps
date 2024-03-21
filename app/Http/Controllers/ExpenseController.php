@@ -25,7 +25,7 @@ class ExpenseController extends Controller
     public function index()
     {
 //        abort_if(Gate::denies('expense-access'), redirect('error'));
-        $start_date = Carbon::now()->subDays(30)->format('Y-m-d') . ' 00:00:00';
+        $start_date = Carbon::now()->subDays(90)->format('Y-m-d') . ' 00:00:00';
         $end_date = date('Y-m-d') . ' 23:59:59';
         $header_title = 'Expense From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
 
@@ -66,9 +66,9 @@ class ExpenseController extends Controller
             $end_date = Carbon::parse($request->end_date)->endOfDay();
         }
 
-        // If not provided, set default date range (last 30 days)
+        // If not provided, set default date range (last 90 days)
         if ($start_date === null) {
-            $start_date = Carbon::now()->subDays(30)->startOfDay();
+            $start_date = Carbon::now()->subDays(90)->startOfDay();
         }
 
         if ($end_date === null) {
@@ -86,7 +86,7 @@ class ExpenseController extends Controller
     public function expense_approved()
     {
 //        abort_if(Gate::denies('expense-access'), redirect('error'));
-        $start_date = Carbon::now()->subDays(30)->format('Y-m-d') . ' 00:00:00';
+        $start_date = Carbon::now()->subDays(90)->format('Y-m-d') . ' 00:00:00';
         $end_date = date('Y-m-d') . ' 23:59:59';
 
         $expense = Expense::with('user')->with('approvedBy')->with('expense_type')->

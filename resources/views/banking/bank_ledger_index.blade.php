@@ -93,6 +93,7 @@
                                 $data['transaction_type'][$key]=='Withdraw'||$data['transaction_type'][$key]=='Loan Payment'||$data['transaction_type'][$key]=='Profit Share')?$data['transaction_amount'][$key]:''}}</td>
                                 <td style="text-align: right">{{$data['balance'][$key]}}</td>
                                 <td>
+                                    <a href="{{ url('bank_ledger/'.$data['transaction_code'][$key]) }}" class="btn btn-success btn-xs" title="View "><span class="far fa-eye" aria-hidden="true"></span></a>
 
                                     @can('AccountMgtAccess')
                                         <a href="{{ url('bank_ledger/' . $data['transaction_code'][$key] . '/edit') }}"

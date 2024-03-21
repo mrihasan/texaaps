@@ -38,5 +38,9 @@ class Ledger extends Model
     {
         return $this->belongsTo('App\Models\User','entry_by');
     }
+    public function branch()
+    {
+        return $this->belongsTo('App\Models\Branch');
+    }
 
 }
