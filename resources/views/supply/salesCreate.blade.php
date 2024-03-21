@@ -253,8 +253,7 @@
                                                       class="form-control productID autocomplete_txt"
                                                       autocomplete="off"></td>
 
-{{--                            <td>{{ Form::select('brand[]', $brands,null, ['class'=>'form-control', 'id'=>'brand_1'] ) }}</td>--}}
-                            <td>{{ Form::select('brandId[]', ['' => 'Select brand'] + $brands, null, ['class'=>'form-control', 'id'=>'brand_1'] ) }}</td>
+                            <td>{{ Form::select('brandId[]', ['' => 'Select brand'] + $brands, null, ['class'=>'form-control', 'id'=>'brand_1', 'required'] ) }}</td>
                             <td><input type="text" name="model[]"
                                        id="model_1" style="text-align:left"
                                        class="form-control"

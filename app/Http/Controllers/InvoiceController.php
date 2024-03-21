@@ -334,15 +334,14 @@ class InvoiceController extends Controller
             $customers = customer_list();
             $branch = branch_list();
             $brands = brand_list();
-            $transaction_methods = transaction_method();
             if ($invoice->transaction_type == 'Purchase')
-                return view('supply.purchaseEdit', compact('invoice', 'inventory', 'supplier', 'branch'));
+                return view('supply.purchaseEdit', compact('invoice', 'inventory', 'supplier', 'branch','brands'));
             else if ($invoice->transaction_type == 'Sales') {
                 if ($invoice->user_id == 6) {
                     $related_customer = WalkingCustomer::where('invoice_id', $invoice->id)->first();
-                    return view('supply.salesEditWalking', compact('invoice', 'inventory', 'branch', 'customers', 'supplier', 'related_customer', 'transaction_methods','brands'));
+                    return view('supply.salesEditWalking', compact('invoice', 'inventory', 'branch', 'customers', 'supplier', 'related_customer','brands'));
                 } else
-                    return view('supply.salesEdit', compact('invoice', 'inventory', 'customers', 'supplier', 'branch', 'transaction_methods','brands'));
+                    return view('supply.salesEdit', compact('invoice', 'inventory', 'customers', 'supplier', 'branch', 'brands'));
             } elseif ($invoice->transaction_type == 'Return')
                 return view('supply.edit_return', compact('inventory_transaction_account', 'invoice', 'inventory', 'customer', 'supplier'));
             elseif ($invoice->transaction_type == 'Put Back')
@@ -364,6 +363,8 @@ class InvoiceController extends Controller
             ]);
 
             $ProductID_a = [];
+            $BrandID_a = [];
+            $Model_a = [];
             $unitBuyPrice_a = [];
             $Qty_a = [];
             $unit_name_a = [];
@@ -373,6 +374,14 @@ class InvoiceController extends Controller
                 $ProductID_a[] = $ProductID_;
             }
             $ProductID_e = $ProductID_a;
+            foreach ($request['brandId'] as $BrandID_) {
+                $BrandID_a[] = $BrandID_;
+            }
+            $BrandID_e = $BrandID_a;
+            foreach ($request['model'] as $Model_) {
+                $Model_a[] = $Model_;
+            }
+            $Model_e = $Model_a;
             foreach ($request['unitBuyPrice'] as $unitBuyPrice_) {
                 $unitBuyPrice_a[] = $unitBuyPrice_;
             }
@@ -420,6 +429,8 @@ class InvoiceController extends Controller
                 $inventory_transaction->invoice_id = $invoice->id;
                 $inventory_transaction->branch_id = $request->branch;
                 $inventory_transaction->product_id = $ProductID_e[$i];
+                $inventory_transaction->brand_id = $BrandID_e[$i];
+                $inventory_transaction->model = $Model_e[$i];
                 $inventory_transaction->ubuy_price = $unitBuyPrice_e[$i];
                 $inventory_transaction->qty = $Qty_e[$i];
                 $inventory_transaction->unit_name = $unit_name_e[$i];

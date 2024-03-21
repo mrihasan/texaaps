@@ -5,10 +5,17 @@ function addNewRow() {
 	html += '<td style="text-align:center"><input class="case" type="checkbox"/></td>';
     html += '<td><input type="text" data-type="title" custom="doup" name="itemName[]" id="itemName_'+i+'" class="form-control autocomplete_txt" autocomplete="off" required ></td>';
     html += '<td class = "d-none"><input type="number" data-type="productId" name="productId[]" id="productId_'+i+'" class="form-control autocomplete_txt " autocomplete="off"></td>';
+    html += '<td><select name="brandId[]" class="form-control" id="brand_' + i + '" required>';
+    html += '<option value="" >Select Brand</option>';
+    for (var brandId in brands) {
+        html += '<option value="' + brandId + '">' + brands[brandId] + '</option>';
+    }
+    html += '</select></td>';
+    html += '<td><input type="text" name="model[]" id="model_' + i + '" class="form-control" autocomplete="off" ondrop="return false;" style="text-align:left;"></td>';
     html += '<td><input type="number" name="quantity[]" id="quantity_'+i+'" step="any" class="form-control changesNo" autocomplete="off"  onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" style="text-align:right;"></td>';
     html += '<td><input type="text" name="unit_name[]" id="unit_name_'+i+'" class="form-control " autocomplete="off"  ondrop="return false;" onpaste="return false;" style="text-align:center;" readonly></td>';
     html += '<td><input type="number" name="stock[]" id="stock_'+i+'" class="form-control in_stock"  disabled="disabled"></td>';
-    html += '<td><input type="number" step="any" name="unitBuyPrice[]" id="unitBuyPrice_'+i+'" class="form-control changesNo" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" style="text-align:right;"></td>';
+    html += '<td><input type="number" step="any" name="unitBuyPrice[]" id="unitBuyPrice_'+i+'" class="form-control autocomplete_txt changesNo" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" style="text-align:right;"></td>';
     html += '<td><input type="number" step="any" name="mrpTotal[]" id="mrpTotal_'+i+'" class="form-control changesNo mrpTotal" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" style="text-align:right;" readonly></td>';
 
     $('table').append(html);
@@ -117,13 +124,8 @@ $(document).on('change keyup blur','.changesNo',function(){
     // console.log(id);
 	quantity = $('#quantity_'+id[1]).val();
     unitBuyPrice = $('#unitBuyPrice_'+id[1]).val();
-
-    console.log(unitBuyPrice)
-    // discountUnit = $('#discountUnit_'+id[1]).val();
-    // discountedMrp = $('#discountedMrp_'+id[1]).val();
+    // console.log(unitBuyPrice)
     if( quantity!='' && unitBuyPrice!='') $('#mrpTotal_'+id[1]).val( (parseFloat(unitBuyPrice)*parseFloat(quantity)).toFixed(2));
-    // if( quantity!='' && discountUnit !='') $('#discountTotal_'+id[1]).val((parseFloat(discountUnit)*parseFloat(quantity)).toFixed(2));
-    // if( quantity!='' && discountedMrp !='') $('#discountedTotalMrp_'+id[1]).val((parseFloat(discountedMrp)*parseFloat(quantity)).toFixed(2));
 	calculateTotal();
 });
 

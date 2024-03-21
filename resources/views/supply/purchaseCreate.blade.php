@@ -115,7 +115,7 @@
                        aria-selected="true">{{ __('all_settings.Add Purchase') }}</a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ url('salesTransaction') }}" class="nav-link">
+                    <a href="{{ url('purchaseTransaction') }}" class="nav-link">
                         {{ __('all_settings.Manage Purchase') }}
                     </a>
                 </li>
@@ -203,9 +203,11 @@
                                                                  type="checkbox"/></th>
                             <th style="text-align:center; width: 30%;background-color: #7adeee">Title</th>
                             <th class="d-none">id</th>
-                            <th style="text-align:center; width:10%;background-color: #7adeee">Qty</th>
-                            <th style="text-align:center; width:10%;background-color: #7adeee">Unit</th>
-                            <th style="text-align:center; width:10%;background-color: #7adeee">In Stock</th>
+                            <th style="text-align:center; width:15%;background-color: #7adeee">Brand</th>
+                            <th style="text-align:center; width:15%;background-color: #7adeee">Model</th>
+                            <th style="text-align:center; width:5%;background-color: #7adeee">Qty</th>
+                            <th style="text-align:center; width:5%;background-color: #7adeee">Unit</th>
+                            <th style="text-align:center; width:5%;background-color: #7adeee">In Stock</th>
                             <th style="text-align:center; width:10%;background-color: #7adeee">Unit Buy Price</th>
                             <th style="text-align:center;background-color: #7adeee">Line Total</th>
                         </tr>
@@ -222,6 +224,11 @@
                                                       id="productId_1"
                                                       class="form-control productID autocomplete_txt"
                                                       autocomplete="off"></td>
+                            <td>{{ Form::select('brandId[]', ['' => 'Select brand'] + $brands, null, ['class'=>'form-control', 'id'=>'brand_1', 'required' ] ) }}</td>
+                            <td><input type="text" name="model[]"
+                                       id="model_1" style="text-align:left"
+                                       class="form-control"
+                                       autocomplete="off"></td>
 
                             <td><input type="number" name="quantity[]" id="quantity_1"
                                        class="form-control changesNo "
@@ -347,48 +354,6 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="row d-none">
-                    <div class='col-md-12'>
-                        <span id="balanceAmount" style="color: #9f1447"></span>
-                    </div>
-
-                    <div class='col-md-6'>
-                        <div>
-                            {!! Form::textarea('comments', null,['class'=>'form-control','placeholder'=>'Payment Comments','rows'=>'4']) !!}
-                        </div>
-
-                    </div>
-                    <div class='col-md-2'></div>
-                    <div class='col-md-4'>
-                        <div class="form-group">
-                            <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"
-                                          style="background-color: #7adeee">Paid Amount ৳</span>
-                                </div>
-                                <input type="number" class="form-control " name="paid_amount"
-                                       id="paidAmount"
-                                       placeholder="Paid Amount" style="text-align:right" value="0">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"
-                                          style="background-color: #7adeee">Transaction Method</span>
-                                </div>
-                                {{ Form::select('transaction_method', $transaction_methods, null,['class'=>'form-control select2bs4'] ) }}
-                            </div>
-                            @if ($errors->has('transaction_method'))
-                                <span class="help-block">
-                                        <strong>{{ $errors->first('transaction_method') }}</strong>
-                                    </span>
-                            @endif
-
-                        </div>
-                    </div>
-                </div>
             </div>
             <div class="card-footer">
                 <a href="{{ url()->previous() }}" class="btn btn-outline-dark"><i
@@ -417,6 +382,10 @@
 
 <script src="{!! asset('alte305/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js')!!}"></script>
 <script src="{!! asset('alte305/plugins/select2/js/select2.full.min.js')!!}"></script>
+<script>
+    var brands = @json($brands); // Convert PHP array to JSON and make it accessible to the external script
+</script>
+
 <script src="{!! asset('supporting/invoice/auto_purchase.js')!!}"></script>
 
 <script>

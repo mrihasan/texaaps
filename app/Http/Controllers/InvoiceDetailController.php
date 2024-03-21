@@ -30,7 +30,8 @@ class InvoiceDetailController extends Controller
         $supplier = supplier_list();
         $transaction_methods = transaction_method();
         $branch = branch_list();
-        return view('supply.purchaseCreate', compact('supplier', 'transaction_methods', 'branch'));
+        $brands = brand_list();
+        return view('supply.purchaseCreate', compact('supplier', 'transaction_methods', 'branch','brands'));
     }
 
     public function salesCreate()
@@ -157,12 +158,10 @@ class InvoiceDetailController extends Controller
                 $unitBuyPrice_a[] = $unitBuyPrice_;
             }
             $unitBuyPrice_e = $unitBuyPrice_a;
-
             foreach ($request['unit_name'] as $unit_name_) {
                 $unit_name_a[] = $unit_name_;
             }
             $unit_name_e = $unit_name_a;
-
             foreach ($request['quantity'] as $Qty_) {
                 $Qty_a[] = $Qty_;
             }

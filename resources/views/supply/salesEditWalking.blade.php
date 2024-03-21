@@ -214,7 +214,7 @@
                                                       id="productId_<?php echo $stu->id ?>"
                                                       class="form-control productID autocomplete_txt"
                                                       autocomplete="off"></td>
-                            <td>{{ Form::select('brandId[]', $brands, $stu->brand_id, ['class'=>'form-control', 'id'=>'brand_'.$stu->id] ) }}</td>
+                            <td>{{ Form::select('brandId[]', $brands, $stu->brand_id, ['class'=>'form-control', 'id'=>'brand_'.$stu->id, 'required'] ) }}</td>
                             <td><input type="text" name="model[]"
                                        id="model_<?php echo $stu->id ?>" style="text-align:left"
                                        value="<?php echo $stu->model ?>" class="form-control"

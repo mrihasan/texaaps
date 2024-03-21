@@ -177,15 +177,17 @@
                     <table class="table table-bordered table-hover ">
                         <thead>
                         <tr>
-                            <th style="text-align:center"><input id="check_all" class="formcontrol"
+                            <th style="text-align:center; background-color: #7adeee"><input id="check_all" class="formcontrol"
                                                                  type="checkbox"/></th>
-                            <th style="text-align:center; width: 30%">Title</th>
+                            <th style="text-align:center; width: 30%; background-color: #7adeee">Title</th>
                             <th class="d-none">id</th>
-                            <th style="text-align:center; width:10%">Qty</th>
-                            <th style="text-align:center; width:10%">Unit</th>
-                            <th style="text-align:center; width:10%">Stock</th>
-                            <th style="text-align:center; width:10%">Unit Buy Price</th>
-                            <th style="text-align:center">Line Total</th>
+                            <th style="text-align:center; width:15%;background-color: #7adeee">Brand</th>
+                            <th style="text-align:center; width:15%;background-color: #7adeee">Model</th>
+                            <th style="text-align:center; width:5%; background-color: #7adeee">Qty</th>
+                            <th style="text-align:center; width:5%; background-color: #7adeee">Unit</th>
+                            <th style="text-align:center; width:5%; background-color: #7adeee">Stock</th>
+                            <th style="text-align:center; width:10%; background-color: #7adeee">Unit Buy Price</th>
+                            <th style="text-align:center; background-color: #7adeee">Line Total</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -202,9 +204,14 @@
                                                       id="productId_<?php echo $stu->id ?>"
                                                       class="form-control productID autocomplete_txt"
                                                       autocomplete="off"></td>
+                            <td>{{ Form::select('brandId[]', $brands, $stu->brand_id, ['class'=>'form-control', 'id'=>'brand_'.$stu->id, 'required'] ) }}</td>
+                            <td><input type="text" name="model[]"
+                                       id="model_<?php echo $stu->id ?>" style="text-align:left"
+                                       value="<?php echo $stu->model ?>" class="form-control"
+                                       autocomplete="off"></td>
 
                             <td><input type="number" name="quantity[]" id="quantity_<?php echo $stu->id ?>"
-                                       class="form-control changesNo "
+                                       class="form-control changesNo"
                                        value="<?php echo $stu->qty ?>"
                                        autocomplete="off" step="any"
                                        onkeypress="return IsNumeric(event);"
@@ -217,14 +224,14 @@
                                        autocomplete="off"></td>
                             <td><input type="number" name="stock[]" id="stock_<?php echo $stu->id ?>" readonly
                                        value="<?php echo static_product_stock($stu->product_id)['stock'] ?>"
-                                       class="form-control in_stock">
+                                       class="form-control in_stock" style="text-align:right">
                             </td>
 
 
                             <td><input type="text" data-type="unitBuyPrice" name="unitBuyPrice[]"
                                        value="<?php echo $stu->ubuy_price ?>"
                                        id="unitBuyPrice_<?php echo $stu->id ?>" style="text-align:right"
-                                       class="form-control autocomplete_txt"
+                                       class="form-control autocomplete_txt changesNo"
                                        autocomplete="off"></td>
                             <td><input readonly type="number" step="any" name="mrpTotal[]"
                                        value="<?php echo $stu->line_total ?>"
@@ -371,6 +378,9 @@
 
 <script src="{!! asset('alte305/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js')!!}"></script>
 <script src="{!! asset('alte305/plugins/select2/js/select2.full.min.js')!!}"></script>
+<script>
+    var brands = @json($brands); // Convert PHP array to JSON and make it accessible to the external script
+</script>
 <script src="{!! asset('supporting/invoice/auto_purchase.js')!!}"></script>
 
 <script>

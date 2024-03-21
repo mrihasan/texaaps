@@ -150,7 +150,7 @@
                                         <div class="company-address"
                                              style="text-align: right; color: blue; font-size:12px">
                                             {{'Sl No: '.$invoice->sl_no}}<br/>
-                                            <small>{{'Tracking Code: '.$invoice->transaction_code}}</small>
+                                            <small>{{'Tracking ID: '.$invoice->transaction_code}}</small>
                                             <br/>
                                             {{' Date: '.Carbon\Carbon::parse($invoice->transaction_date)->format('d-M-Y').','}}<br/>
                                             {{' By: '.($invoice->entryBy->name)}}
@@ -159,8 +159,8 @@
                                         </div>
 
                                     </td>
-
                                 </tr>
+                                <tr><td style="text-align:left; border: none " colspan="3">{{$invoice->notes}}</td></tr>
                                 <tr style="border: none">
                                     <td style="text-align:left; border: none" width="35% ">
 
@@ -193,7 +193,11 @@
                                     <td>{{ $key+1 }}</td>
 
                                     <td>
-                                        {{ $details->product_title.' : '.$details->product_type_title }}
+                                        {{--{{ $details->product_title.' : '.$details->product_type_title }}--}}
+                                        <strong>Product : </strong>{{ $details->product_title }}<br/>
+                                        <strong>Brand : </strong>{{ $details->brand_title }}<br/>
+                                        <strong>Model : </strong>{{ $details->model }}<br/>
+
                                     </td>
                                     <td style="text-align:right">{{ $details->qty}} </td>
                                     <td style="text-align:right">{{ $details->unit_name}} </td>

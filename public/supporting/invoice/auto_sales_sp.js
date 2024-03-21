@@ -8,7 +8,7 @@ function addNewRow() {
     html += '<td><input type="text" data-type="title" custom="doup" name="itemName[]" id="itemName_' + i + '" class="form-control autocomplete_txt" autocomplete="off" required ></td>';
     html += '<td class = "d-none"><input type="text" data-type="productId" name="productId[]" id="productId_' + i + '" class="form-control autocomplete_txt productID" autocomplete="off"></td>';
     // html += '<td></td>';
-    html += '<td><select name="brandId[]" class="form-control" id="brand_' + i + '">';
+    html += '<td><select name="brandId[]" class="form-control" id="brand_' + i + '" required>';
     html += '<option value="">Select Brand</option>';
     for (var brandId in brands) {
         html += '<option value="' + brandId + '">' + brands[brandId] + '</option>';
