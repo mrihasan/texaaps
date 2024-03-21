@@ -93,25 +93,26 @@
                                 $data['transaction_type'][$key]=='Withdraw'||$data['transaction_type'][$key]=='Loan Payment'||$data['transaction_type'][$key]=='Profit Share')?$data['transaction_amount'][$key]:''}}</td>
                                 <td style="text-align: right">{{$data['balance'][$key]}}</td>
                                 <td>
-                                    {{--@can('AccountMgtAccess')--}}
-                                        {{--<a href="{{ url('bank_ledger/' . $data['transaction_code'][$key] . '/edit') }}"--}}
-                                           {{--class="btn btn-info btn-xs" title="Edit"><span class="far fa-edit"--}}
-                                                                                          {{--aria-hidden="true"></span></a>--}}
-                                    {{--@endcan--}}
-                                    {{--@can('AccountMgtDelete')--}}
-                                        {{--{!! Form::open([--}}
-                                            {{--'method'=>'DELETE',--}}
-                                            {{--'url' => ['bank_ledger', $data['transaction_code'][$key]],--}}
-                                            {{--'style' => 'display:inline'--}}
-                                        {{--]) !!}--}}
-                                        {{--{!! Form::button('<span class="far fa-trash-alt" aria-hidden="true" title="Delete" />', array(--}}
-                                                {{--'type' => 'submit',--}}
-                                                {{--'class' => 'btn btn-danger btn-xs',--}}
-                                                {{--'title' => 'Delete',--}}
-                                                {{--'onclick'=>'return confirm("Confirm delete?")'--}}
-                                        {{--))!!}--}}
-                                        {{--{!! Form::close() !!}--}}
-                                    {{--@endcan--}}
+
+                                    @can('AccountMgtAccess')
+                                        <a href="{{ url('bank_ledger/' . $data['transaction_code'][$key] . '/edit') }}"
+                                           class="btn btn-info btn-xs" title="Edit"><span class="far fa-edit"
+                                                                                          aria-hidden="true"></span></a>
+                                    @endcan
+                                    @can('AccountMgtDelete')
+                                        {!! Form::open([
+                                            'method'=>'DELETE',
+                                            'url' => ['bank_ledger', $data['transaction_code'][$key]],
+                                            'style' => 'display:inline'
+                                        ]) !!}
+                                        {!! Form::button('<span class="far fa-trash-alt" aria-hidden="true" title="Delete" />', array(
+                                                'type' => 'submit',
+                                                'class' => 'btn btn-danger btn-xs',
+                                                'title' => 'Delete',
+                                                'onclick'=>'return confirm("Confirm delete?")'
+                                        ))!!}
+                                        {!! Form::close() !!}
+                                    @endcan
 
                                 </td>
                             </tr>
@@ -317,7 +318,7 @@
             ],
             "footerCallback": function (row, data, start, end, display) {
                 var api = this.api();
-                nb_cols = api.columns().nodes().length -1;
+                nb_cols = api.columns().nodes().length -2;
 //                nb_cols = 8;
                 var j = 6;
                 while (j < nb_cols) {
@@ -354,10 +355,15 @@
                 ranges: {
                     'Today': [moment(), moment()],
                     'Yesterday': [moment().subtract('days', 1), moment().subtract('days', 1)],
-                    'Last 7 Days': [moment().subtract('days', 6), moment()],
+//                    'Last 7 Days': [moment().subtract('days', 6), moment()],
                     'Last 30 Days': [moment().subtract('days', 29), moment()],
                     'This Month': [moment().startOf('month'), moment().endOf('month')],
-                    'Last Month': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')]
+                    'Last Month': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')],
+                    'Last 6 Month': [moment().subtract(6, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                    'This Year': [moment().startOf('year'), moment().endOf('year')],
+                    'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
+                    'The year before last year': [moment().subtract(2, 'year').startOf('year'), moment().subtract(2, 'year').endOf('year')]
+
                 },
                 opens: 'right',
                 buttonClasses: ['btn btn-default'],

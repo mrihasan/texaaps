@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BankAccount;
 use App\Models\BankLedger;
+use App\Models\BranchLedger;
 use App\Models\TransactionMethod;
 use Illuminate\Http\Request;
 use DB;
@@ -65,6 +66,19 @@ class BankAccountController extends Controller
         $ledger_banking->approve_status = 'Approved';
         $ledger_banking->entry_by = Auth::user()->id;
         $ledger_banking->save();
+
+        $ledger_branch = new BranchLedger();
+        $ledger_branch->branch_id = $request->branch;
+        $ledger_branch->transaction_date = date('Y-m-d H:i:s');
+        $ledger_branch->transaction_code = $transaction_code;
+        $ledger_branch->amount = $request->opening_balance;
+        $ledger_branch->transaction_type_id = 8;
+        $ledger_branch->transaction_method_id = 1;
+        $ledger_branch->comments = 'Bank Account Opening';
+        $ledger_branch->entry_by = Auth::user()->id;
+        $ledger_branch->approve_status = 'Approved';
+        $ledger_branch->save();
+
 
         \Session::flash('flash_message', 'Successfully Added');
         return redirect('bank_account');

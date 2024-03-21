@@ -299,6 +299,8 @@
                                         <br/>
                                         <br/>
                                         <br/>
+                                        {{ entryBy($invoice->entry_by) }}
+                                        <br/>
                                         Mob: +880176-5450149.<br/>
                                         E-mail: noman@texaaps.com
                                     </td>
@@ -383,7 +385,7 @@
                                     <td style="border: none; text-align: right" class="company-name">
                                         <strong>{{' Date: '.Carbon\Carbon::parse($invoice->transaction_date)->format('d-M-Y').','}}</strong><br/>
                                         <strong>
-                                            {{'Bill No: '.$invoice->transaction_code}}
+                                            {{'Bill No: '.$invoice->sl_no}}
                                             <br/>
                                             {{' By: '.($invoice->entryBy->name)}}
                                             <br/>
@@ -488,6 +490,8 @@
                                         <br/>
                                         <br/>
                                         <br/>
+                                        <br/>
+                                        {{ entryBy($invoice->entry_by) }}
                                         <br/>
                                         Mob: +880176-5450149.<br/>
                                         E-mail: noman@texaaps.com

@@ -26,6 +26,7 @@ return new class extends Migration
             $table->double('amount',10,1)->default(0);
             $table->text('comments')->nullable();
             $table->integer('entry_by')->nullable();
+            $table->integer('updated_by')->nullable();
             $table->enum('approve_status',['Approved','Not Approved'])->default('Approved');
 
             $table->timestamps();

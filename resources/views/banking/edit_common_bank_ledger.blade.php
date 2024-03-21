@@ -2,13 +2,13 @@
 @section('accounting_mo','menu-open')
 @section('accounting','active')
 @section('deposit','active')
-@section('title','Deposit Update')
+@section('title','Bank Ledger Update')
 @section('breadcrumb')
     <li class="nav-item d-none d-sm-inline-block">
         <a href="#" class="nav-link">Accounting</a>
     </li>
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">Deposit</a>
+        <a href="#" class="nav-link">Bank Ledger Update</a>
     </li>
 @endsection
 @push('css')
@@ -25,11 +25,11 @@
     <div class="row justify-content-center">
         <div class="card card-info col-md-8">
             <div class="card-header">
-                <h3 class="card-title">Bank Deposit Update</h3>
+                <h3 class="card-title">Bank Ledger Update</h3>
             </div>
             {!! Form::model($bank_ledger,['method'=>'PATCH', 'route'=>['bank_ledger.update',$bank_ledger->id],'class'=>'form-horizontal','id'=>'saveForm']) !!}
             {{ csrf_field() }}
-            {!! Form::hidden('transaction_type_id', 8 )!!} {{--Deposite--}}
+            {!! Form::hidden('edit_type', 'common' )!!}
 
             <div class="card-body">
                 <div class="form-group row{{ $errors->has('branch') ? 'has-error' : '' }}">
@@ -56,6 +56,20 @@
                         </em>
                     @endif
                 </div>
+                <div class="form-group row {{ $errors->has('transaction_type') ? ' has-error' : '' }}">
+                    <label class="col-sm-4 control-label text-md-right">Transaction Type : <span
+                                class="required"> * </span></label>
+                    <div class="col-sm-6">
+                        {{ Form::select('transaction_type', $transaction_types, $bank_ledger->transaction_type_id,['class'=>'form-control select2'] ) }}
+                        @if ($errors->has('transaction_type'))
+                            <span class="help-block">
+                                        <strong>{{ $errors->first('transaction_type') }}</strong>
+                                    </span>
+                        @endif
+
+                    </div>
+                </div>
+
                 <div class="form-group row {{ $errors->has('transaction_date') ? ' has-error' : '' }}">
                     <label class="col-md-4 control-label text-md-right">Transaction Date : <span
                                 class="required"> * </span></label>
@@ -64,7 +78,6 @@
                         <input type="text" class="form-control datetimepicker-input"
                                name="transaction_date"
                                value="{{Carbon\Carbon::parse(date('Y-m-d ', strtotime($bank_ledger->transaction_date)))->format('dd-mm-YYYY')}}" data-target="#transaction_date"/>
-                        {{--                                  {!! Form::input('text', 'transaction_date', \Carbon\Carbon::now()->format('d-M-Y'),['class'=>'form-control']) !!}--}}
                         <div class="input-group-append" data-target="#transaction_date"
                              data-toggle="datetimepicker">
                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>

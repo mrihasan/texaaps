@@ -27,6 +27,7 @@ return new class extends Migration
             $table->integer('transaction_method_id');
             $table->text('comments')->nullable();
             $table->integer('entry_by');
+            $table->integer('updated_by');
             $table->timestamps();
         });
     }

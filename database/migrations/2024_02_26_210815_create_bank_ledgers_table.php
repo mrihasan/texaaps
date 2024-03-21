@@ -32,6 +32,7 @@ return new class extends Migration
             $table->date('ref_date')->nullable();
             $table->string('ref_no')->nullable();
             $table->integer('entry_by')->nullable();
+            $table->integer('updated_by')->nullable();
             $table->enum('approve_status',['Approved','Not Approved'])->default('Approved');
 
             $table->timestamps();
