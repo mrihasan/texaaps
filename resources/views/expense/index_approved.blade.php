@@ -95,7 +95,7 @@
                                 <td>{{ ($section->approved_date==null)?'Not Yet Approved':Carbon\Carbon::parse($section->approved_date)->format('d-M-Y') }}</td>
 
                                 <td>
-                                    {{--                                    <a href="{{ url('expense/'.$section->id) }}" class="btn btn-success btn-xs" title="View "><span class="far fa-eye" aria-hidden="true"/></a>--}}
+                                    <a href="{{ url('expense/'.$section->id) }}" class="btn btn-success btn-xs" title="View "><span class="far fa-eye" aria-hidden="true"></span></a>
                                     @can('ExpenseAccess')
                                         <a href="{{ url('expense/' . $section->id . '/edit') }}"
                                            class="btn btn-info btn-xs"
