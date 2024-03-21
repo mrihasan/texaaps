@@ -157,7 +157,7 @@
                                         <strong>Product Brand :</strong>
                                     </td>
                                     <td style="text-align:left; border: none" colspan="2">
-                                        {{$payment_request->product->brand->title}}
+                                        {{$payment_request->brand->title}}
                                     </td>
                                 </tr>
                                 <tr style="border: none">

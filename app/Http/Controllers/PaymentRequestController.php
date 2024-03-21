@@ -32,9 +32,10 @@ class PaymentRequestController extends Controller
         $customer = customer_list();
         $supplier = supplier_list();
         $product = product_list();
+        $brands = brand_list();
         $expected_days = [30 => 30, 45 => 45, 60 => 60, 75 => 75, 90 => 90];
         $transaction_methods = TransactionMethod::orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Method', '')->toArray();
-        return view('payment_request.create', compact('customer', 'supplier', 'product', 'expected_days', 'transaction_methods', 'branches'));
+        return view('payment_request.create', compact('customer', 'supplier', 'product', 'expected_days', 'transaction_methods', 'branches','brands'));
     }
 
     public function store(Request $request)
@@ -58,6 +59,7 @@ class PaymentRequestController extends Controller
 
         $pr->customer_id = $request->customer;
         $pr->product_id = $request->product;
+        $pr->brand_id = $request->brand;
         $pr->model = $request->model;
         $pr->workorder_refno = $request->workorder_refno;
         $pr->workorder_date = date('Y-m-d', strtotime($request->workorder_date));
@@ -87,10 +89,11 @@ class PaymentRequestController extends Controller
         $customer = customer_list();
         $supplier = supplier_list();
         $product = product_list();
+        $brands = brand_list();
         $expected_days = [30 => 30, 45 => 45, 60 => 60, 75 => 75, 90 => 90];
         $transaction_methods = TransactionMethod::orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Method', '')->toArray();
 
-        return view('payment_request.edit', compact('payment_request', 'customer', 'supplier', 'product', 'expected_days', 'transaction_methods', 'branches'));
+        return view('payment_request.edit', compact('payment_request', 'customer', 'supplier', 'product', 'expected_days', 'transaction_methods', 'branches','brands'));
     }
 
     public function update(Request $request, PaymentRequest $payment_request)
@@ -105,6 +108,7 @@ class PaymentRequestController extends Controller
 
         $payment_request->customer_id = $request->customer;
         $payment_request->product_id = $request->product;
+        $payment_request->brand_id = $request->brand;
         $payment_request->model = $request->model;
         $payment_request->workorder_refno = $request->workorder_refno;
         $payment_request->workorder_date = date('Y-m-d', strtotime($request->workorder_date));

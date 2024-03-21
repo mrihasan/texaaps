@@ -41,6 +41,10 @@ class PaymentRequest extends Model
     {
         return $this->belongsTo(Product::class);
     }
+    public function brand()
+    {
+        return $this->belongsTo(Brand::class);
+    }
     public function branch()
     {
         return $this->belongsTo('App\Models\Branch');

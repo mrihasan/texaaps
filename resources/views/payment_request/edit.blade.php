@@ -81,6 +81,16 @@
                         @endif
                     </div>
                 </div>
+                <div class="form-group row {{ $errors->has('brand') ? ' has-error' : '' }}">
+                    <label for="brand" class="col-md-4 control-label text-md-right">Select
+                        Brands :<span class="required"> * </span></label>
+                    <div class="col-md-6">
+                        {{ Form::select('brand', $brands,$payment_request->brand_id, ['class'=>'form-control select2bs4' ] ) }}
+                        @if ($errors->has('brand'))
+                            <span class="help-block"><strong>{{ $errors->first('brand') }}</strong></span>
+                        @endif
+                    </div>
+                </div>
                 <div class="form-group row {{ $errors->has('model') ? ' has-error' : '' }}">
                     <label class="col-md-4 control-label text-md-right">Model :</label>
                     <div class="col-md-6">

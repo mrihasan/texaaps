@@ -57,7 +57,7 @@
                                 <td>{{ $key+1 }}</td>
                                 <td>{{ $data->user->name}}</td>
                                 <td>{{ $data->req_no }}</td>
-                                <td>{{ $data->product->title}}</td>
+                                <td>{{ $data->product->title}}<br/>{{ $data->brand->title??''}}<br/>{{ $data->model??''}}</td>
                                 <td>{{ $data->amount }}</td>
                                 <td>
                                     @if( $data->checked_by == null && Auth::user()->hasRole('Checked'))

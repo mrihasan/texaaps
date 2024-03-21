@@ -87,6 +87,16 @@
                         @endif
                     </div>
                 </div>
+                <div class="form-group row {{ $errors->has('brand') ? ' has-error' : '' }}">
+                    <label for="brand" class="col-md-4 control-label text-md-right">Select
+                        Brand :</label>
+                    <div class="col-md-6">
+                        {{ Form::select('brand', ['' => 'Select brand']+$brands,null, ['class'=>'form-control select2bs4' ] ) }}
+                        @if ($errors->has('brand'))
+                            <span class="help-block"><strong>{{ $errors->first('brand') }}</strong></span>
+                        @endif
+                    </div>
+                </div>
                 <div class="form-group row {{ $errors->has('model') ? ' has-error' : '' }}">
                     <label class="col-md-4 control-label text-md-right">Model :</label>
                     <div class="col-md-6">
