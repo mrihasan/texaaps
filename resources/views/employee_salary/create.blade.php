@@ -40,13 +40,15 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group row {{ $errors->has('user_id') ? ' has-error' : '' }}">
-                                <label class="col-md-5 control-label text-md-right "> Select Employee: <span class="required"> * </span></label>
+                                <label class="col-md-5 control-label text-md-right "> Select Employee: <span
+                                            class="required"> * </span></label>
                                 <div class="col-md-7 ">
                                     {!! Form::select('user_id', $user, null, array('class' => 'form-control select2bs4','id'=>'user_id','autofocus'=>'autofocus')) !!}
 
                                     @if ($errors->has('user_id'))
                                         <span class="help-block"><strong>{{ $errors->first('user_id') }}</strong></span>
                                     @endif
+                                    <span id="salaryamount" style="color: #9f1447"></span>
                                 </div>
                             </div>
                         </div>
@@ -78,7 +80,8 @@
                         <div class="col-md-6">
 
                             <div class="form-group row">
-                                <label class="control-label text-md-right col-md-5">Select Month : <span class="required"> * </span></label>
+                                <label class="control-label text-md-right col-md-5">Select Month : <span
+                                            class="required"> * </span></label>
                                 <div class="col-md-7">
                                     <select class="bs-select form-control" name="salary_month" id="salary_month">
                                         <option value="01" {{($current_month=='02') ? 'selected' : ''}}>January
@@ -133,29 +136,17 @@
                                     @endif
                                 </div>
                             </div>
-                            <div class="form-group row {{ $errors->has('salary_amount') ? ' has-error' : '' }}">
-                                <label class="col-md-5 control-label text-md-right"> Salary Amount : <span
-                                            class="required">  </span></label>
-                                <div class=" col-md-7">
-                                    {!! Form::number('salary_amount', null,['class'=>'form-control input-circle','placeholder'=>'Please Enter Salary Amount','id'=>'salaryamount']) !!}
-                                    {{--<span class="help-block">Regular, Family, Single, 500ml etc</span>--}}
-                                    @if ($errors->has('salary_amount'))
-                                        <span class="help-block"><strong>{{ $errors->first('salary_amount') }}</strong></span>
-                                    @endif
-                                </div>
-                            </div>
-                            <hr/>
-                            <div class="form-group row {{ $errors->has('account') ? ' has-error' : '' }}">
-                                <label class="col-sm-5 control-label text-md-right"> Select Account (Payment From) : <span
+
+                            <div class="form-group row {{ $errors->has('branch') ? ' has-error' : '' }}">
+                                <label class="col-sm-5 control-label text-md-right"> Select Branch : <span
                                             class="required"> * </span></label>
                                 <div class="col-sm-7">
-                                    {{ Form::select('account', $account, null,['class'=>'form-control '] ) }}
-                                    @if ($errors->has('account'))
+                                    {{ Form::select('branch', $account, null,['class'=>'form-control '] ) }}
+                                    @if ($errors->has('branch'))
                                         <span class="help-block">
-                                        <strong>{{ $errors->first('account') }}</strong>
+                                        <strong>{{ $errors->first('branch') }}</strong>
                                     </span>
                                     @endif
-
                                 </div>
                             </div>
                             <div class="form-group row {{ $errors->has('transaction_method') ? ' has-error' : '' }}">
@@ -175,7 +166,8 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group row ">
-                                <label class="control-label text-md-right col-md-5">Select Year : <span class="required"> * </span> </label>
+                                <label class="control-label text-md-right col-md-5">Select Year : <span
+                                            class="required"> * </span> </label>
                                 <div class="col-md-7">
                                     <input class="date-own form-control" type="number" name="year" id="salary_year"
                                            value="<?php echo date('Y') ?>">
@@ -206,26 +198,51 @@
                                 </div>
                             </div>
 
+                            <div class="form-group row {{ $errors->has('bank_account') ? ' has-error' : '' }}">
+                                <label class="col-sm-5 control-label text-md-right"> Select Account : <span
+                                            class="required"> * </span></label>
+                                <div class="col-sm-7">
+                                    {{ Form::select('bank_account', $to_accounts, null,['class'=>'form-control '] ) }}
+                                    @if ($errors->has('bank_account'))
+                                        <span class="help-block">
+                                        <strong>{{ $errors->first('bank_account') }}</strong>
+                                    </span>
+                                    @endif
+                                </div>
+                            </div>
                             <div class="form-group row {{ $errors->has('paidsalary_amount') ? ' has-error' : '' }}">
 
-                                <label class="col-md-5 control-label text-md-right"> Paid Amount : <span class="required"> * </span></label>
+                                <label class="col-md-5 control-label text-md-right"> Paid Amount : <span
+                                            class="required"> * </span></label>
                                 <div class=" col-md-7">
                                     {!! Form::text('paidsalary_amount', null,['class'=>'form-control','id'=>'rest_salary']) !!}
                                     @if ($errors->has('paidsalary_amount'))
                                         <span class="help-block"><strong>{{ $errors->first('paidsalary_amount') }}</strong></span>
                                     @endif
+
                                 </div>
                             </div>
-                            <hr/>
-                            <div class="form-group row">
-                                <label class="col-md-5 control-label text-md-right">Comments :</label>
-                                <div class="col-md-7">
-                                    {!! Form::textarea('comments', null,['class'=>'form-control ', 'placeholder'=>'i.e: Check No : CA123456','rows'=>'3']) !!}
-                                </div>
-                            </div>
+                            {{--<div class="form-group row {{ $errors->has('salary_amount') ? ' has-error' : '' }}">--}}
+                                {{--<label class="col-md-5 control-label text-md-right"> Salary Amount : <span--}}
+                                            {{--class="required">  </span></label>--}}
+                                {{--<div class=" col-md-7">--}}
+                                    {{--{!! Form::number('salary_amount', null,['class'=>'form-control input-circle','placeholder'=>'Please Enter Salary Amount','id'=>'salaryamount']) !!}--}}
+                                    {{--<span class="help-block">Regular, Family, Single, 500ml etc</span>--}}
+                                    {{--@if ($errors->has('salary_amount'))--}}
+                                        {{--<span class="help-block"><strong>{{ $errors->first('salary_amount') }}</strong></span>--}}
+                                    {{--@endif--}}
+                                {{--</div>--}}
+                            {{--</div>--}}
+
+
+                            {{--<div class="form-group row">--}}
+                                {{--<label class="col-md-5 control-label text-md-right">Comments :</label>--}}
+                                {{--<div class="col-md-7">--}}
+                                    {{--{!! Form::textarea('comments', null,['class'=>'form-control ', 'placeholder'=>'i.e: Check No : CA123456','rows'=>'3']) !!}--}}
+                                {{--</div>--}}
+                            {{--</div>--}}
 
                         </div>
-
 
 
                     </div>
@@ -274,8 +291,8 @@
 </script>
 
 <script>
-    $(document).ready(function() {
-        $("input[name='paidsalary_amount']").click(function() {
+    $(document).ready(function () {
+        $("input[name='paidsalary_amount']").click(function () {
             var user_id = $('#user_id').val();
             var month = $('#salary_month').val();
             var year = $('#salary_year').val();
@@ -284,7 +301,7 @@
             $.ajax({
                 url: "employ_salary_rest",
                 method: 'POST',
-                data: {user_id: user_id,month: month, year:year, _token: token},
+                data: {user_id: user_id, month: month, year: year, _token: token},
 //            dataType: 'json',
                 success: function (data) {
                     console.log(data);
@@ -300,19 +317,15 @@
 <script>
     $("select[name='user_id']").change(function () {
         var user_id = $(this).val();
-//        console.log(user_id);
         var token = $("input[name='_token']").val();
         $.ajax({
             url: "employ_salary_value",
             method: 'POST',
             data: {user_id: user_id, _token: token},
-//            dataType: 'json',
             success: function (data) {
-//                console.log(data);
-                $('#salaryamount').val(data.salary_amount);
-//                $('#org_commission').val(data.org_commission);
+//                $('#salaryamount').val(data.salary_amount);
+                $('#salaryamount').text('Salary Amount : '+data.salary_amount);
             }
-
         });
     });
 </script>

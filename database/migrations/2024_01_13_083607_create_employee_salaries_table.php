@@ -27,7 +27,9 @@ return new class extends Migration
             $table->integer('holiday_weekend')->nullable();
             $table->integer('leave_day')->nullable();
             $table->integer('absent_day')->nullable();
-            $table->integer('paidsalary_amount');
+            $table->integer('paidsalary_amount')->nullable();
+            $table->integer('entry_by')->nullable();
+            $table->integer('updated_by')->nullable();
             $table->timestamps();
         });
     }

@@ -259,6 +259,7 @@ class LedgerController extends Controller
     }
     public function show(Ledger $ledger)
     {
+//        dd($ledger);
         return view('accounting.show_ledger', compact('ledger'));
     }
 

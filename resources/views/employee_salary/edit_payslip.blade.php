@@ -28,19 +28,18 @@
                 </div>
                 {!! Form::model($employee_salary,['method'=>'PATCH', 'route'=>['employee_salary.update',$employee_salary->id],'class'=>'form-horizontal','id'=>'saveForm']) !!}
                 {{ csrf_field() }}
-                {!! Form::hidden('salary_type', 'Salary' )!!}
+
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group row {{ $errors->has('user_id') ? ' has-error' : '' }}">
-                                <label class="col-md-5 control-label text-md-right "> Employee:</label>
+                                <label class="col-md-5 control-label text-md-right "> Select Employee:</label>
                                 <div class="col-md-7 ">
                                     {!! Form::select('user_id', $user, null, array('class' => 'form-control')) !!}
 
                                     @if ($errors->has('user_id'))
                                         <span class="help-block"><strong>{{ $errors->first('user_id') }}</strong></span>
                                     @endif
-                                    <span id="salaryamount" style="color: #9f1447"></span>
                                 </div>
                             </div>
                         </div>
@@ -76,30 +75,30 @@
                                             class="required"> * </span></label>
                                 <div class="col-md-7">
                                     <select class="bs-select form-control" name="salary_month">
-                                        <option value="01" {{($employee_salary->salary_month==1) ? 'selected' : ''}}>January
+                                        <option value="01" {{($current_month=='02') ? 'selected' : ''}}>January
                                         </option>
-                                        <option value="02" {{($employee_salary->salary_month==2) ? 'selected' : ''}}>February
+                                        <option value="02" {{($current_month=='03') ? 'selected' : ''}}>February
                                         </option>
-                                        <option value="03" {{($employee_salary->salary_month==3) ? 'selected' : ''}}>March
+                                        <option value="03" {{($current_month=='04') ? 'selected' : ''}}>March
                                         </option>
-                                        <option value="04" {{($employee_salary->salary_month==4) ? 'selected' : ''}}>April
+                                        <option value="04" {{($current_month=='05') ? 'selected' : ''}}>April
                                         </option>
-                                        <option value="05" {{($employee_salary->salary_month==5) ? 'selected' : ''}}>May
+                                        <option value="05" {{($current_month=='06') ? 'selected' : ''}}>May
                                         </option>
-                                        <option value="06" {{($employee_salary->salary_month==6) ? 'selected' : ''}}>June
+                                        <option value="06" {{($current_month=='07') ? 'selected' : ''}}>June
                                         </option>
-                                        <option value="07" {{($employee_salary->salary_month==7) ? 'selected' : ''}}>July
+                                        <option value="07" {{($current_month=='08') ? 'selected' : ''}}>July
                                         </option>
-                                        <option value="08" {{($employee_salary->salary_month==8) ? 'selected' : ''}}>August
+                                        <option value="08" {{($current_month=='09') ? 'selected' : ''}}>August
                                         </option>
-                                        <option value="09" {{($employee_salary->salary_month==9) ? 'selected' : ''}}>
+                                        <option value="09" {{($current_month=='10') ? 'selected' : ''}}>
                                             September
                                         </option>
-                                        <option value="10" {{($employee_salary->salary_month==10) ? 'selected' : ''}}>October
+                                        <option value="10" {{($current_month=='11') ? 'selected' : ''}}>October
                                         </option>
-                                        <option value="11" {{($employee_salary->salary_month==11) ? 'selected' : ''}}>November
+                                        <option value="11" {{($current_month=='12') ? 'selected' : ''}}>November
                                         </option>
-                                        <option value="12" {{($employee_salary->salary_month==12) ? 'selected' : ''}}>December
+                                        <option value="12" {{($current_month=='01') ? 'selected' : ''}}>December
                                         </option>
                                     </select>
                                 </div>
@@ -128,32 +127,17 @@
                                     @endif
                                 </div>
                             </div>
-                            <div class="form-group row {{ $errors->has('branch') ? ' has-error' : '' }}">
-                                <label class="col-sm-5 control-label text-md-right"> Select Branch : <span
-                                            class="required"> * </span></label>
-                                <div class="col-sm-7">
-                                    {{ Form::select('branch', $account, $employee_salary->branch_id,['class'=>'form-control '] ) }}
-                                    @if ($errors->has('branch'))
-                                        <span class="help-block">
-                                        <strong>{{ $errors->first('branch') }}</strong>
-                                    </span>
+                            <div class="form-group row{{ $errors->has('salary_amount') ? ' has-error' : '' }}">
+                                <label class="col-md-5 control-label text-md-right"> Salary Amount : <span
+                                            class="required">  </span></label>
+                                <div class=" col-md-7">
+                                    {!! Form::number('salary_amount', null,['class'=>'form-control input-circle','placeholder'=>'Please Enter Salary Amount','id'=>'salaryamount']) !!}
+                                    {{--<span class="help-block">Regular, Family, Single, 500ml etc</span>--}}
+                                    @if ($errors->has('salary_amount'))
+                                        <span class="help-block"><strong>{{ $errors->first('salary_amount') }}</strong></span>
                                     @endif
                                 </div>
                             </div>
-                            <div class="form-group row {{ $errors->has('transaction_method') ? ' has-error' : '' }}">
-                                <label class="col-sm-5 control-label text-md-right">Transaction Method : <span
-                                            class="required"> * </span></label>
-                                <div class="col-sm-7">
-                                    {{ Form::select('transaction_method', $transaction_methods, $bank_ledger->transaction_method_id,['class'=>'form-control select2'] ) }}
-                                    @if ($errors->has('transaction_method'))
-                                        <span class="help-block">
-                                        <strong>{{ $errors->first('transaction_method') }}</strong>
-                                    </span>
-                                    @endif
-
-                                </div>
-                            </div>
-
                         </div>
                         <div class="col-md-6">
                             <div class="form-group row">
@@ -182,24 +166,13 @@
                                             class="required">  </span></label>
                                 <div class=" col-md-7">
                                     {!! Form::number('absent_day', null,['class'=>'form-control input-circle','placeholder'=>'Please Enter days']) !!}
+                                    {{--<span class="help-block">Regular, Family, Single, 500ml etc</span>--}}
                                     @if ($errors->has('absent_day'))
                                         <span class="help-block"><strong>{{ $errors->first('absent_day') }}</strong></span>
                                     @endif
                                 </div>
                             </div>
 
-                            <div class="form-group row {{ $errors->has('bank_account') ? ' has-error' : '' }}">
-                                <label class="col-sm-5 control-label text-md-right"> Select Account : <span
-                                            class="required"> * </span></label>
-                                <div class="col-sm-7">
-                                    {{ Form::select('bank_account', $to_accounts, $bank_ledger->bank_account_id,['class'=>'form-control '] ) }}
-                                    @if ($errors->has('bank_account'))
-                                        <span class="help-block">
-                                        <strong>{{ $errors->first('bank_account') }}</strong>
-                                    </span>
-                                    @endif
-                                </div>
-                            </div>
                             <div class="form-group row{{ $errors->has('paidsalary_amount') ? ' has-error' : '' }}">
                                 <label class="col-md-5 control-label text-md-right"> Paid Amount : <span
                                             class="required"> * </span></label>
@@ -210,6 +183,8 @@
                                     @endif
                                 </div>
                             </div>
+
+
                         </div>
 
                     </div>
@@ -252,6 +227,27 @@
 
     })
 </script>
+<script>
+    $("select[name='user_id']").change(function () {
+        var user_id = $(this).val();
+        console.log(user_id);
+        var token = $("input[name='_token']").val();
+        $.ajax({
+//            url: "employ_salary_value",
+            url: "<?php echo route('employ_salary_value') ?>",
+            method: 'POST',
+            data: {user_id: user_id, _token: token},
+//            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+                $('#salaryamount').val(data.salary_amount);
+//                $('#org_commission').val(data.org_commission);
+            }
+
+        });
+    });
+</script>
+
 {{--prevent multiple form submits (Jquery needed)--}}
 <script>
     $('#saveForm').submit(function () {

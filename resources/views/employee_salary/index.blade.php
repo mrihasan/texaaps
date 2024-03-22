@@ -57,7 +57,7 @@
                             <th>Salary</th>
                             <th>Paid Amount</th>
                             <th>Date</th>
-                            {{--<th>Action</th>--}}
+                            <th>Action</th>
                         </tr>
                         </thead>
                         <tfoot>
@@ -72,7 +72,7 @@
                             <td style="text-align:right"></td>
                             <td style="text-align:right"></td>
                             <td style="text-align:right"></td>
-                            {{--<td></td>--}}
+                            <td></td>
                         </tr>
                         </tfoot>
                         <tbody>
@@ -80,7 +80,10 @@
                             <tr>
                                 <td>{{ $key+1 }}</td>
 
-                                <td>{{ $employee_salary->user->name }}</td>
+                                <td>{{ $employee_salary->user->name }}
+                                    <a href="{{ route('user.show',$employee_salary->user_id) }}" class="btn btn-success btn-xs"
+                                       title="User Profile View"><span class="far fa-user-circle" aria-hidden="true"></span></a>
+                                </td>
                                 <td>{{ date('F', mktime(0, 0, 0, $employee_salary->salary_month, 10)).' - '. $employee_salary->year}}</td>
                                 <td>{{ $employee_salary->type}}</td>
                                 <td>{{ $employee_salary->holiday_weekend }}</td>
@@ -90,24 +93,27 @@
                                 <td style="text-align:right">{{ $employee_salary->salary_amount}}</td>
                                 <td style="text-align:right">{{ $employee_salary->paidsalary_amount}}</td>
                                 <td>{{ Carbon\Carbon::parse($employee_salary->created_at)->format('d-M-Y') }}</td>
-                                {{--<td class="col-md-1">--}}
-                                    {{--@can('employee-salary')--}}
-                                    {{--<a href="{{ url('employee_salary/' . $employee_salary->id . '/edit') }}" class="btn btn-info btn-xs" title="Edit"><span class="far fa-edit" aria-hidden="true"></span></a>--}}
+                                <td class="col-md-1">
+                                    <a href="{{ url('employee_salary/' . $employee_salary->id ) }}" class="btn btn-success btn-xs"
+                                       title="Show"><span class="far fa-eye" aria-hidden="true"></span></a>
 
-                                    {{--{!! Form::open([--}}
-                                        {{--'method'=>'DELETE',--}}
-                                        {{--'url' => ['employee_salary', $employee_salary->id],--}}
-                                        {{--'style' => 'display:inline'--}}
-                                    {{--]) !!}--}}
-                                    {{--{!! Form::button('<span class="far fa-trash-alt" aria-hidden="true" title="Delete" ></span>', array(--}}
-                                            {{--'type' => 'submit',--}}
-                                            {{--'class' => 'btn btn-danger btn-xs',--}}
-                                            {{--'title' => 'Delete',--}}
-                                            {{--'onclick'=>'return confirm("Confirm delete?")'--}}
-                                    {{--))!!}--}}
-                                    {{--{!! Form::close() !!}--}}
-                                    {{--@endcan--}}
-                                {{--</td>--}}
+                                @can('EmployeeAccess')
+                                    <a href="{{ url('employee_salary/' . $employee_salary->id . '/edit') }}" class="btn btn-info btn-xs" title="Edit"><span class="far fa-edit" aria-hidden="true"></span></a>
+
+                                    {!! Form::open([
+                                        'method'=>'DELETE',
+                                        'url' => ['employee_salary', $employee_salary->id],
+                                        'style' => 'display:inline'
+                                    ]) !!}
+                                    {!! Form::button('<span class="far fa-trash-alt" aria-hidden="true" title="Delete" ></span>', array(
+                                            'type' => 'submit',
+                                            'class' => 'btn btn-danger btn-xs',
+                                            'title' => 'Delete',
+                                            'onclick'=>'return confirm("Confirm delete?")'
+                                    ))!!}
+                                    {!! Form::close() !!}
+                                    @endcan
+                                </td>
                             </tr>
                         @endforeach
                         </tbody>
