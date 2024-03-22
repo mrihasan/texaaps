@@ -35,12 +35,12 @@
                             <div class="form-group row {{ $errors->has('user_id') ? ' has-error' : '' }}">
                                 <label class="col-md-5 control-label text-md-right "> Employee:</label>
                                 <div class="col-md-7 ">
-                                    {!! Form::select('user_id', $user, null, array('class' => 'form-control')) !!}
+                                    <label class="col-md-5 control-label text-md-right "> {{$employee_salary->user->name}}</label>
+                                    {{--{!! Form::select('user_id', $user, null, array('class' => 'form-control')) !!}--}}
 
-                                    @if ($errors->has('user_id'))
-                                        <span class="help-block"><strong>{{ $errors->first('user_id') }}</strong></span>
-                                    @endif
-                                    <span id="salaryamount" style="color: #9f1447"></span>
+                                    {{--@if ($errors->has('user_id'))--}}
+                                        {{--<span class="help-block"><strong>{{ $errors->first('user_id') }}</strong></span>--}}
+                                    {{--@endif--}}
                                 </div>
                             </div>
                         </div>

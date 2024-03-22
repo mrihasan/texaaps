@@ -74,10 +74,10 @@ class BrandController extends Controller
         } else {
 
             $brand->delete();
-        \Session::flash('flash_message', 'Successfully Deleted');
+            \Session::flash('flash_message', 'Successfully Deleted');
 
-        return back();
-    }
+            return back();
+        }
     }
 
 }
