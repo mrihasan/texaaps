@@ -28,6 +28,7 @@ return new class extends Migration
             $table->text('comments')->nullable();
             $table->integer('entry_by');
             $table->integer('updated_by');
+            $table->bigInteger('invoice_id')->nullable();
             $table->timestamps();
         });
     }

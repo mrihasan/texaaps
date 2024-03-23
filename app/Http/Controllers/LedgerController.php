@@ -81,9 +81,10 @@ class LedgerController extends Controller
         abort_if(Gate::denies('AccountMgtAccess'), redirect('error'));
         $user = supplier_list();
         $branches = branch_list();
+        $invoices = DB::table('invoices')->where('transaction_type', 'Purchase')->pluck('transaction_code', 'id')->prepend('Select Invoice', '')->toArray();
         $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
         $transaction_methods = TransactionMethod::orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Method', '')->toArray();
-        return view('accounting.payment', compact('user', 'branches', 'transaction_methods', 'to_accounts'));
+        return view('accounting.payment', compact('user', 'branches', 'transaction_methods', 'to_accounts','invoices'));
     }
 
     public function receipt()
@@ -91,9 +92,10 @@ class LedgerController extends Controller
         abort_if(Gate::denies('AccountMgtAccess'), redirect('error'));
         $user = customer_list();
         $branches = branch_list();
+        $invoices = DB::table('invoices')->where('transaction_type', 'Sales')->pluck('transaction_code', 'id')->prepend('Select Invoice', '')->toArray();
         $transaction_methods = TransactionMethod::orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Method', '')->toArray();
         $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
-        return view('accounting.receipt', compact('user', 'branches', 'transaction_methods', 'to_accounts','transaction_methods'));
+        return view('accounting.receipt', compact('user', 'branches', 'transaction_methods', 'to_accounts','transaction_methods','invoices'));
     }
 
     public function store(Request $request)
@@ -140,6 +142,7 @@ class LedgerController extends Controller
                 $ledger->amount = $request->amount;
                 $ledger->comments = $request->comments;
                 $ledger->entry_by = Auth::user()->id;
+                $ledger->invoice_id = $request->invoice;
 
                 $ledger_branch->branch_id = $request->branch;
                 $ledger_branch->transaction_date = date('Y-m-d', strtotime($request->transaction_date)) . date(' H:i:s');
@@ -188,11 +191,13 @@ class LedgerController extends Controller
         if ($ledger->transaction_type_id == 4) //4=Payment
         {
             $user = supplier_list();
-            return view('accounting.edit_payment', compact('user', 'branches', 'transaction_methods', 'ledger', 'bank_ledger', 'to_accounts'));
+            $invoices = DB::table('invoices')->where('transaction_type', 'Purchase')->pluck('transaction_code', 'id')->prepend('Select Invoice', '')->toArray();
+            return view('accounting.edit_payment', compact('user', 'branches', 'transaction_methods', 'ledger', 'bank_ledger', 'to_accounts','invoices'));
         } elseif ($ledger->transaction_type_id == 3) //3=Receipt
         {
             $user = customer_list();
-            return view('accounting.edit_receipt', compact('user', 'branches', 'transaction_methods', 'ledger', 'bank_ledger', 'to_accounts'));
+            $invoices = DB::table('invoices')->where('transaction_type', 'Sales')->pluck('transaction_code', 'id')->prepend('Select Invoice', '')->toArray();
+            return view('accounting.edit_receipt', compact('user', 'branches', 'transaction_methods', 'ledger', 'bank_ledger', 'to_accounts','invoices'));
         } else {
             $user = user_list();
             return view('accounting.edit', compact('user', 'branches', 'transaction_methods', 'ledger', 'bank_ledger', 'to_accounts'));
@@ -218,6 +223,7 @@ class LedgerController extends Controller
         $ledger->amount = $request->amount;
         $ledger->comments = $request->comments;
         $ledger->entry_by = Auth::user()->id;
+        $ledger->invoice_id = $request->invoice;
         $ledger->update();
 
         $del_lb = DB::table('branch_ledgers')->where('transaction_code', $ledger->transaction_code)->delete();

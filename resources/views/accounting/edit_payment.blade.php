@@ -88,6 +88,16 @@
                         @endif
                     </div>
                 </div>
+                <div class="form-group row {{ $errors->has('invoice') ? ' has-error' : '' }}">
+                    <label for="invoice" class="col-md-4 control-label text-md-right">Select
+                        Invoice :</label>
+                    <div class="col-md-6">
+                        {{ Form::select('invoice', $invoices,$ledger->invoice_id, ['class'=>'form-control select2bs4' ] ) }}
+                        @if ($errors->has('invoice'))
+                            <span class="help-block"><strong>{{ $errors->first('invoice') }}</strong></span>
+                        @endif
+                    </div>
+                </div>
 
                 <div class="form-group row {{ $errors->has('amount') ? ' has-error' : '' }}">
                     <label class="col-md-4 control-label text-md-right">Paid Amount :<span
