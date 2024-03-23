@@ -28,7 +28,7 @@
                 </div>
                 {!! Form::model($employee_salary,['method'=>'PATCH', 'route'=>['employee_salary.update',$employee_salary->id],'class'=>'form-horizontal','id'=>'saveForm']) !!}
                 {{ csrf_field() }}
-                {!! Form::hidden('salary_type', 'Salary' )!!}
+                {!! Form::hidden('salary_type', $employee_salary->type )!!}
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">

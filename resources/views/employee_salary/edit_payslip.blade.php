@@ -16,7 +16,7 @@
         <a href="{{url('employee_salary')}}" class="nav-link">Employee Salary</a>
     </li>
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">Update Employee Payslip</a>
+        <a href="#" class="nav-link">Update Employee -  {{$employee_salary->type}}</a>
     </li>
 @endsection
 @section('maincontent')
@@ -24,11 +24,11 @@
         <div class="col-md-12">
             <div class="card card-primary">
                 <div class="card-header">
-                    <h3 class="card-title">Update Employee Payslip</h3>
+                    <h3 class="card-title">Update Employee -  {{$employee_salary->type}}</h3>
                 </div>
                 {!! Form::model($employee_salary,['method'=>'PATCH', 'route'=>['employee_salary.update',$employee_salary->id],'class'=>'form-horizontal','id'=>'saveForm']) !!}
                 {{ csrf_field() }}
-                {!! Form::hidden('salary_type', 'Payslip' )!!}
+                {!! Form::hidden('salary_type', $employee_salary->type )!!}
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">

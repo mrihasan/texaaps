@@ -53,8 +53,9 @@ class EmployeeSalaryController extends Controller
         $current_month = date('n');
         $user = Employee::with('user')->get()->pluck('user.name', 'user.id')->prepend('Select Employee', '')->toArray();;
         $account = branch_list();
-//        dd($user);
-        return view('employee_salary.create_bonus', compact('user', 'current_month', 'account'));
+        $transaction_methods = transaction_method();
+        $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
+        return view('employee_salary.create_bonus', compact('user', 'current_month', 'account','transaction_methods','to_accounts'));
 
     }
 
@@ -94,7 +95,7 @@ class EmployeeSalaryController extends Controller
                 \Session::flash('flash_error', 'Salary Pay Slip not Generated, Please Generate First');
                 return Redirect::back();
             } else {
-                $salary_payment = EmployeeSalary::where('type', 'Payment')->where('user_id', $request->user_id)
+                $salary_payment = EmployeeSalary::where('type', 'Salary Payment')->where('user_id', $request->user_id)
                     ->where('salary_month', (int)$request->salary_month)->where('year', (int)$request->year)
                     ->sum('paidsalary_amount');
                 $rest_salary = ($salary_payslip->salary_amount) - $salary_payment;
@@ -112,7 +113,7 @@ class EmployeeSalaryController extends Controller
                 \Session::flash('flash_error', 'Bonus Pay Slip not Generated, Please Generate First');
                 return Redirect::back();
             } else {
-                $salary_payment = EmployeeSalary::where('type', 'Payment')->where('user_id', $request->user_id)
+                $salary_payment = EmployeeSalary::where('type', 'Bonus Payment')->where('user_id', $request->user_id)
                     ->where('salary_month', (int)$request->salary_month)->where('year', (int)$request->year)
                     ->sum('paidsalary_amount');
                 $rest_salary = ($salary_payslip->salary_amount) - $salary_payment;
@@ -255,7 +256,7 @@ class EmployeeSalaryController extends Controller
                 $ledger->transaction_method_id = 5;
                 $ledger->transaction_date = date('Y-m-d H:i:s');
                 $ledger->transaction_code = $transaction_code;
-                $ledger->amount = $employees[$i]->salary_amount;
+                $ledger->amount = ($request->type == 'Bonus Payslip') ? ($employees[$i]->salary_amount * $employees[$i]->bonus_amount) / 100 : $employees[$i]->salary_amount;
                 $ledger->comments = $request->type . ' of ' . date("F", mktime(0, 0, 0, $request->salary_month, 10)) . ' - ' . $request->year;
                 $ledger->entry_by = Auth::user()->id;
 
@@ -323,7 +324,7 @@ class EmployeeSalaryController extends Controller
         $ledger->transaction_method_id = 5;
         $ledger->transaction_date = date('Y-m-d H:i:s');
         $ledger->transaction_code = $transaction_code;
-        $ledger->amount = $employees->salary_amount;
+        $ledger->amount = ($request->type == 'Bonus Payslip') ? ($employees->salary_amount * $employees->bonus_amount) / 100 : $employees->salary_amount;
         $ledger->comments = $request->type . ' of ' . date("F", mktime(0, 0, 0, $request->salary_month, 10)) . ' - ' . $request->year;
         $ledger->entry_by = Auth::user()->id;
 
@@ -344,7 +345,7 @@ class EmployeeSalaryController extends Controller
     {
 //        dd($employee_salary);
 //        abort_if(Gate::denies('employee-salary'), redirect('error'));
-        if ($employee_salary->type == 'Salary Payslip') {
+        if ($employee_salary->type == 'Salary Payslip' ||$employee_salary->type == 'Bonus Payslip') {
             return view('employee_salary.edit_payslip', compact('employee_salary'));
         } else {
 
@@ -360,7 +361,7 @@ class EmployeeSalaryController extends Controller
     public function update(Request $request, $id)
     {
 //        abort_if(Gate::denies('employee-salary'), redirect('error'));
-        if ($request->salary_type == 'Salary') {
+        if ($request->salary_type == 'Salary Payment'||$request->salary_type == 'Bonus Payment') {
             $this->validate($request, [
                 'salary_month' => 'required',
                 'year' => 'required',
@@ -370,7 +371,7 @@ class EmployeeSalaryController extends Controller
                 'transaction_method' => 'required',
             ]);
             $items = EmployeeSalary::find($id);
-            if ($request->salary_type == 'Salary') {
+            if ($request->salary_type == 'Salary Payment') {
                 $salary_payslip = EmployeeSalary::where('type', 'Salary Payslip')->where('user_id', $items->user_id)
                     ->where('salary_month', (int)($request->salary_month))->where('year', (int)($request->year))
                     ->first();
@@ -378,7 +379,25 @@ class EmployeeSalaryController extends Controller
                     \Session::flash('flash_error', 'Salary Pay Slip not Generated, Please Generate First');
                     return Redirect::back();
                 } else {
-                    $salary_payment = EmployeeSalary::where('type', 'Payment')->where('user_id', $items->user_id)
+                    $salary_payment = EmployeeSalary::where('type', 'Salary Payment')->where('user_id', $items->user_id)
+                        ->where('salary_month', (int)$request->salary_month)->where('year', (int)$request->year)
+                        ->sum('paidsalary_amount');
+                    $rest_salary = ($salary_payslip->salary_amount) - ($salary_payment-$items->paidsalary_amount);
+                    if ($request->paidsalary_amount > $rest_salary) {
+                        \Session::flash('flash_error', 'You can not pay more then the Payslip amount of '.$salary_payslip->salary_amount);
+                        return Redirect::back();
+                    }
+                }
+            }
+            if ($request->salary_type == 'Bonus Payment') {
+                $salary_payslip = EmployeeSalary::where('type', 'Bonus Payslip')->where('user_id', $items->user_id)
+                    ->where('salary_month', (int)($request->salary_month))->where('year', (int)($request->year))
+                    ->first();
+                if ($salary_payslip == null) {
+                    \Session::flash('flash_error', 'Salary Pay Slip not Generated, Please Generate First');
+                    return Redirect::back();
+                } else {
+                    $salary_payment = EmployeeSalary::where('type', 'Bonus Payment')->where('user_id', $items->user_id)
                         ->where('salary_month', (int)$request->salary_month)->where('year', (int)$request->year)
                         ->sum('paidsalary_amount');
                     $rest_salary = ($salary_payslip->salary_amount) - ($salary_payment-$items->paidsalary_amount);
@@ -449,7 +468,7 @@ class EmployeeSalaryController extends Controller
             $ledger->save();
             $ledger_branch->save();
             $ledger_banking->save();
-        } elseif ($request->salary_type == 'Payslip') {
+        } elseif ($request->salary_type == 'Salary Payslip'||$request->salary_type == 'Bonus Payslip') {
             $this->validate($request, [
                 'salary_month' => 'required',
                 'year' => 'required',

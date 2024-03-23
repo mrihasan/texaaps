@@ -33,7 +33,7 @@
                 <!-- form start -->
                 {!! Form::open(['url' => 'employee_salary', 'class' => 'form-horizontal','id'=>'saveForm']) !!}
                 {{ csrf_field() }}
-                {!! Form::hidden('type', 'Payment' )!!}
+                {!! Form::hidden('type', 'Salary Payment' )!!}
                 {!! Form::hidden('salary_type', 'Salary' )!!}
 
                 <div class="card-body">
