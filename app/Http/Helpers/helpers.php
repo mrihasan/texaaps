@@ -344,6 +344,30 @@ function ledgerBalance($user_id)
 
 function ledger_account($account_id, $start_date, $end_date)
 {
+    $mindate_ledger = DB::table('ledgers')->MIN('transaction_date');
+    $before1day = new DateTime($start_date);
+    $before1day->sub(new DateInterval('P1D'));
+    $bd_bank_credit = DB::table('bank_ledgers')
+        ->whereIn('transaction_type_id', [1,3,5,8,10])
+        ->whereBetween('transaction_date', [$mindate_ledger, $before1day])
+        ->sum('amount');
+    $bd_bank_debit = DB::table('bank_ledgers')
+        ->whereIn('transaction_type_id', [2,4,6,9,11])
+        ->whereBetween('transaction_date', [$mindate_ledger, $before1day])
+        ->sum('amount');
+    $balance_brought_down=$bd_bank_credit-$bd_bank_debit;
+//    dd($balance_bd);
+// Create a new ledger entry for balance brought down
+    $balance_brought_down_entry = (object) [
+        'transaction_date' => $before1day,
+        'transaction_code' => null,
+        'amount' => $balance_brought_down,
+        'transaction_type' => 'Credited',
+        'reference' => 'Balance Brought Down',
+        'ref_date' => null,
+        'ref_no' => null,
+        'created_at' => null,
+    ];
 
     $ledger = DB::table('bank_ledgers')->select('bank_ledgers.transaction_date', 'bank_ledgers.transaction_code', 'bank_ledgers.amount',
         'transaction_types.title as transaction_type', 'bank_ledgers.particulars as reference',
@@ -352,9 +376,10 @@ function ledger_account($account_id, $start_date, $end_date)
         ->where('bank_ledgers.bank_account_id', $account_id)
         ->whereBetween('bank_ledgers.transaction_date', [$start_date, $end_date])
         ->orderBy('bank_ledgers.transaction_date')->get();
-
+//dd($ledger);
 //    $myall = $ledger;
 //    $merged_ledger = collect($myall)->sortBy('transaction_date')->sortBy('created_at');
+    $ledger->prepend($balance_brought_down_entry);
     $merged_ledger = $ledger;
     $sort_array = [];
     foreach ($merged_ledger as $key => $data)
