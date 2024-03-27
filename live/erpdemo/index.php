@@ -16,7 +16,7 @@ define('LARAVEL_START', microtime(true));
 |
 */
 
-if (file_exists($maintenance = __DIR__.'/../texaaps/storage/framework/maintenance.php')) {
+if (file_exists($maintenance = __DIR__ . '/../erpdemo/storage/framework/maintenance.php')) {
     require $maintenance;
 }
 
@@ -31,7 +31,7 @@ if (file_exists($maintenance = __DIR__.'/../texaaps/storage/framework/maintenanc
 |
 */
 
-require __DIR__.'/../texaaps/vendor/autoload.php';
+require __DIR__ . '/../erpdemo/vendor/autoload.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -44,7 +44,7 @@ require __DIR__.'/../texaaps/vendor/autoload.php';
 |
 */
 
-$app = require_once __DIR__.'/../texaaps/bootstrap/app.php';
+$app = require_once __DIR__ . '/../erpdemo/bootstrap/app.php';
 
 $kernel = $app->make(Kernel::class);
 

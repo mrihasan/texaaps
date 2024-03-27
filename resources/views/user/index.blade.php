@@ -1,12 +1,12 @@
 @extends('layouts.al305_main')
 @if($user_type=='Admin')
-    {
+
     @section('user_mo','menu-open')
 @section('user','active')
-}@else{
-@section('product_mo','menu-open')
+@else
+    @section('product_mo','menu-open')
 @section('product','active')
-}
+
 @endif
 @section('manage_'.$user_type,'active')
 @section('title','Manage '.$user_type)

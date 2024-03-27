@@ -21,7 +21,7 @@ return new class extends Migration
             $table->integer('branch_id')->unsigned();
             $table->tinyInteger('salary_month');
             $table->integer('year');
-            $table->enum('type', ['Salary Payslip', 'Bonus Payslip', 'Payment']);
+            $table->enum('type', ['Salary Payslip', 'Bonus Payslip', 'Salary Payment', 'Bonus Payment']);
             $table->integer('salary_amount')->nullable();
             $table->integer('working_day')->nullable();
             $table->integer('holiday_weekend')->nullable();
