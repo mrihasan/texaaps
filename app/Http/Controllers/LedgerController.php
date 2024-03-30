@@ -81,7 +81,7 @@ class LedgerController extends Controller
         abort_if(Gate::denies('AccountMgtAccess'), redirect('error'));
         $user = supplier_list();
         $branches = branch_list();
-        $invoices = DB::table('invoices')->where('transaction_type', 'Purchase')->pluck('transaction_code', 'id')->prepend('Select Invoice', '')->toArray();
+        $invoices = DB::table('invoices')->where('transaction_type', 'Purchase')->pluck('sl_no', 'id')->prepend('Select Invoice', '')->toArray();
         $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
         $transaction_methods = TransactionMethod::orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Method', '')->toArray();
         return view('accounting.payment', compact('user', 'branches', 'transaction_methods', 'to_accounts','invoices'));
@@ -92,7 +92,7 @@ class LedgerController extends Controller
         abort_if(Gate::denies('AccountMgtAccess'), redirect('error'));
         $user = customer_list();
         $branches = branch_list();
-        $invoices = DB::table('invoices')->where('transaction_type', 'Sales')->pluck('transaction_code', 'id')->prepend('Select Invoice', '')->toArray();
+        $invoices = DB::table('invoices')->where('transaction_type', 'Sales')->pluck('sl_no', 'id')->prepend('Select Invoice', '')->toArray();
         $transaction_methods = TransactionMethod::orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Method', '')->toArray();
         $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
         return view('accounting.receipt', compact('user', 'branches', 'transaction_methods', 'to_accounts','transaction_methods','invoices'));

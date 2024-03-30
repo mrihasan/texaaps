@@ -87,6 +87,11 @@
                        href="#custom-tabs-one-profile" role="tab" aria-controls="custom-tabs-one-profile"
                        aria-selected="false">Challan</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="custom-tabs-one-transaction-tab" data-toggle="pill"
+                       href="#custom-tabs-one-transaction" role="tab" aria-controls="custom-tabs-one-transaction"
+                       aria-selected="false">Transaction History</a>
+                </li>
 
             </ul>
         </div>
@@ -148,7 +153,7 @@
                                             <strong>{{$invoice->user->profile->company_name->title}}</strong>
                                             <br/>
                                             {{$invoice->user->profile->company_name->contact_no ?? ''}}<br/>
-                                            {{$invoice->user->profile->company_name->contact_no2 ?? ''}}<br/>
+{{--                                            {{$invoice->user->profile->company_name->contact_no2 ?? ''}}<br/>--}}
                                             {{$invoice->user->profile->company_name->address ?? ''}}<br/>
                                             {{$invoice->user->profile->company_name->address2 ?? ''}}<br/>
                                         @else
@@ -299,10 +304,10 @@
                                         <br/>
                                         <br/>
                                         <br/>
-                                        {{ entryBy($invoice->entry_by) }}
+                                        {{ entryByInfo($invoice->entry_by)['name'] }}<br/>
+                                        {{ entryByInfo($invoice->entry_by)['cell_phone'] }}<br/>
+                                        {{ entryByInfo($invoice->entry_by)['email'] }}<br/>
                                         <br/>
-                                        Mob: +880176-5450149.<br/>
-                                        E-mail: noman@texaaps.com
                                     </td>
                                     {{--<td colspan="4" style="border: none"></td>--}}
                                 </tr>
@@ -530,6 +535,53 @@
                                     class="fa fa-print"> Print</i></a>
                     </div>
                 </div>
+                <div class="tab-pane fade" id="custom-tabs-one-transaction" role="tabpanel"
+                     aria-labelledby="custom-tabs-one-transaction-tab">
+                    <div class="portlet-body form portrait" id="print_this2">
+                        <div class="content">
+                            <table class="table table-striped table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th> Date</th>
+                                    <th> {{ __('all_settings.Transaction') }} No</th>
+                                    <th>User Info</th>
+                                    <th> Transaction Type</th>
+                                    <th> Transaction Method</th>
+                                    <th> amount</th>
+                                    <th>Remarks</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($related_payment as $data)
+                                    <tr>
+                                        <td>{{ Carbon\Carbon::parse($data->transaction_date)->format('d-M-Y') }}</td>
+                                        <td>{{ $data->transaction_code }}</td>
+
+                                        <td>
+                                            <a href="{{ route('user.show',$data->user->id) }}" class="btn btn-success btn-xs"
+                                               title="User Profile View"><span class="far fa-user-circle"
+                                                                               aria-hidden="true"></span></a>
+                                            {{$data->user->name??''}}</td>
+                                        <td>{{ $data->transaction_type->title }}</td>
+                                        <td>{{ $data->transaction_method->title}}</td>
+                                        <td>{{ $data->amount }}</td>
+                                        <td>{{ $data->comments }}</td>
+                                    </tr>
+
+                                @endforeach
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{{ url()->previous() }}" class="btn btn-outline-primary"><i
+                                    class="fa fa-arrow-left"
+                                    aria-hidden="true"></i>{{ __('all_settings.Back') }}</a>
+                        <a type="button" id="pbutton2" class="btn btn-warning pull-right"><i
+                                    class="fa fa-print"> Print</i></a>
+                    </div>
+                </div>
 
             </div>
 
@@ -566,6 +618,26 @@
 
     $('#pbutton1').on('click', function () {
         $("#print_this1").printThis({
+            debug: false,
+            importCSS: true,
+            importStyle: true,
+            printContainer: true,
+//            loadCSS: "../../../public/tf/global/plugins/bootstrap/css/bootstrap.min.css",
+            pageTitle: "",
+            removeInline: false,
+            printDelay: 333,
+            header: null,
+            footer: null,
+            base: false,
+//            formValues: true,
+            canvas: false,
+//            doctypeString: "...",
+            removeScripts: false,
+            copyTagClasses: false
+        });
+    });
+    $('#pbutton2').on('click', function () {
+        $("#print_this2").printThis({
             debug: false,
             importCSS: true,
             importStyle: true,

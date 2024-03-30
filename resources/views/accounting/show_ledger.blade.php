@@ -75,6 +75,21 @@
                                 {{ $ledger->amount }}
                             </td>
                         </tr>
+
+                        <tr>
+                            <th>
+                                Linked Bill
+                            </th>
+                            <td>
+                                @if($ledger->invoice_id)
+                                    {{ $ledger->invoice->sl_no}}
+                                    <a href="{{ url('invoice/' . $ledger->invoice_id ) }}" class="btn btn-outline-info btn-xs"
+                                       title="Show Invoice"><span class="far fa-eye" aria-hidden="true"></span></a>
+                                @else N/A
+                                @endif
+
+                            </td>
+                        </tr>
                         <tr>
                             <th>
                                 Branch

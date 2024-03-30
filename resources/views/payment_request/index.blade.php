@@ -42,8 +42,8 @@
                         <thead>
                         <tr style="background-color: #dff0d8">
                             <th>S.No</th>
-                            <th> Requester</th>
                             <th> Request Number</th>
+                            <th> Customer</th>
                             <th> Product</th>
                             <th> Amount</th>
                             <th> Checked By</th>
@@ -55,8 +55,8 @@
                         @foreach($payment_requests as $key=>$data)
                             <tr>
                                 <td>{{ $key+1 }}</td>
-                                <td>{{ $data->user->name}}</td>
                                 <td>{{ $data->req_no }}</td>
+                                <td>{{ $data->customerInfo->name}}</td>
                                 <td>{{ $data->product->title}}<br/>{{ $data->brand->title??''}}<br/>{{ $data->model??''}}</td>
                                 <td>{{ $data->amount }}</td>
                                 <td>

@@ -14,6 +14,23 @@ function entryBy($entry_by)
     else
         return $user->name;
 }
+function entryByInfo($entry_by)
+{
+    $user = \App\Models\User::where('id', $entry_by)->first();
+    if ($user == null){
+        $uinfo['name']='N/A';
+        $uinfo['cell_phone']='N/A';
+        $uinfo['email']='N/A';
+        return $uinfo;
+    }
+    else {
+        ($user->name) ? $uinfo['name'] = $user->name : $uinfo['name'] = 'Name: N/A';
+        ($user->cell_phone) ? $uinfo['cell_phone'] = $user->cell_phone : $uinfo['cell_phone'] = 'Mob: N/A';
+        ($user->email) ? $uinfo['email'] = $user->email : $uinfo['email'] = 'Email: N/A';
+        return $uinfo;
+    }
+
+}
 
 function companyBy($user_id)
 {

@@ -212,6 +212,9 @@ class InvoiceController extends Controller
         $mindate_ledger = date('Y-m-d', strtotime($mindate_ledger1));
         $mindate_ledger_datetime = $mindate_ledger . ' 00:00:00';
         $settings = DB::table('settings')->first();
+        $related_payment = Ledger::with('user')->with('entryby')
+            ->where('invoice_id', $invoice->id)
+            ->orderBy('transaction_date', 'desc')->get();
 
         if (date('Y-m-d', strtotime($invoice->transaction_date)) == $mindate_ledger)
             $before1day_invoice = date('Y-m-d', strtotime($invoice->transaction_date));
@@ -223,14 +226,14 @@ class InvoiceController extends Controller
         $before1day_invoice_datetime = $before1day_invoice . ' 23:59:59';
         if ($invoice->transaction_type == 'Purchase') {
             $ledger = $this->ledger($invoice->user_id, $mindate_ledger_datetime, $before1day_invoice_datetime, $invoice->transaction_date, 'Purchase', 4);
-            return view('supply.show_purchase', compact('invoice', 'transactionDetails', 'mindate_ledger', 'before1day_invoice', 'ledger'));
+            return view('supply.show_purchase', compact('invoice', 'transactionDetails', 'mindate_ledger', 'before1day_invoice', 'ledger','related_payment'));
         } else if ($invoice->transaction_type == 'Sales') {
             if ($invoice->user_id == 6)
                 return view('supply.show_sales_walking', compact('invoice', 'settings', 'transactionDetails', 'related_customer'));
             else {
                 $ledger = $this->ledger($invoice->user_id, $mindate_ledger_datetime, $before1day_invoice_datetime, $invoice->transaction_date, 'Sales', 3);
                 return view('supply.show_sales', compact('invoice', 'transactionDetails', 'settings',
-                    'mindate_ledger', 'before1day_invoice', 'ledger', 'related_customer'));
+                    'mindate_ledger', 'before1day_invoice', 'ledger', 'related_customer','related_payment'));
             }
         } else if ($invoice->transaction_type == 'Order') {
             $ledger = $this->ledger($invoice->user_id, $mindate_ledger_datetime, $before1day_invoice_datetime, $invoice->transaction_date, 'Sales', 3);

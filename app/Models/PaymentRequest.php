@@ -65,6 +65,14 @@ class PaymentRequest extends Model
     {
         return $this->belongsTo('App\Models\User','approved_by');
     }
+    public function customerInfo()
+    {
+        return $this->belongsTo('App\Models\User','customer_id');
+    }
+    public function supplierInfo()
+    {
+        return $this->belongsTo('App\Models\User','supplier_id');
+    }
 
 
 }

@@ -50,7 +50,7 @@
                             <th> {{ __('all_settings.Transaction') }}<br/> No</th>
                             <th>User<br/> Info</th>
                             <th>Total<br/> Amount</th>
-                            <th>{{ __('all_settings.Transaction') }}<br/> {{ __('all_settings.Made By') }}</th>
+                            <th>Linked Bill</th>
                             <th>Remarks</th>
                             <th>Actions</th>
                         </tr>
@@ -66,7 +66,15 @@
                                        title="User Profile View"><span class="far fa-user-circle" aria-hidden="true"></span></a>
                                     {{$data->user->name}}</td>
                                 <td style="text-align: right">{{ $data->amount }}</td>
-                                <td>{{ $data->entryby->name}}</td>
+                                <td>
+                                    @if($data->invoice_id)
+                                    {{ $data->invoice->sl_no}}
+                                    <a href="{{ url('invoice/' . $data->invoice_id ) }}" class="btn btn-outline-info btn-xs"
+                                       title="Show Invoice"><span class="far fa-eye" aria-hidden="true"></span></a>
+                                        @else N/A
+                                        @endif
+
+                                </td>
                                 <td>{{ $data->comments }}</td>
                                 <td class="noprint">
                                     <a href="{{ url('ledger/' . $data->id ) }}" class="btn btn-success btn-xs"

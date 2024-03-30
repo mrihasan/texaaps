@@ -112,11 +112,12 @@
                        href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home"
                        aria-selected="true">{{ __('all_settings.Manage Purchase') }} </a>
                 </li>
-                <li>
-                    <a type="button" id="pbutton0" class="btn btn-success pull-right"><i
-                                class="fa fa-print"> Print</i></a>
-
+                <li class="nav-item">
+                    <a class="nav-link" id="custom-tabs-one-transaction-tab" data-toggle="pill"
+                       href="#custom-tabs-one-transaction" role="tab" aria-controls="custom-tabs-one-transaction"
+                       aria-selected="false">Transaction History</a>
                 </li>
+
 
             </ul>
         </div>
@@ -290,33 +291,84 @@
                             </tr>
                         </table>
                     </div>
+                    <div class="card-footer">
+                        <a href="{{ url()->previous() }}" class="btn btn-outline-primary"><i
+                                    class="fa fa-arrow-left"
+                                    aria-hidden="true"></i>{{ __('all_settings.Back') }}</a>
+                        <a type="button" id="pbutton0" class="btn btn-warning pull-right"><i
+                                    class="fa fa-print"> Print</i></a>
+                        @can('SupplyDelete')
+                            {!! Form::open([
+                    'method'=>'DELETE',
+                    'url' => ['invoice', $invoice->id],
+                    'style' => 'display:inline'
+                ]) !!}
+                            {!! Form::button('<span class="far fa-trash-alt" aria-hidden="true" title="Delete" />', array(
+                                    'type' => 'submit',
+                                    'class' => 'btn btn-danger btn-xs fa-pull-right',
+                                    'title' => 'Delete',
+                                    'onclick'=>'return confirm("Confirm delete?")'
+                            ))!!}
+                            {!! Form::close() !!}
+                        @endcan
+                        @can('SupplyAccess')
+                            <a href="{{ url('invoice/' . $invoice->id . '/edit') }}"
+                               class="btn btn-info btn-xs fa-pull-right" title="Edit" style="margin-right: 10px"><span
+                                        class="far fa-edit"
+                                        aria-hidden="true"></span></a>
+                        @endcan
+                    </div>
+
                 </div>
+                <div class="tab-pane fade" id="custom-tabs-one-transaction" role="tabpanel"
+                     aria-labelledby="custom-tabs-one-transaction-tab">
+                    <div class="portlet-body form portrait" id="print_this2">
+                        <div class="content">
+                            <table class="table table-striped table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th> Date</th>
+                                    <th> {{ __('all_settings.Transaction') }} No</th>
+                                    <th>User Info</th>
+                                    <th> Transaction Type</th>
+                                    <th> Transaction Method</th>
+                                    <th> amount</th>
+                                    <th>Remarks</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($related_payment as $data)
+                                    <tr>
+                                        <td>{{ Carbon\Carbon::parse($data->transaction_date)->format('d-M-Y') }}</td>
+                                        <td>{{ $data->transaction_code }}</td>
+
+                                        <td>
+                                            <a href="{{ route('user.show',$data->user->id) }}" class="btn btn-success btn-xs"
+                                               title="User Profile View"><span class="far fa-user-circle"
+                                                                               aria-hidden="true"></span></a>
+                                            {{$data->user->name??''}}</td>
+                                        <td>{{ $data->transaction_type->title }}</td>
+                                        <td>{{ $data->transaction_method->title}}</td>
+                                        <td>{{ $data->amount }}</td>
+                                        <td>{{ $data->comments }}</td>
+                                    </tr>
+
+                                @endforeach
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{{ url()->previous() }}" class="btn btn-outline-primary"><i
+                                    class="fa fa-arrow-left"
+                                    aria-hidden="true"></i>{{ __('all_settings.Back') }}</a>
+                        <a type="button" id="pbutton2" class="btn btn-warning pull-right"><i
+                                    class="fa fa-print"> Print</i></a>
+                    </div>
+                </div>
+
             </div>
-        </div>
-        <div class="card-footer">
-            <a href="{{ url()->previous() }}" class="btn btn-outline-primary"><i
-                        class="fa fa-arrow-left"
-                        aria-hidden="true"></i>{{ __('all_settings.Back') }}</a>
-            @can('SupplyDelete')
-                {!! Form::open([
-        'method'=>'DELETE',
-        'url' => ['invoice', $invoice->id],
-        'style' => 'display:inline'
-    ]) !!}
-                {!! Form::button('<span class="far fa-trash-alt" aria-hidden="true" title="Delete" />', array(
-                        'type' => 'submit',
-                        'class' => 'btn btn-danger btn-xs fa-pull-right',
-                        'title' => 'Delete',
-                        'onclick'=>'return confirm("Confirm delete?")'
-                ))!!}
-                {!! Form::close() !!}
-            @endcan
-            @can('SupplyAccess')
-                <a href="{{ url('invoice/' . $invoice->id . '/edit') }}"
-                   class="btn btn-info btn-xs fa-pull-right" title="Edit" style="margin-right: 10px"><span
-                            class="far fa-edit"
-                            aria-hidden="true"></span></a>
-            @endcan
         </div>
 
     </div>
@@ -347,6 +399,27 @@
             copyTagClasses: false
         });
     });
+    $('#pbutton2').on('click', function () {
+        $("#print_this2").printThis({
+            debug: false,
+            importCSS: true,
+            importStyle: true,
+            printContainer: true,
+//            loadCSS: "../../../public/tf/global/plugins/bootstrap/css/bootstrap.min.css",
+            pageTitle: "",
+            removeInline: false,
+            printDelay: 333,
+            header: null,
+            footer: null,
+            base: false,
+//            formValues: true,
+            canvas: false,
+//            doctypeString: "...",
+            removeScripts: false,
+            copyTagClasses: false
+        });
+    });
+
 
 </script>
 
