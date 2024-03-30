@@ -229,7 +229,7 @@
 
 
                             <td><input type="text" data-type="unitBuyPrice" name="unitBuyPrice[]"
-                                       value="<?php echo $stu->ubuy_price ?>"
+                                       value="<?php echo $stu->ubuy_price ?>" step="any"
                                        id="unitBuyPrice_<?php echo $stu->id ?>" style="text-align:right"
                                        class="form-control autocomplete_txt changesNo"
                                        autocomplete="off"></td>

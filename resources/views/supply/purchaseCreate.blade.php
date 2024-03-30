@@ -245,7 +245,7 @@
                             </td>
 
                             <td><input type="number" data-type="unitBuyPrice" name="unitBuyPrice[]"
-                                       id="unitBuyPrice_1" style="text-align:right"
+                                       id="unitBuyPrice_1" style="text-align:right" step="any"
                                        class="form-control autocomplete_txt changesNo"
                                        autocomplete="off"></td>
                             <td><input readonly type="number" step="any" name="mrpTotal[]"

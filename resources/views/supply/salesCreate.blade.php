@@ -278,7 +278,7 @@
                                        {{--class="form-control autocomplete_txt unitBuyPrice"--}}
                                        {{--autocomplete="off"></td>--}}
                             <td><input type="number" data-type="unitSellPrice" name="unitSellPrice[]"
-                                       id="unitSellPrice_1" style="text-align:right"
+                                       id="unitSellPrice_1" style="text-align:right" step="any"
                                        class="form-control autocomplete_txt changesNo"
                                        autocomplete="off"></td>
                             <td><input readonly type="number" step="any" name="mrpTotal[]"

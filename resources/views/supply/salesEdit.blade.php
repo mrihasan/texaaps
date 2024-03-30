@@ -223,7 +223,7 @@
                                        value="<?php echo static_product_stock($stu->product_id)['stock']  ?>" class="form-control in_stock">
                             </td>
                             <td><input type="number" data-type="unitSellPrice" name="unitSellPrice[]"
-                                       value="<?php echo $stu->usell_price ?>"
+                                       value="<?php echo $stu->usell_price ?>" step="any"
                                        id="unitSellPrice_<?php echo $stu->id ?>" style="text-align:right"
                                        class="form-control autocomplete_txt changesNo"
                                        autocomplete="off"></td>

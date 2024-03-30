@@ -155,7 +155,7 @@
             confirmButtonText: 'Yes, Verify it!',
             cancelButtonText: 'No, cancel!',
             reverseButtons: true
-        }).then((result) = > {
+        }).then((result) => {
             if (result.value
     )
         {
@@ -194,7 +194,7 @@
             confirmButtonText: 'Yes, Approve it!',
             cancelButtonText: 'No, cancel!',
             reverseButtons: true
-        }).then((result) = > {
+        }).then((result) => {
             if (result.value
     )
         {
