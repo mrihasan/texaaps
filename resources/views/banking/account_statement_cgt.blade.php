@@ -151,7 +151,7 @@
 
 <script>
     $(document).ready(function () {
-        $('.dataTables').DataTable({
+        var table = $('.dataTables').DataTable({
             aaSorting: [],
             lengthMenu: [
                 [25, 50, 100, 200, -1],
@@ -160,30 +160,29 @@
             pageLength: 25,
             responsive: true,
             fixedHeader: true,
-//            dom: '<"html5buttons"B>lTfgtip',
             'dom': "<'row'<'col-sm-12 col-md-4'l><'col-sm-12 col-md-4'B><'col-sm-12 col-md-4'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-
             buttons: [
-                {extend: 'copy'},
-                {extend: 'csv'},
                 {
-                    extend: 'excel', title: '{{$header_title}}',
-                    messageTop: '{{$header_title}}'
+                    extend: 'print',
+                    footer: true,
+                    page: 'current',
+                    messageTop: '{{$header_title}}',
+                    messageBottom: '{{'Printed On: '.\Carbon\Carbon::now()->format(' D, d-M-Y, h:ia')}}',
+                    customize: function (win) {
+                        $(win.document.body).addClass('white-bg');
+                        $(win.document.body).css('font-size', '10px');
+                        $(win.document.body).find('table')
+                            .addClass('compact')
+                            .css('font-size', 'inherit');
+                    }
                 },
-                    {{--{extend: 'pdf', title: 'DVL Transaction Data',--}}
-                    {{--messageTop: 'Commission Report of {{entryBy($partner_id).' '. $title_date_range}} ',--}}
-                    {{--messageBottom: '{{\Carbon\Carbon::now()->format(' D, d-M-Y, h:ia')}}'--}}
-                    {{--},--}}
-
                 {
                     extend: 'pdfHtml5',
-
                     className: 'btn  btn-sm btn-table',
                     titleAttr: 'Export to Pdf',
                     text: '<span class="fa fa-file-pdf-o fa-lg"></span><i class="hidden-xs hidden-sm hidden-md"> Pdf</i>',
                     filename: '{{$header_title}}',
                     extension: '.pdf',
-//                    orientation : 'landscape',
                     orientation: 'portrait',
                     title: "{{$header_title}}",
                     footer: true,
@@ -194,13 +193,6 @@
                     customize: function (doc) {
                         var rowCount = doc.content[1].table.body.length;
                         for (i = 1; i < rowCount; i++) {
-
-                            /*var val = document.form1.campo.value;
-                             if (isNaN(val)){
-                             alert(‘Il valore inserito non è numerico’);
-                             } else {
-                             alert(‘Il valore inserito è numerico’);
-                             }*/
                             doc.content[1].table.body[i][0].alignment = 'center';
                             doc.content[1].table.body[i][1].alignment = 'left';
                             doc.content[1].table.body[i][2].alignment = 'left';
@@ -210,15 +202,12 @@
                             doc.content[1].table.body[i][6].alignment = 'center';
                         }
                         doc.content[1].table.widths = ['10%','15%','25%','10%','15%','20%','5%'];
-//                        doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
                         doc.content.splice(0, 1);
                         var now = new Date();
                         var jsDate = now.getDate() + '-' + (now.getMonth() + 1) + '-' + now.getFullYear() + ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
                         var logo = '';
-                        {{--var header_title = '';--}}
-                            doc.pageMargins = [10, 50, 10, 40];
+                        doc.pageMargins = [10, 50, 10, 40];
                         doc.defaultStyle.fontSize = 7;
-
                         doc.defaultStyle.alignment = 'left';
                         doc.styles.tableHeader.alignment = 'left';
                         doc.styles.tableHeader.fontSize = 10;
@@ -241,7 +230,6 @@
                                         image: 'data:image/png;base64,{{$settings->logo_base64}}'
 
                                     },
-
                                     {
                                         alignment: 'right',
                                         fontSize: 10,
@@ -291,47 +279,56 @@
                         };
                         doc.content[0].layout = objLayout;
                     }
-                },
-                {
-                    extend: 'print',
-                    footer: true,
-                    messageTop: '{{$header_title}}',
-                    messageBottom: '{{'Printed On: '.\Carbon\Carbon::now()->format(' D, d-M-Y, h:ia')}}',
-                    customize: function (win) {
-                        $(win.document.body).addClass('white-bg');
-                        $(win.document.body).css('font-size', '10px');
-                        $(win.document.body).find('table')
-                            .addClass('compact')
-                            .css('font-size', 'inherit');
-                    }
                 }
             ],
             "footerCallback": function (row, data, start, end, display) {
                 var api = this.api();
-                nb_cols = api.columns().nodes().length -1;
-//                nb_cols = 8;
+                var nb_cols = api.columns().nodes().length - 1; // Exclude the last column
                 var j = 6;
                 while (j < nb_cols) {
                     var pageTotal = api
                         .column(j, {page: 'current'})
                         .data()
                         .reduce(function (a, b) {
-                            return (Number(a) + Number(b)).toFixed(2);
+                            return (Number(a) + Number(b));
                         }, 0);
-                    // Update footer
-                    $(api.column(j).footer()).html(pageTotal);
+
+                    // Update footer for DataTables view
+                    $(api.column(j).footer()).html(pageTotal.toFixed(2));
+
                     j++;
                 }
-            },
-            columnDefs: [
-                {
-                    targets: [6,7,8],
-                    render: $.fn.dataTable.render.number(',', '.', 1, '')
-                }
-            ]
-
-
+            }
         });
+
+        // Recalculate footer totals before print
+        window.addEventListener('beforeprint', function () {
+            updatePrintFooterTotals();
+        });
+
+        // Function to update footer totals for print view
+        function updatePrintFooterTotals() {
+            var api = table.api();
+            var nb_cols = api.columns().nodes().length - 1; // Exclude the last column
+            var pageTotal = [];
+            var j = 6;
+            while (j < nb_cols) {
+                pageTotal[j] = api
+                    .column(j, {page: 'all'})
+                    .data()
+                    .reduce(function (a, b) {
+                        return a + Number(b);
+                    }, 0);
+                j++;
+            }
+
+            // Update footer for print view
+            $('.dataTables_scrollFootInner tfoot').children('tr').children('th').each(function (index) {
+                if (index >= 6 && index < nb_cols) {
+                    $(this).text(pageTotal[index].toFixed(2));
+                }
+            });
+        }
     });
 
 </script>

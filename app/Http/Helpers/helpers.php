@@ -365,10 +365,12 @@ function ledger_account($account_id, $start_date, $end_date)
     $before1day = new DateTime($start_date);
     $before1day->sub(new DateInterval('P1D'));
     $bd_bank_credit = DB::table('bank_ledgers')
+        ->where('bank_ledgers.bank_account_id', $account_id)
         ->whereIn('transaction_type_id', [1,3,5,8,10])
         ->whereBetween('transaction_date', [$mindate_ledger, $before1day])
         ->sum('amount');
     $bd_bank_debit = DB::table('bank_ledgers')
+        ->where('bank_ledgers.bank_account_id', $account_id)
         ->whereIn('transaction_type_id', [2,4,6,9,11])
         ->whereBetween('transaction_date', [$mindate_ledger, $before1day])
         ->sum('amount');

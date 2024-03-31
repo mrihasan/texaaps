@@ -12,6 +12,13 @@
     </li>
 @endsection
 @push('css')
+<style>
+    .total{
+        font-weight: bolder;
+        text-align: right;
+    }
+</style>
+
 <link rel="stylesheet" href="{{ asset('supporting/dataTables/bs4/datatables.min.css') }}">
 <link rel="stylesheet" href="{{ asset('supporting/dataTables/fixedHeader.dataTables.min.css') }}">
 <link rel="stylesheet" href="{{ asset('supporting/bootstrap-daterangepicker/daterangepicker.min.css') }}">
@@ -53,8 +60,12 @@
                         </thead>
                         <tfoot>
                         <tr>
-                            <th colspan="5" style="text-align:right">Total:&nbsp;&nbsp;</th>
-                            <th style="text-align:right"></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th class="total"></th>
                             <th></th>
                         </tr>
                         </tfoot>
@@ -65,7 +76,8 @@
                                 <td>{{ $data->sl_no }}</td>
                                 <td>
                                     <a href="{{ route('user.show',$data->user->id) }}" class="btn btn-success btn-xs"
-                                       title="User Profile View"><span class="far fa-user-circle" aria-hidden="true"></span></a>
+                                       title="User Profile View"><span class="far fa-user-circle"
+                                                                       aria-hidden="true"></span></a>
                                     {{$data->user->name.', '.$data->user->cell_phone}}
                                 </td>
                                 <td>{{ $data->entryBy->name}}<br>
@@ -78,25 +90,25 @@
                                 <td style="text-align:right">{{ $data->total_amount }}</td>
                                 <td class="noprint">
                                     @can('SupplyAccess')
-                                    <a href="{{ url('invoice/' . $data->id ) }}" class="btn btn-success btn-xs"
-                                       title="Show"><span class="far fa-eye" aria-hidden="true"></span></a>
-                                    <a href="{{ url('invoice/' . $data->id . '/edit') }}"
-                                       class="btn btn-info btn-xs" title="Edit"><span class="far fa-edit"
-                                                                                      aria-hidden="true"></span></a>
+                                        <a href="{{ url('invoice/' . $data->id ) }}" class="btn btn-success btn-xs"
+                                           title="Show"><span class="far fa-eye" aria-hidden="true"></span></a>
+                                        <a href="{{ url('invoice/' . $data->id . '/edit') }}"
+                                           class="btn btn-info btn-xs" title="Edit"><span class="far fa-edit"
+                                                                                          aria-hidden="true"></span></a>
                                     @endcan
-                                        @can('SupplyDelete')
-                                    {!! Form::open([
-                                        'method'=>'DELETE',
-                                        'url' => ['invoice', $data->id],
-                                        'style' => 'display:inline'
-                                    ]) !!}
-                                    {!! Form::button('<span class="far fa-trash-alt" aria-hidden="true" title="Delete"></span>', array(
-                                            'type' => 'submit',
-                                            'class' => 'btn btn-danger btn-xs',
-                                            'title' => 'Delete',
-                                            'onclick'=>'return confirm("Confirm delete?")'
-                                    ))!!}
-                                    {!! Form::close() !!}
+                                    @can('SupplyDelete')
+                                        {!! Form::open([
+                                            'method'=>'DELETE',
+                                            'url' => ['invoice', $data->id],
+                                            'style' => 'display:inline'
+                                        ]) !!}
+                                        {!! Form::button('<span class="far fa-trash-alt" aria-hidden="true" title="Delete"></span>', array(
+                                                'type' => 'submit',
+                                                'class' => 'btn btn-danger btn-xs',
+                                                'title' => 'Delete',
+                                                'onclick'=>'return confirm("Confirm delete?")'
+                                        ))!!}
+                                        {!! Form::close() !!}
                                     @endcan
 
                                 </td>
@@ -117,9 +129,10 @@
                                 {!! Form::hidden('end_date', null,['class'=>'EndDate','id'=>'EndDate'] )!!}
 
                                 <div class="form-group ">
-                                    <label class="control-label col-md-4 text-md-right">{{ __('all_settings.Select Date Ranges') }} :</label>
-                                    <div class="col-md-6 input-group " style="display: inline-block" >
-                                        <button type="button" class="btn btn-default " id="reportrange" >
+                                    <label class="control-label col-md-4 text-md-right">{{ __('all_settings.Select Date Ranges') }}
+                                        :</label>
+                                    <div class="col-md-6 input-group " style="display: inline-block">
+                                        <button type="button" class="btn btn-default " id="reportrange">
                                             <i class="far fa-calendar-alt"></i>
                                             <span> </span>
                                             <i class="fas fa-caret-down"></i>
@@ -134,7 +147,9 @@
 
                                 <div class="card-footer">
                                     <button type="submit" class="btn btn-default">{{ __('all_settings.Back') }}</button>
-                                    <button type="submit" class="btn btn-info float-right"><i class="fa fa-search" aria-hidden="true"></i> {{ __('all_settings.Search') }}</button>
+                                    <button type="submit" class="btn btn-info float-right"><i class="fa fa-search"
+                                                                                              aria-hidden="true"></i> {{ __('all_settings.Search') }}
+                                    </button>
                                 </div>
 
 
@@ -191,6 +206,10 @@
 //                { targets: [0,1,2,3,4, 5,6,7 ], className: 'text-center' },
                 {targets: [0], className: 'text-center'},
 //                {targets: [4], className: 'text-right'},
+                {
+                    targets: [5],
+                    render: $.fn.dataTable.render.number(',', '.', 1, '')
+                }
             ],
 
             buttons: [
@@ -198,7 +217,7 @@
                 {extend: 'csv'},
                 {
                     extend: 'excel', title: '{{ config('app.name', 'EIS') }}',
-                    messageTop: ' Product   '
+                    messageTop: '{{$title_date_range}}'
                 },
                     {{--{extend: 'pdf', title: 'DVL Transaction Data',--}}
                     {{--messageTop: 'Commission Report of {{entryBy($partner_id).' '. $title_date_range}} ',--}}
@@ -211,11 +230,11 @@
                     className: 'btn  btn-sm btn-table',
                     titleAttr: 'Export to Pdf',
                     text: '<span class="fa fa-file-pdf-o fa-lg"></span><i class="hidden-xs hidden-sm hidden-md"> Pdf</i>',
-                    filename: 'Product ',
+                    filename: '{{$title_date_range}}',
                     extension: '.pdf',
 //                    orientation : 'landscape',
                     orientation: 'portrait',
-                    title: "Product ",
+                    title: "{{$title_date_range}}",
                     footer: true,
                     exportOptions: {
                         columns: ':visible:not(.not-export-col)',
@@ -234,14 +253,14 @@
                             doc.content[1].table.body[i][0].alignment = 'center';
                             doc.content[1].table.body[i][1].alignment = 'left';
                             doc.content[1].table.body[i][2].alignment = 'left';
-//                            doc.content[1].table.body[i][3].alignment = 'left';
-//                            doc.content[1].table.body[i][4].alignment = 'right';
-//                            doc.content[1].table.body[i][5].alignment = 'right';
-//                            doc.content[1].table.body[i][6].alignment = 'right';
+                            doc.content[1].table.body[i][3].alignment = 'left';
+                            doc.content[1].table.body[i][4].alignment = 'left';
+                            doc.content[1].table.body[i][5].alignment = 'right';
+                            doc.content[1].table.body[i][6].alignment = 'center';
 //                            doc.content[1].table.body[i][7].alignment = 'left';
 //                            doc.content[1].table.body[i][8].alignment = 'left';
                         }
-                        doc.content[1].table.widths = ['10%', '50%', '40%'];
+                        doc.content[1].table.widths = ['10%', '15%', '20%', '15%', '15%', '15%', '10%'];
 //                        doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
                         doc.content.splice(0, 1);
                         var now = new Date();
@@ -261,15 +280,15 @@
                                     {
                                         alignment: 'left',
                                         italics: true,
-                                        text: 'Product ',
+                                        text: '{{$title_date_range}}',
                                         fontSize: 10,
                                         margin: [10, 0]
                                     },
                                     {
                                         //image: logo,
-                                        alignment: 'center',
-                                        width: 20,
-                                        height: 20,
+//                                        alignment: 'center',
+//                                        width: 20,
+//                                        height: 20,
                                         {{--image: 'data:image/png;base64,{{$settings->logo_base64}}'--}}
 
                                     },
@@ -324,7 +343,7 @@
                 {
                     extend: 'print',
                     footer: true,
-                    messageTop: 'Product  ',
+                    messageTop: '{{$title_date_range}}',
                     messageBottom: '{{'Printed On: '.\Carbon\Carbon::now()->format(' D, d-M-Y, h:ia')}}',
                     customize: function (win) {
                         $(win.document.body).addClass('white-bg');
@@ -334,7 +353,24 @@
                             .css('font-size', 'inherit');
                     }
                 }
-            ]
+            ],
+            "footerCallback": function (row, data, start, end, display) {
+                var api = this.api();
+                nb_cols = api.columns().nodes().length -1;
+//                nb_cols = 8;
+                var j = 5;
+                while (j < nb_cols) {
+                    var pageTotal = api
+                        .column(j, {page: 'current'})
+                        .data()
+                        .reduce(function (a, b) {
+                            return (Number(a) + Number(b)).toFixed(2);
+                        }, 0);
+                    // Update footer
+                    $(api.column(j).footer()).html(pageTotal);
+                    j++;
+                }
+            }
 
         });
     });
@@ -347,7 +383,7 @@
     $(document).ready(function () {
         $('#reportrange').daterangepicker(
             {
-                startDate: moment().subtract(30,'days'),
+                startDate: moment().subtract(30, 'days'),
                 endDate: moment(),
                 minDate: '01/01/2015',
                 maxDate: '12/31/2050',
@@ -357,11 +393,11 @@
                 timePicker: false,
                 ranges: {
                     'Today': [moment(), moment()],
-                    'Yesterday': [moment().subtract(1,'days'), moment().subtract(1,'days')],
+                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
 //                    'Last 7 Days': [moment().subtract(6,'days'), moment()],
-                    'Last 30 Days': [moment().subtract(30,'days'), moment()],
+                    'Last 30 Days': [moment().subtract(30, 'days'), moment()],
                     'This Month': [moment().startOf('month'), moment().endOf('month')],
-                    'Last Month': [moment().subtract(1,'month').startOf('month'), moment().subtract(1,'month').endOf('month')],
+                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
                     'Last 6 Month': [moment().subtract(6, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
                     'This Year': [moment().startOf('year'), moment().endOf('year')],
                     'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
@@ -398,8 +434,8 @@
         );
         //Set the initial state of the picker label
 //        $('#reportrange span').html('Please select Date Range');
-        $('#reportrange span').html(moment().subtract(30,'days').format('D MMMM YYYY') + ' - ' + moment().format('D MMMM YYYY'));
-        $("#StartDate").val(moment().subtract(30,'days').format('YYYY-MM-DD'));
+        $('#reportrange span').html(moment().subtract(30, 'days').format('D MMMM YYYY') + ' - ' + moment().format('D MMMM YYYY'));
+        $("#StartDate").val(moment().subtract(30, 'days').format('YYYY-MM-DD'));
         $("#EndDate").val(moment(endDate).format('YYYY-MM-DD'));
 //        $('#reportrange span').html(moment().format('D MMMM YYYY') + ' - ' + moment().format('D MMMM YYYY'));
 //        console.log(startDate);
