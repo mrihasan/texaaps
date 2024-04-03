@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')
                 ->onUpdate('cascade')->onDelete('cascade');
             $table->string('image')->default('default_image.png');
+            $table->string('sign')->default('default_sign');
             $table->timestamps();
         });
     }

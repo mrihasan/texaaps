@@ -129,8 +129,9 @@
                                             <strong>To</strong></h6>
                                         <p>Managing Director </p>
 
-                                        <address>Texaaps<br/>Rangs Nahraz, H-14(5th Floor )<br/>Shahjalal Avenue,
-                                            Sector-4,<br/>Uttara, Dhaka-1230
+                                        <address>{{$settings->org_name}}<br/>
+                                            {{$settings->address_line1}}<br/>
+                                            {{$settings->address_line2}}<br/>
                                         </address>
                                         <p>Dear Sir,</p>
                                         <p>Kindly arrange for the Payment for the bellow particulars-</p>
@@ -337,6 +338,11 @@
                                 <tr style="border: none">
                                     <td style="text-align:left; border: none" width="35% ">
                                         Prepared by<br/><br/><br/><br/>
+                                        @if($payment_request->user->employee && ($payment_request->user->imageprofile->sign!='default_sign'||$payment_request->user->imageprofile->sign!=null))
+                                            <img src="{!! asset( 'storage/sign/'. $payment_request->user->imageprofile->sign. '?'. 'time='. time()) !!}"
+                                                    class="img-fluid" alt="Sign Image">
+                                        @endif
+
                                         <address>
                                             ______________________<br/>
                                             {{$payment_request->user->name}}<br/>
@@ -348,6 +354,10 @@
 
                                     <td style="text-align:center; border: none" width="30%">
                                         Checked by<br/><br/><br/><br/>
+                                        @if($payment_request->checked_by!=null && ($payment_request->checkedBy->employee->user->imageprofile->sign!='default_sign'||$payment_request->checkedBy->employee->user->imageprofile->sign!=null))
+                                            <img src="{!! asset( 'storage/sign/'. $payment_request->checkedBy->employee->user->imageprofile->sign. '?'. 'time='. time()) !!}"
+                                                 class="img-fluid" alt="Sign Image">
+                                        @endif
                                         <address>
                                             ______________________<br/>
                                             {{($payment_request->checked_by)?$payment_request->checkedBy->name:'Not Yet Checked'}}
@@ -359,6 +369,11 @@
                                     </td>
                                     <td style="text-align:right; border: none" width="35%">
                                         Approved By<br/><br/><br/><br/>
+                                        @if($payment_request->approved_by!=null && ($payment_request->approvedBy->employee->user->imageprofile->sign!='default_sign'||$payment_request->approvedBy->employee->user->imageprofile->sign!=null))
+                                            <img src="{!! asset( 'storage/sign/'. $payment_request->approvedBy->employee->user->imageprofile->sign. '?'. 'time='. time()) !!}"
+                                                 class="img-fluid" alt="Sign Image">
+                                        @endif
+
                                         <address>
                                             ______________________<br/>
                                             {{($payment_request->approved_by)?$payment_request->approvedBy->name:'Not Yet Approved'}}

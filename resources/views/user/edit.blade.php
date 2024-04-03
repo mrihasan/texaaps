@@ -119,6 +119,8 @@
                                 </li>
                                 <li class="nav-item"><a class="nav-link" href="#avatar" data-toggle="tab">Avatar</a>
                                 </li>
+                                <li class="nav-item"><a class="nav-link" href="#sign" data-toggle="tab">Sign</a>
+                                </li>
                                 <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">System
                                         Settings</a>
                                 </li>
@@ -305,6 +307,7 @@
                                 <div class="tab-pane" id="avatar">
                                     {!! Form::model($user->imageprofile, ['route' => ['imageprofile.update',$user->imageprofile->id],'method' => 'PATCH', 'class' => 'saveFrom', 'files' => true] ) !!}
                                     {!! Form::hidden('user_id', $user->id )!!}
+                                    {!! Form::hidden('image_type', 'avatar' )!!}
                                     @csrf
 
                                     <div class="card-body">
@@ -345,10 +348,6 @@
                                                        data-dismiss="fileinput"> Remove </a>
                                                 </div>
                                             </div>
-                                            {{--<div class="clearfix margin-top-10">--}}
-                                            {{--<span class="label label-danger">NOTE! </span>--}}
-                                            {{--<span>Attached image thumbnail is supported in Latest Firefox, Chrome, Opera, Safari and Internet Explorer 10 only </span>--}}
-                                            {{--</div>--}}
                                         </div>
                                         <hr/>
                                         <div class="row">
@@ -356,6 +355,65 @@
                                                 <strong><i class="far fa-file-alt mr-1"></i> Notes</strong>
                                                 <p>
                                                     <span> Prefered image size for Avatar is 300X300 & not more then 1MB. Supported image type should be jpeg, jpj, png and bmp. Attached image thumbnail is supported in Latest Firefox, Chrome, Opera, Safari and Internet Explorer 10 only </span>
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    {{--<div class="card-footer">--}}
+                                    <a href="{{ url()->previous() }}" class="btn btn-outline-primary"><i
+                                                class="fa fa-arrow-left"
+                                                aria-hidden="true"></i>{{ __('all_settings.Back') }}</a>
+                                    <button type="submit" class="btn btn-success float-right" id="saveButton"><i
+                                                class="fa fa-save"
+                                                aria-hidden="true"></i> Save
+                                    </button>
+                                    {{--</div>--}}
+                                    {!! Form::close() !!}
+
+                                </div>
+                                <div class="tab-pane" id="sign">
+                                    {!! Form::model($user->imageprofile, ['route' => ['imageprofile.update',$user->imageprofile->id],'method' => 'PATCH', 'class' => 'saveFrom', 'files' => true] ) !!}
+                                    {!! Form::hidden('user_id', $user->id )!!}
+                                    {!! Form::hidden('image_type', 'sign' )!!}
+                                    @csrf
+
+                                    <div class="card-body">
+                                        <div class="form-group">
+                                            <h3>Sign</h3>
+                                            <div class="fileinput fileinput-new" data-provides="fileinput">
+                                                <div class="fileinput-new thumbnail"
+                                                     style="width: 200px; height: 150px;">
+                                                    @if($user->imageprofile->sign=='default_sign')
+                                                        <img
+                                                                src="{!! asset( 'storage/images/dummy-sign'.'.png'. '?'. 'time='. time()) !!}"
+                                                                class="img-fluid" alt="Sign Image">
+                                                    @else
+                                                        <img
+                                                                src="{!! asset( 'storage/sign/'. $user->imageprofile->sign. '?'. 'time='. time()) !!}"
+                                                                class="img-fluid" alt="Sign Image">
+                                                    @endif
+                                                </div>
+                                                <div class="fileinput-preview fileinput-exists thumbnail"
+                                                     style="max-width: 210px; max-height: 70px;"></div>
+                                                <div>
+                                <span class="btn btn-default btn-file">
+                                    <span class="fileinput-new"> Select Sign </span>
+                                    <span class="fileinput-exists"> Change </span>
+                                    {!! Form::file('sign', null, array('required', 'class'=>'form-control')) !!}
+                                </span>
+                                                    <a href="javascript:;" class="btn btn-default fileinput-exists"
+                                                       data-dismiss="fileinput"> Remove </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr/>
+                                        <div class="row">
+                                            <div class="callout callout-warning">
+                                                <strong><i class="far fa-file-alt mr-1"></i> Notes</strong>
+                                                <p>
+                                                    <span> Prefered image size for Avatar is 210X70 & not more then 200KB. Supported image type should be jpeg, jpj, png and bmp. Attached image thumbnail is supported in Latest Firefox, Chrome, Opera, Safari and Internet Explorer 10 only </span>
                                                 </p>
                                             </div>
                                         </div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PaymentRequest;
 use App\Models\Product;
+use App\Models\Setting;
 use App\Models\TransactionMethod;
 use Illuminate\Http\Request;
 use DB;
@@ -133,7 +134,8 @@ class PaymentRequestController extends Controller
 
     public function show(PaymentRequest $payment_request)
     {
-        return view('payment_request.show', compact('payment_request'));
+        $settings=Setting::first();
+        return view('payment_request.show', compact('payment_request','settings'));
     }
 
     public function payment_request_checked($id)
