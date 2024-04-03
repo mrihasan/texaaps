@@ -136,3 +136,7 @@ Route::get('/customer_report', '\App\Http\Controllers\ReportController@customer_
 Route::get('/supplier_report', '\App\Http\Controllers\ReportController@supplier_report')->name('supplier_report');
 Route::get('/balance_report', '\App\Http\Controllers\ReportController@balance_report')->name('balance_report');
 Route::get('/balance_sheet', '\App\Http\Controllers\ReportController@balance_sheet')->name('balance_sheet');
+
+Route::get('/print-template', function () {
+    return view('print_template');
+})->name('print.template');

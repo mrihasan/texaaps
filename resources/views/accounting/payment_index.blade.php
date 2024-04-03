@@ -192,8 +192,8 @@
                     text: '<span class="fa fa-file-pdf-o fa-lg"></span><i class="hidden-xs hidden-sm hidden-md"> Pdf</i>',
                     filename: '{{$header_title}}',
                     extension: '.pdf',
-//                    orientation : 'landscape',
-                    orientation: 'portrait',
+                    orientation : 'landscape',
+//                    orientation: 'portrait',
                     title: "{{$header_title}}",
                     footer: true,
                     exportOptions: {
@@ -244,10 +244,10 @@
                                     },
                                     {
                                         //image: logo,
-                                        alignment: 'center',
-                                        width: 20,
-                                        height: 20,
-                                        image: 'data:image/png;base64,{{$settings->logo_base64}}'
+                                        {{--alignment: 'center',--}}
+                                        {{--width: 20,--}}
+                                        {{--height: 20,--}}
+                                        {{--image: 'data:image/png;base64,{{$settings->logo_base64}}'--}}
 
                                     },
 
@@ -331,7 +331,14 @@
                     $(api.column(j).footer()).html(pageTotal);
                     j++;
                 }
-            }
+            },
+            columnDefs: [
+                {
+                    targets: [3],
+                    render: $.fn.dataTable.render.number(',', '.', 1, '')
+                }
+            ]
+
 
         });
     });

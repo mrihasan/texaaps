@@ -362,8 +362,9 @@ function ledgerBalance($user_id)
 function ledger_account($account_id, $start_date, $end_date)
 {
     $mindate_ledger = DB::table('bank_ledgers')->MIN('transaction_date');
-    $before1day = new DateTime($start_date);
-    $before1day->sub(new DateInterval('P1D'));
+    $before1day1 = new DateTime($start_date);
+    $dateObject=$before1day1->sub(new DateInterval('P1D'));
+    $before1day=$dateObject->format('Y-m-d'). ' 23:59:59';
     $bd_bank_credit = DB::table('bank_ledgers')
         ->where('bank_ledgers.bank_account_id', $account_id)
         ->whereIn('transaction_type_id', [1,3,5,8,10])

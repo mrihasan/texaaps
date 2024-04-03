@@ -183,8 +183,8 @@
                     text: '<span class="fa fa-file-pdf-o fa-lg"></span><i class="hidden-xs hidden-sm hidden-md"> Pdf</i>',
                     filename: '{{$header_title}}',
                     extension: '.pdf',
-//                    orientation : 'landscape',
-                    orientation: 'portrait',
+                    orientation : 'landscape',
+//                    orientation: 'portrait',
                     title: "{{$header_title}}",
                     footer: true,
                     exportOptions: {
@@ -204,13 +204,15 @@
                             doc.content[1].table.body[i][0].alignment = 'center';
                             doc.content[1].table.body[i][1].alignment = 'left';
                             doc.content[1].table.body[i][2].alignment = 'left';
-                            doc.content[1].table.body[i][3].alignment = 'right';
+                            doc.content[1].table.body[i][3].alignment = 'left';
                             doc.content[1].table.body[i][4].alignment = 'left';
                             doc.content[1].table.body[i][5].alignment = 'left';
-                            doc.content[1].table.body[i][6].alignment = 'center';
+                            doc.content[1].table.body[i][6].alignment = 'right';
+                            doc.content[1].table.body[i][7].alignment = 'right';
+                            doc.content[1].table.body[i][8].alignment = 'right';
                         }
-                        doc.content[1].table.widths = ['10%','15%','25%','10%','15%','20%','5%'];
-//                        doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+//                        doc.content[1].table.widths = ['10%','15%','25%','10%','15%','20%','5%'];
+                        doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
                         doc.content.splice(0, 1);
                         var now = new Date();
                         var jsDate = now.getDate() + '-' + (now.getMonth() + 1) + '-' + now.getFullYear() + ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
@@ -235,10 +237,10 @@
                                     },
                                     {
                                         //image: logo,
-                                        alignment: 'center',
-                                        width: 20,
-                                        height: 20,
-                                        image: 'data:image/png;base64,{{$settings->logo_base64}}'
+                                        {{--alignment: 'center',--}}
+                                        {{--width: 20,--}}
+                                        {{--height: 20,--}}
+                                        {{--image: 'data:image/png;base64,{{$settings->logo_base64}}'--}}
 
                                     },
 

@@ -496,10 +496,9 @@
                                         <br/>
                                         <br/>
                                         <br/>
-                                        {{ entryBy($invoice->entry_by) }}
-                                        <br/>
-                                        Mob: +880176-5450149.<br/>
-                                        E-mail: noman@texaaps.com
+                                        {{ entryByInfo($invoice->entry_by)['name'] }}<br/>
+                                        {{ entryByInfo($invoice->entry_by)['cell_phone'] }}<br/>
+                                        {{ entryByInfo($invoice->entry_by)['email'] }}<br/>
                                     </td>
                                     {{--<td colspan="4" style="border: none"></td>--}}
                                 </tr>

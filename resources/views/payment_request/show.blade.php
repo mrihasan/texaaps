@@ -70,6 +70,11 @@
         margin-left: auto;
         margin-right: auto;
     }
+
+    .print-container {
+        border: 1px solid black;
+        padding: 10px;
+    }
 </style>
 
 @endpush
@@ -93,7 +98,6 @@
                         <div class="content">
                             <table class="center" width="90%" style="border: none">
 
-                                <tbody>
                                 <tr style="border: none">
                                     <td style="border: none"><img
                                                 src="{!! asset( 'storage/images/pad_top.png'. '?'. 'time='. time()) !!}"
@@ -117,27 +121,31 @@
 
                                     </td>
                                 </tr>
-
                                 <tr style="border: none">
-                                    <td style="text-align:left; border: none"  colspan="3">
+                                    <td style="text-align:left; border: none" colspan="3">
 
                                         <h6 style="text-align: left;margin-top: 0px;margin-bottom: 0px;"
                                             class="company-name">
                                             <strong>To</strong></h6>
                                         <p>Managing Director </p>
 
-                                        <address>Texaaps<br/>Rangs Nahraz, H-14(5th Floor )<br/>Shahjalal Avenue, Sector-4,<br/>Uttara, Dhaka-1230</address>
+                                        <address>Texaaps<br/>Rangs Nahraz, H-14(5th Floor )<br/>Shahjalal Avenue,
+                                            Sector-4,<br/>Uttara, Dhaka-1230
+                                        </address>
                                         <p>Dear Sir,</p>
                                         <p>Kindly arrange for the Payment for the bellow particulars-</p>
                                     </td>
                                 </tr>
+                            </table>
+                            <table class="center" width="90%" style="border: solid">
+
                                 <tr style="border: none">
                                     <td style="text-align:left; border: none" colspan="3">
                                         <p><strong>Customer Details :</strong></p>
                                     </td>
                                 </tr>
                                 <tr style="border: none">
-                                    <td style="text-align:right; border: none" >
+                                    <td style="text-align:right; border: none" width="35%">
                                         <strong>Customer Name :</strong>
                                     </td>
                                     <td style="text-align:left; border: none" colspan="2">
@@ -145,7 +153,7 @@
                                     </td>
                                 </tr>
                                 <tr style="border: none">
-                                    <td style="text-align:right; border: none" >
+                                    <td style="text-align:right; border: none">
                                         <strong>Product Name :</strong>
                                     </td>
                                     <td style="text-align:left; border: none" colspan="2">
@@ -153,7 +161,7 @@
                                     </td>
                                 </tr>
                                 <tr style="border: none">
-                                    <td style="text-align:right; border: none" >
+                                    <td style="text-align:right; border: none">
                                         <strong>Product Brand :</strong>
                                     </td>
                                     <td style="text-align:left; border: none" colspan="2">
@@ -161,7 +169,7 @@
                                     </td>
                                 </tr>
                                 <tr style="border: none">
-                                    <td style="text-align:right; border: none" >
+                                    <td style="text-align:right; border: none">
                                         <strong>Product Model :</strong>
                                     </td>
                                     <td style="text-align:left; border: none" colspan="2">
@@ -169,7 +177,7 @@
                                     </td>
                                 </tr>
                                 <tr style="border: none">
-                                    <td style="text-align:right; border: none" >
+                                    <td style="text-align:right; border: none">
                                         <strong>Work order Ref No :</strong>
                                     </td>
                                     <td style="text-align:left; border: none" colspan="2">
@@ -177,7 +185,7 @@
                                     </td>
                                 </tr>
                                 <tr style="border: none">
-                                    <td style="text-align:right; border: none" >
+                                    <td style="text-align:right; border: none">
                                         <strong>Work order Date :</strong>
                                     </td>
                                     <td style="text-align:left; border: none" colspan="2">
@@ -185,21 +193,22 @@
                                     </td>
                                 </tr>
                                 <tr style="border: none">
-                                    <td style="text-align:right; border: none" >
+                                    <td style="text-align:right; border: none">
                                         <strong>Work order Amount :</strong>
                                     </td>
                                     <td style="text-align:left; border: none" colspan="2">
                                         {{ $payment_request->workorder_amount }}
                                     </td>
                                 </tr>
-
+                            </table>
+                            <table class="center" width="90%" style="border: solid">
                                 <tr style="border: none">
                                     <td style="text-align:left; border: none" colspan="3">
                                         <p><strong>Purchase / Supplier Details :</strong></p>
                                     </td>
                                 </tr>
                                 <tr style="border: none">
-                                    <td style="text-align:right; border: none" >
+                                    <td style="text-align:right; border: none" width="35%">
                                         <strong>Supplier Name :</strong>
                                     </td>
                                     <td style="text-align:left; border: none" colspan="2">
@@ -207,7 +216,7 @@
                                     </td>
                                 </tr>
                                 <tr style="border: none">
-                                    <td style="text-align:right; border: none" >
+                                    <td style="text-align:right; border: none">
                                         <strong>Supplier Address :</strong>
                                     </td>
                                     <td style="text-align:left; border: none" colspan="2">
@@ -215,7 +224,7 @@
                                     </td>
                                 </tr>
                                 <tr style="border: none">
-                                    <td style="text-align:right; border: none" >
+                                    <td style="text-align:right; border: none">
                                         <strong>Contact Person :</strong>
                                     </td>
                                     <td style="text-align:left; border: none" colspan="2">
@@ -223,7 +232,7 @@
                                     </td>
                                 </tr>
                                 <tr style="border: none">
-                                    <td style="text-align:right; border: none" >
+                                    <td style="text-align:right; border: none">
                                         <strong>Contact No :</strong>
                                     </td>
                                     <td style="text-align:left; border: none" colspan="2">
@@ -231,7 +240,7 @@
                                     </td>
                                 </tr>
                                 <tr style="border: none">
-                                    <td style="text-align:right; border: none" >
+                                    <td style="text-align:right; border: none">
                                         <strong>Amount :</strong>
                                     </td>
                                     <td style="text-align:left; border: none" colspan="2">
@@ -239,21 +248,22 @@
                                     </td>
                                 </tr>
                                 <tr style="border: none">
-                                    <td style="text-align:right; border: none" >
+                                    <td style="text-align:right; border: none">
                                         <strong>In Word :</strong>
                                     </td>
                                     <td style="text-align:left; border: none" colspan="2">
                                         {{numberToWord($payment_request->amount).' Taka Only'}}
                                     </td>
                                 </tr>
-
+                            </table>
+                            <table class="center" width="90%" style="border: solid">
                                 <tr style="border: none">
                                     <td style="text-align:left; border: none" colspan="3">
                                         <p><strong>Bank Details :</strong></p>
                                     </td>
                                 </tr>
                                 <tr style="border: none">
-                                    <td style="text-align:right; border: none" >
+                                    <td style="text-align:right; border: none" width="35%">
                                         <strong>Account Name :</strong>
                                     </td>
                                     <td style="text-align:left; border: none" colspan="2">
@@ -261,7 +271,7 @@
                                     </td>
                                 </tr>
                                 <tr style="border: none">
-                                    <td style="text-align:right; border: none" >
+                                    <td style="text-align:right; border: none">
                                         <strong>Account No :</strong>
                                     </td>
                                     <td style="text-align:left; border: none" colspan="2">
@@ -269,7 +279,7 @@
                                     </td>
                                 </tr>
                                 <tr style="border: none">
-                                    <td style="text-align:right; border: none" >
+                                    <td style="text-align:right; border: none">
                                         <strong>Bank Name :</strong>
                                     </td>
                                     <td style="text-align:left; border: none" colspan="2">
@@ -277,7 +287,7 @@
                                     </td>
                                 </tr>
                                 <tr style="border: none">
-                                    <td style="text-align:right; border: none" >
+                                    <td style="text-align:right; border: none">
                                         <strong>Payment Mode :</strong>
                                     </td>
                                     <td style="text-align:left; border: none" colspan="2">
@@ -292,7 +302,7 @@
                                 </tr>
 
                                 <tr style="border: none">
-                                    <td style="text-align:right; border: none" >
+                                    <td style="text-align:right; border: none">
                                         <strong>Expected Bill :</strong>
                                     </td>
                                     <td style="text-align:left; border: none" colspan="2">
@@ -301,13 +311,15 @@
                                 </tr>
 
                                 <tr style="border: none">
-                                    <td style="text-align:right; border: none" >
+                                    <td style="text-align:right; border: none">
                                         <strong>Expected Day :</strong>
                                     </td>
                                     <td style="text-align:left; border: none" colspan="2">
                                         <strong>{{$payment_request->expected_day}}</strong>
                                     </td>
                                 </tr>
+                            </table>
+                            <table class="center" width="90%" style="border: none">
 
                                 <tr style="border: none">
                                     <td style="text-align:left; border: none" width="35% ">
@@ -326,10 +338,11 @@
                                     <td style="text-align:left; border: none" width="35% ">
                                         Prepared by<br/><br/><br/><br/>
                                         <address>
-                                        ______________________<br/>
-                                        {{$payment_request->user->name}}<br/>
-                                        {{($payment_request->user->employee)?$payment_request->user->employee->designation:''}}<br/>
-                                        {{setting_info()['org_name']}}
+                                            ______________________<br/>
+                                            {{$payment_request->user->name}}<br/>
+                                            {{($payment_request->user->employee)?$payment_request->user->employee->designation:''}}
+                                            <br/>
+                                            {{setting_info()['org_name']}}
                                         </address>
                                     </td>
 
@@ -337,8 +350,10 @@
                                         Checked by<br/><br/><br/><br/>
                                         <address>
                                             ______________________<br/>
-                                            {{($payment_request->checked_by)?$payment_request->checkedBy->name:'Not Yet Checked'}}<br/>
-                                            {{($payment_request->checked_by && $payment_request->user->employee)?$payment_request->user->employee->designation:''}}<br/>
+                                            {{($payment_request->checked_by)?$payment_request->checkedBy->name:'Not Yet Checked'}}
+                                            <br/>
+                                            {{($payment_request->checked_by && $payment_request->checkedBy->employee)?$payment_request->checkedBy->employee->designation:'N/A'}}
+                                            <br/>
                                             {{($payment_request->checked_by)?setting_info()['org_name']:''}}
                                         </address>
                                     </td>
@@ -346,14 +361,16 @@
                                         Approved By<br/><br/><br/><br/>
                                         <address>
                                             ______________________<br/>
-                                            {{($payment_request->approved_by)?$payment_request->approvedBy->name:'Not Yet Approved'}}<br/>
-                                            {{($payment_request->approved_by && $payment_request->user->employee)?$payment_request->user->employee->designation:''}}<br/>
+                                            {{($payment_request->approved_by)?$payment_request->approvedBy->name:'Not Yet Approved'}}
+                                            <br/>
+                                            {{($payment_request->approved_by && $payment_request->approvedBy->employee)?$payment_request->approvedBy->employee->designation:'N/A'}}
+                                            <br/>
                                             {{($payment_request->approved_by)?setting_info()['org_name']:''}}
                                         </address>
                                     </td>
 
                                 </tr>
-                                </tbody>
+                                {{--</tbody>--}}
                             </table>
                         </div>
                     </div>
@@ -364,24 +381,24 @@
                         <a type="button" id="pbutton0" class="btn btn-warning pull-right"><i
                                     class="fa fa-print"> Print</i></a>
                         {{--@can('SupplyDelete')--}}
-                            {{--{!! Form::open([--}}
-                    {{--'method'=>'DELETE',--}}
-                    {{--'url' => ['invoice', $payment_request->id],--}}
-                    {{--'style' => 'display:inline'--}}
-                {{--]) !!}--}}
-                            {{--{!! Form::button('<span class="far fa-trash-alt" aria-hidden="true" title="Delete" />', array(--}}
-                                    {{--'type' => 'submit',--}}
-                                    {{--'class' => 'btn btn-danger btn-xs fa-pull-right',--}}
-                                    {{--'title' => 'Delete',--}}
-                                    {{--'onclick'=>'return confirm("Confirm delete?")'--}}
-                            {{--))!!}--}}
-                            {{--{!! Form::close() !!}--}}
+                        {{--{!! Form::open([--}}
+                        {{--'method'=>'DELETE',--}}
+                        {{--'url' => ['invoice', $payment_request->id],--}}
+                        {{--'style' => 'display:inline'--}}
+                        {{--]) !!}--}}
+                        {{--{!! Form::button('<span class="far fa-trash-alt" aria-hidden="true" title="Delete" />', array(--}}
+                        {{--'type' => 'submit',--}}
+                        {{--'class' => 'btn btn-danger btn-xs fa-pull-right',--}}
+                        {{--'title' => 'Delete',--}}
+                        {{--'onclick'=>'return confirm("Confirm delete?")'--}}
+                        {{--))!!}--}}
+                        {{--{!! Form::close() !!}--}}
                         {{--@endcan--}}
                         {{--@can('SupplyAccess')--}}
-                            {{--<a href="{{ url('invoice/' . $payment_request->id . '/edit') }}"--}}
-                               {{--class="btn btn-info btn-xs fa-pull-right" title="Edit" style="margin-right: 10px"><span--}}
-                                        {{--class="far fa-edit"--}}
-                                        {{--aria-hidden="true"></span></a>--}}
+                        {{--<a href="{{ url('invoice/' . $payment_request->id . '/edit') }}"--}}
+                        {{--class="btn btn-info btn-xs fa-pull-right" title="Edit" style="margin-right: 10px"><span--}}
+                        {{--class="far fa-edit"--}}
+                        {{--aria-hidden="true"></span></a>--}}
                         {{--@endcan--}}
                     </div>
                 </div>

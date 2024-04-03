@@ -244,10 +244,10 @@
                                     },
                                     {
                                         //image: logo,
-                                        alignment: 'center',
-                                        width: 20,
-                                        height: 20,
-                                        image: 'data:image/png;base64,{{$settings->logo_base64}}'
+                                        {{--alignment: 'center',--}}
+                                        {{--width: 20,--}}
+                                        {{--height: 20,--}}
+                                        {{--image: 'data:image/png;base64,{{$settings->logo_base64}}'--}}
 
                                     },
 
@@ -331,7 +331,14 @@
                     $(api.column(j).footer()).html(pageTotal);
                     j++;
                 }
-            }
+            },
+            columnDefs: [
+                {
+                    targets: [3],
+                    render: $.fn.dataTable.render.number(',', '.', 1, '')
+                }
+            ]
+
 
         });
     });

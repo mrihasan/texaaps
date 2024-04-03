@@ -266,7 +266,15 @@ class LedgerController extends Controller
     public function show(Ledger $ledger)
     {
 //        dd($ledger);
-        return view('accounting.show_ledger', compact('ledger'));
+        $transaction_type1=$ledger->transaction_type->title;
+        if ($transaction_type1=='Payment')
+            $transaction_type= 'manage_payment';
+        elseif ($transaction_type1=='Receipt')
+            $transaction_type= 'manage_receipt';
+        else
+            $transaction_type= 'manage_ledger';
+
+        return view('accounting.show_ledger', compact('ledger','transaction_type'));
     }
 
     public function destroy(Ledger $ledger)
