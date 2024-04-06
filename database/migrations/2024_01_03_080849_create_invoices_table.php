@@ -25,14 +25,14 @@ return new class extends Migration
             $table->timestamp('transaction_date')->useCurrent();
             $table->string('reference')->nullable();
             $table->enum('transaction_type', ['Sales', 'Purchase','Order','Return','Put Back']);
-            $table->float('product_total')->nullable(); //invoice sub_total
-            $table->float('vat_per')->nullable();       //invoice vat %
-            $table->float('vat')->nullable();           //invoice vat amount
-            $table->float('disc_per')->nullable();      //invoice discount %
-            $table->float('discount')->nullable();      //invoice  discount amount
-            $table->float('total_amount', 9, 2); //invoice total before less amount
-            $table->float('less_amount')->nullable();   //invoice less amount
-            $table->float('invoice_total', 9, 2); //invoice total
+            $table->float('product_total', 12, 1)->nullable(); //invoice sub_total
+            $table->float('vat_per', 8, 1)->nullable();       //invoice vat %
+            $table->float('vat', 8, 1)->nullable();           //invoice vat amount
+            $table->float('disc_per', 8, 1)->nullable();      //invoice discount %
+            $table->float('discount', 12, 1)->nullable();      //invoice  discount amount
+            $table->float('total_amount', 12, 1); //invoice total before less amount
+            $table->float('less_amount', 12,1)->nullable();   //invoice less amount
+            $table->float('invoice_total', 12, 1); //invoice total
             $table->integer('entry_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->text('notes')->nullable();

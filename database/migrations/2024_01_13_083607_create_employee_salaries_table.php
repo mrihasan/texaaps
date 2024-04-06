@@ -22,7 +22,7 @@ return new class extends Migration
             $table->tinyInteger('salary_month');
             $table->integer('year');
             $table->enum('type', ['Salary Payslip', 'Bonus Payslip', 'Salary Payment', 'Bonus Payment']);
-            $table->integer('salary_amount')->nullable();
+            $table->integer('salary_amount', 12, 1)->nullable();
             $table->integer('working_day')->nullable();
             $table->integer('holiday_weekend')->nullable();
             $table->integer('leave_day')->nullable();

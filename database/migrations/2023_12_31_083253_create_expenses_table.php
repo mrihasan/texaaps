@@ -21,7 +21,7 @@ return new class extends Migration
                 ->references('id')->on('expense_types')
                 ->onDelete('cascade');
             $table->timestamp('expense_date')->useCurrent();
-            $table->float('expense_amount',10,2);
+            $table->float('expense_amount',12,1);
             $table->enum('status',['Submitted','Approved','Canceled','Updated']);
             $table->string('comments')->nullable();
             $table->integer('user_id');

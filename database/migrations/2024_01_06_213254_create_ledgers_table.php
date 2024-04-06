@@ -23,7 +23,7 @@ return new class extends Migration
             $table->timestamp('transaction_date')->useCurrent();
             $table->string('transaction_code');
             $table->integer('transaction_type_id');
-            $table->float('amount',9,2)->default(0);
+            $table->float('amount',12,1)->default(0);
             $table->integer('transaction_method_id');
             $table->text('comments')->nullable();
             $table->integer('entry_by');

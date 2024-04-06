@@ -13,17 +13,18 @@ class ImageProfileController extends Controller
 {
     public function update(Request $request, $id)
     {
+        $utime = round(microtime(true) * 1000);
         if ($request->image_type=='sign') {
             $this->validate($request, [
                 'sign' => 'mimes:png,jpeg,jpg,bmp | required | max:200'
             ]);
             $sign = $request->file('sign');
+
             $slug = 'dg';
             $profile_sign = ImageProfile::find($id);
             if (isset($sign)) {
 //            make unique name for sign
-                $currentDate = Carbon::now()->toDateString();
-                $imagename = $slug . '-' . $currentDate . '-' . uniqid() . '.' . $sign->getClientOriginalExtension();
+                $imagename = $slug . '-' . $utime . '.' . $sign->getClientOriginalExtension();
 //            check category dir is exists
                 if (!Storage::disk('public')->exists('sign')) {
                     Storage::disk('public')->makeDirectory('sign');
@@ -49,8 +50,7 @@ class ImageProfileController extends Controller
             $profile_img = ImageProfile::find($id);
             if (isset($image)) {
 //            make unique name for image
-                $currentDate = Carbon::now()->toDateString();
-                $imagename = $slug . '-' . $currentDate . '-' . uniqid() . '.' . $image->getClientOriginalExtension();
+                $imagename = $slug . '-' . $utime . '.' . $image->getClientOriginalExtension();
 //            check category dir is exists
                 if (!Storage::disk('public')->exists('image_profile')) {
                     Storage::disk('public')->makeDirectory('image_profile');

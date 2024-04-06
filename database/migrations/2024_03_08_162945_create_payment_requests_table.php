@@ -30,12 +30,12 @@ return new class extends Migration
             $table->string('model')->nullable();
             $table->string('workorder_refno')->nullable();
             $table->date('workorder_date')->nullable();
-            $table->float('workorder_amount', 10, 1)->nullable();
+            $table->float('workorder_amount', 12, 1)->nullable();
 
             $table->integer('supplier_id')->nullable();
             $table->string('contact_person')->nullable();
             $table->string('contact_no')->nullable();
-            $table->float('amount', 10, 1);
+            $table->float('amount', 12, 1);
 
             $table->string('account_name')->nullable();
             $table->string('account_no')->nullable();

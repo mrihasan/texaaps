@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('transaction_code')->nullable();
             $table->integer('transaction_type_id');
             $table->integer('transaction_method_id');
-            $table->double('amount',10,1)->default(0);
+            $table->double('amount',12,1)->default(0);
             $table->text('particulars')->nullable();
             $table->date('ref_date')->nullable();
             $table->string('ref_no')->nullable();

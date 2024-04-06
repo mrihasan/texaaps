@@ -29,9 +29,9 @@ return new class extends Migration
             $table->enum('transaction_type', ['Sales', 'Purchase','Order','Return','Put Back']);
             $table->integer('qty');
             $table->string('unit_name');
-            $table->float('ubuy_price',9,1)->nullable();
-            $table->float('usell_price',9,1)->nullable();
-            $table->float('line_total',9,1);
+            $table->float('ubuy_price',12,1)->nullable();
+            $table->float('usell_price',12,1)->nullable();
+            $table->float('line_total',12,1);
             $table->tinyInteger('status')->nullable();
 
             $table->timestamps();

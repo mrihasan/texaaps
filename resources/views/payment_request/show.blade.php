@@ -71,10 +71,18 @@
         margin-right: auto;
     }
 
-    .print-container {
-        border: 1px solid black;
-        padding: 10px;
-    }
+    @media print {
+        body {
+            margin: 0;
+            padding: 0;
+            size: A4 portrait;
+        }
+
+        /* Adjust margins to fit content within A4 size */
+        @page {
+            margin: 20mm; /* Adjust as needed */
+        }
+        }
 </style>
 
 @endpush
@@ -97,16 +105,15 @@
                     <div class="portlet-body form portrait" id="print_this0">
                         <div class="content">
                             <table class="center" width="90%" style="border: none">
-
                                 <tr style="border: none">
                                     <td style="border: none"><img
-                                                src="{!! asset( 'storage/images/pad_top.png'. '?'. 'time='. time()) !!}"
-                                                class="img-fluid" style="border: none"></td>
+                                                src="{!! asset( 'storage/images/pad_top.png'. '?'. 'time='. time()) !!}" width="50%"
+                                                class="" style="border: none"></td>
                                 </tr>
                                 <tr style="border: none">
-                                    <td style="border: none" class="company-name">
+                                    <td style="border: none" class="company-name" width="35%">
                                         <strong>{{'Reff: '.$payment_request->req_no}}</strong></td>
-                                    <td style="border: none; text-align: right" class="company-name">
+                                    <td style="border: none; text-align: right" class="company-name" width="35%">
                                         <br/>
                                         <br/>
                                         <br/>
@@ -116,7 +123,7 @@
                                             class="company-name">
                                             <strong>PAYMENT REQUEST FORM</strong></h4>
                                     </td>
-                                    <td style="border: none; text-align: right" class="company-name">
+                                    <td style="border: none; text-align: right" class="company-name" width="35%">
                                         <strong>{{' Date: '.Carbon\Carbon::parse($payment_request->req_date)->format('d-M-Y')}}</strong><br/>
 
                                     </td>
@@ -325,8 +332,6 @@
                                 <tr style="border: none">
                                     <td style="text-align:left; border: none" width="35% ">
                                         <br/>
-                                        <br/>
-                                        <br/>
                                     </td>
 
                                     <td style="text-align:center; border: none" width="30%">
@@ -337,7 +342,7 @@
                                 </tr>
                                 <tr style="border: none">
                                     <td style="text-align:left; border: none" width="35% ">
-                                        Prepared by<br/><br/><br/><br/>
+                                        Prepared by<br/><br/>
                                         @if($payment_request->user->employee && ($payment_request->user->imageprofile->sign!='default_sign'||$payment_request->user->imageprofile->sign!=null))
                                             <img src="{!! asset( 'storage/sign/'. $payment_request->user->imageprofile->sign. '?'. 'time='. time()) !!}"
                                                     class="img-fluid" alt="Sign Image">
@@ -353,7 +358,7 @@
                                     </td>
 
                                     <td style="text-align:center; border: none" width="30%">
-                                        Checked by<br/><br/><br/><br/>
+                                        Checked by<br/><br/>
                                         @if($payment_request->checked_by!=null && ($payment_request->checkedBy->employee->user->imageprofile->sign!='default_sign'||$payment_request->checkedBy->employee->user->imageprofile->sign!=null))
                                             <img src="{!! asset( 'storage/sign/'. $payment_request->checkedBy->employee->user->imageprofile->sign. '?'. 'time='. time()) !!}"
                                                  class="img-fluid" alt="Sign Image">
@@ -368,7 +373,7 @@
                                         </address>
                                     </td>
                                     <td style="text-align:right; border: none" width="35%">
-                                        Approved By<br/><br/><br/><br/>
+                                        Approved By<br/><br/>
                                         @if($payment_request->approved_by!=null && ($payment_request->approvedBy->employee->user->imageprofile->sign!='default_sign'||$payment_request->approvedBy->employee->user->imageprofile->sign!=null))
                                             <img src="{!! asset( 'storage/sign/'. $payment_request->approvedBy->employee->user->imageprofile->sign. '?'. 'time='. time()) !!}"
                                                  class="img-fluid" alt="Sign Image">
@@ -432,27 +437,6 @@
     //    console.log(id);
     $('#pbutton0').on('click', function () {
         $("#print_this0").printThis({
-            debug: false,
-            importCSS: true,
-            importStyle: true,
-            printContainer: true,
-//            loadCSS: "../../../public/tf/global/plugins/bootstrap/css/bootstrap.min.css",
-            pageTitle: "",
-            removeInline: false,
-            printDelay: 333,
-            header: null,
-            footer: null,
-            base: false,
-//            formValues: true,
-            canvas: false,
-//            doctypeString: "...",
-            removeScripts: false,
-            copyTagClasses: false
-        });
-    });
-
-    $('#pbutton1').on('click', function () {
-        $("#print_this1").printThis({
             debug: false,
             importCSS: true,
             importStyle: true,

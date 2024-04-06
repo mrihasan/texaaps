@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('transaction_code')->nullable();
             $table->integer('transaction_type_id');
             $table->integer('transaction_method_id');
-            $table->double('amount',10,1)->default(0);
+            $table->double('amount',12,1)->default(0);
             $table->text('comments')->nullable();
             $table->integer('entry_by')->nullable();
             $table->integer('updated_by')->nullable();
