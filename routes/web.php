@@ -120,6 +120,9 @@ Route::put('payment_request_approved/{id}', '\App\Http\Controllers\PaymentReques
 Route::put('payment_request_checked/{id}', '\App\Http\Controllers\PaymentRequestController@payment_request_checked')->name('payment_request_checked');
 Route::resource('payment_request', '\App\Http\Controllers\PaymentRequestController');
 
+Route::get('/pqCreate', '\App\Http\Controllers\PriceQuotationController@pqCreate')->name('pqCreate');
+Route::resource('price_quotation', '\App\Http\Controllers\PriceQuotationController');
+
 //Report Route________________________________________________________________________
 Route::get('/datewise_expense_summary_home', '\App\Http\Controllers\ReportController@datewise_expense_summary_home')->name('datewise_expense_summary_home');
 Route::get('/datewise_expense_summary', '\App\Http\Controllers\ReportController@datewise_expense_summary')->name('datewise_expense_summary');
@@ -137,6 +140,3 @@ Route::get('/supplier_report', '\App\Http\Controllers\ReportController@supplier_
 Route::get('/balance_report', '\App\Http\Controllers\ReportController@balance_report')->name('balance_report');
 Route::get('/balance_sheet', '\App\Http\Controllers\ReportController@balance_sheet')->name('balance_sheet');
 
-Route::get('/print-template', function () {
-    return view('print_template');
-})->name('print.template');

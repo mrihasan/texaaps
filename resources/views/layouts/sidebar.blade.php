@@ -58,7 +58,20 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
-                        @can('SupplyAccess')
+                        <li class="nav-item">
+                            <a href="{{ url('pqCreate') }}" class="nav-link @yield('add_price_quotation')">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Add Price Quotation</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url('price_quotation') }}" class="nav-link @yield('manage_price_quotation')">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Manage Price Quotation</p>
+                            </a>
+                        </li>
+
+                    @can('SupplyAccess')
                             <li class="nav-item">
                                 <a href="{{ url('salesCreate') }}" class="nav-link @yield('add_sales')">
                                     <i class="far fa-circle nav-icon"></i>
