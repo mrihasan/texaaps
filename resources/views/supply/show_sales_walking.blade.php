@@ -217,11 +217,11 @@
                                         </td>
                                         <td style="text-align:center">{{ $details->qty}} </td>
                                         <td style="text-align:center">{{ $details->unit_name}}</td>
-                                        <td style="text-align:right">{{ $details->usell_price}} </td>
+                                        <td style="text-align:right">{{ number_format($details->usell_price,0)}} </td>
                                         {{--<td style="text-align:right">{{ $details->discountPercentage}} </td>--}}
                                         {{--<td style="text-align:right">{{ $details->discountUnit}} </td>--}}
                                         {{--<td style="text-align:right">{{ $details->discountedMrp}} </td>--}}
-                                        <td style="text-align:right">{{ $details->line_total}} </td>
+                                        <td style="text-align:right">{{ number_format($details->line_total,0)}} </td>
                                         {{--<td style="text-align:right">{{ $details->discountTotal}} </td>--}}
                                         {{--<td style="text-align:right">{{ $details->discountedTotalMrp}} </td>--}}
                                     </tr>
@@ -230,7 +230,7 @@
                                 <tr>
                                     <td colspan="3" style="text-align:center"></td>
                                     <td colspan="2" style="text-align:right">Sub Total :</td>
-                                    <td style="text-align:right">{{$invoice->product_total}}</td>
+                                    <td style="text-align:right">{{number_format($invoice->product_total,0)}}</td>
 
                                 </tr>
                                 <tr>
@@ -255,7 +255,7 @@
                                     <td colspan="2" style="text-align:right"></td>
                                     <td colspan="1" style="text-align:right"></td>
                                     <td colspan="2" style="text-align:right">Net Amount:</td>
-                                    <td style="text-align:right">{{$invoice->total_amount}}</td>
+                                    <td style="text-align:right">{{number_format($invoice->total_amount,0)}}</td>
 
                                 </tr>
                                 <tr>
@@ -271,7 +271,7 @@
                                     <td colspan="3" style="text-align:left">
                                         </td>
                                     <td colspan="2" style="text-align:right">Invoice Total :</td>
-                                    <td style="text-align:right">{{round($invoice->invoice_total)}}</td>
+                                    <td style="text-align:right">{{number_format(round($invoice->invoice_total),0)}}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="6" style="text-align:left"><strong>In Word (Invoice Total): </strong>
@@ -295,8 +295,9 @@
                                         <br/>
                                         <br/>
                                         <br/>
-                                        Mob: +880176-5450149.<br/>
-                                        E-mail: noman@texaaps.com
+                                        {{ entryByInfo($invoice->entry_by)['name'] }}<br/>
+                                        {{ entryByInfo($invoice->entry_by)['cell_phone'] }}<br/>
+                                        {{ entryByInfo($invoice->entry_by)['email'] }}<br/>
                                     </td>
                                     {{--<td colspan="4" style="border: none"></td>--}}
                                 </tr>

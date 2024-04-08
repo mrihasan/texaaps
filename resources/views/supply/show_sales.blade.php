@@ -132,8 +132,6 @@
                                             <br/>
                                             <small>{{'Tracking No: '.$invoice->transaction_code}}</small>
                                             <br/>
-                                            {{' By: '.($invoice->entryBy->name)}}
-                                            <br/>
                                         </strong>
 
                                     </td>
@@ -222,7 +220,7 @@
                                         </td>
                                         <td style="text-align:center">{{ $details->qty}} </td>
                                         <td style="text-align:center">{{ $details->unit_name}}</td>
-                                        <td style="text-align:right">{{ $details->usell_price}} </td>
+                                        <td style="text-align:right">{{ number_format($details->usell_price,0)}} </td>
                                         {{--<td style="text-align:right">{{ $details->discountPercentage}} </td>--}}
                                         {{--<td style="text-align:right">{{ $details->discountUnit}} </td>--}}
                                         {{--<td style="text-align:right">{{ $details->discountedMrp}} </td>--}}
@@ -251,7 +249,7 @@
                                     <td colspan="2" style="text-align:right">
                                         <strong>{{'From '.\Carbon\Carbon::parse($mindate_ledger)->format('d-M-Y').' to '.\Carbon\Carbon::parse($before1day_invoice)->format('d-M-Y')}} </strong>
                                     </td>
-                                    <td colspan="1" style="text-align:right">{{$ledger['balance_before1day']}}</td>
+                                    <td colspan="1" style="text-align:right">{{number_format($ledger['balance_before1day'],0)}}</td>
                                     <td colspan="2" style="text-align:right">(-)Discount :</td>
                                     <td style="text-align:right">{{$invoice->discount}}</td>
 
@@ -260,9 +258,9 @@
                                     <td colspan="2" style="text-align:right">Today
                                         <strong>( {{\Carbon\Carbon::parse($invoice->transaction_date)->format('d-M-Y')}}
                                             )</strong></td>
-                                    <td colspan="1" style="text-align:right">{{$ledger['balance_today']}}</td>
+                                    <td colspan="1" style="text-align:right">{{number_format($ledger['balance_today'],0)}}</td>
                                     <td colspan="2" style="text-align:right">Net Amount:</td>
-                                    <td style="text-align:right">{{$invoice->total_amount}}</td>
+                                    <td style="text-align:right">{{number_format($invoice->total_amount,0)}}</td>
 
                                 </tr>
                                 <tr>
@@ -270,17 +268,17 @@
                                         <strong> {{'From '.\Carbon\Carbon::parse($mindate_ledger)->format('d-M-Y').' to '.\Carbon\Carbon::parse($invoice->transaction_date)->format('d-M-Y')}} </strong>
                                     </td>
                                     <td colspan="1"
-                                        style="text-align:right">{{$ledger['balance_before1day']+$ledger['balance_today']}}</td>
+                                        style="text-align:right">{{number_format($ledger['balance_before1day']+$ledger['balance_today'],0)}}</td>
                                     <td colspan="2" style="text-align:right">Less Amount:</td>
                                     <td style="text-align:right">{{$invoice->less_amount}}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="3" style="text-align:left"><strong>Last Payment Info : </strong>
                                         {{($ledger['lastPayment'])?('Date: '. \Carbon\Carbon::parse($ledger['lastPayment']->transaction_date)->format('d-M-Y')
-                                .', Payment Method : '. $ledger['lastPayment']->transaction_method->title.', Amount ৳ : '. $ledger['lastPayment']->amount):'No transaction'}}
+                                .', Payment Method : '. $ledger['lastPayment']->transaction_method->title.', Amount ৳ : '. number_format($ledger['lastPayment']->amount,0)):'No transaction'}}
                                     </td>
                                     <td colspan="2" style="text-align:right">Invoice Total :</td>
-                                    <td style="text-align:right">{{round($invoice->invoice_total)}}</td>
+                                    <td style="text-align:right">{{number_format(round($invoice->invoice_total),0)}}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="6" style="text-align:left"><strong>In Word (Invoice Total): </strong>
