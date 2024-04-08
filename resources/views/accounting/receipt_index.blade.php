@@ -334,8 +334,8 @@
             },
             columnDefs: [
                 {
-                    targets: [3],
-                    render: $.fn.dataTable.render.number(',', '.', 1, '')
+                    targets: [3],className: 'text-right',
+                    render: $.fn.dataTable.render.number(',', '.', 0, '')
                 }
             ]
 

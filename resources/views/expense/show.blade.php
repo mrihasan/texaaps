@@ -72,7 +72,7 @@
                                 Expense Amount
                             </th>
                             <td>
-                                {{ $expense->expense_amount }}
+                                {{ number_format($expense->expense_amount,0) }}
                             </td>
                         </tr>
                         <tr>

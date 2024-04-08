@@ -208,7 +208,7 @@
 //                {targets: [4], className: 'text-right'},
                 {
                     targets: [5],
-                    render: $.fn.dataTable.render.number(',', '.', 1, '')
+                    render: $.fn.dataTable.render.number(',', '.', 0, '')
                 }
             ],
 

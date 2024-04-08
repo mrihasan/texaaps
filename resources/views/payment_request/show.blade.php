@@ -205,7 +205,7 @@
                                         <strong>Work order Amount :</strong>
                                     </td>
                                     <td style="text-align:left; border: none" colspan="2">
-                                        {{ $payment_request->workorder_amount }}
+                                        {{ number_format($payment_request->workorder_amount,0) }}
                                     </td>
                                 </tr>
                             </table>
@@ -252,7 +252,7 @@
                                         <strong>Amount :</strong>
                                     </td>
                                     <td style="text-align:left; border: none" colspan="2">
-                                        {{$payment_request->amount}}
+                                        {{number_format($payment_request->amount,0)}}
                                     </td>
                                 </tr>
                                 <tr style="border: none">

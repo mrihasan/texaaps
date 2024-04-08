@@ -40,8 +40,8 @@
                     <td>{{$stu->product->title}}</td>
                     <td style="text-align: right">{{$stu->qty}}</td>
                     <td style="text-align: right">{{$stu->unit_name}}</td>
-                    <td style="text-align: right">{{($user->user_type_id==3)?$stu->usell_price:$stu->ubuy_price}}</td>
-                    <td style="text-align: right">{{$stu->line_total}}</td>
+                    <td style="text-align: right">{{($user->user_type_id==3)?number_format($stu->usell_price,0):number_format($stu->ubuy_price,0)}}</td>
+                    <td style="text-align: right">{{number_format($stu->line_total,0)}}</td>
                 </tr>
             @endforeach
         </table>

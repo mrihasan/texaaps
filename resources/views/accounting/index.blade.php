@@ -155,6 +155,14 @@
             fixedHeader: true,
 //            dom: '<"html5buttons"B>lTfgtip',
             'dom': "<'row'<'col-sm-12 col-md-4'l><'col-sm-12 col-md-4'B><'col-sm-12 col-md-4'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+            columnDefs: [
+//                {targets: [4], className: 'text-right'},
+                {
+                    targets: [4],
+                    className: 'text-right',
+                    render: $.fn.dataTable.render.number(',', '.', 0, '')
+                }
+            ],
 
             buttons: [
                 {extend: 'copy'},

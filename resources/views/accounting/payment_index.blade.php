@@ -333,9 +333,11 @@
                 }
             },
             columnDefs: [
+//                {targets: [4], className: 'text-right'},
                 {
                     targets: [3],
-                    render: $.fn.dataTable.render.number(',', '.', 1, '')
+                    className: 'text-right',
+                    render: $.fn.dataTable.render.number(',', '.', 0, '')
                 }
             ]
 

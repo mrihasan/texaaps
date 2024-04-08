@@ -32,7 +32,7 @@
                     <td>{{$stu->transaction_type->title}}</td>
                     <td>{{$stu->transaction_method->title}}</td>
                     <td>{{$stu->comments}}</td>
-                    <td style="text-align: right">{{$stu->amount}}</td>
+                    <td style="text-align: right">{{number_format($stu->amount,0)}}</td>
                     {{--<td class="noprint">--}}
                         {{--<a href="{{ url('ledger/' . $stu->id ) }}" class="btn btn-success btn-xs"--}}
                            {{--title="Show"><span class="far fa-eye" aria-hidden="true"></span></a>--}}

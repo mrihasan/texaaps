@@ -80,7 +80,7 @@
                                 Amount
                             </th>
                             <td>
-                                {{ ($employee_salary->type=='Salary Payslip')?$employee_salary->salary_amount:$employee_salary->paidsalary_amount }}
+                                {{ ($employee_salary->type=='Salary Payslip')?number_format($employee_salary->salary_amount,0):number_format($employee_salary->paidsalary_amount,0) }}
                             </td>
                         </tr>
                         <tr>

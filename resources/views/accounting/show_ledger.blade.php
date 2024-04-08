@@ -72,7 +72,7 @@
                                 Transaction Amount
                             </th>
                             <td>
-                                {{ $ledger->amount }}
+                                {{ number_format($ledger->amount,0) }}
                             </td>
                         </tr>
 

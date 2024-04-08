@@ -203,7 +203,7 @@
 //                { targets: [0,1,2,3,4, 5,6,7 ], className: 'text-center' },
                 {targets: [0], className: 'text-center'},
 //                {targets: [4], className: 'text-right'},
-                {targets: [5], render: $.fn.dataTable.render.number(',', '.', 1, '')}
+                {targets: [5], render: $.fn.dataTable.render.number(',', '.', 0, '')}
             ],
 
             buttons: [

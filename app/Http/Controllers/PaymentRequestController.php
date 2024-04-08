@@ -23,7 +23,8 @@ class PaymentRequestController extends Controller
     public function index()
     {
         $payment_requests = PaymentRequest::get();
-        return view('payment_request.index', compact('payment_requests'));
+        $header_title='List of Payment Request';
+        return view('payment_request.index', compact('payment_requests','header_title'));
     }
 
     public function create()

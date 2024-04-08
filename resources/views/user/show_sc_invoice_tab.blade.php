@@ -41,9 +41,9 @@
                     <td style="text-align: right">{{$stu->product_total}}</td>
                     <td>{{$stu->vat.' ('.$stu->vat_per.')'}}</td>
                     <td>{{$stu->discount.' ('.$stu->disc_per.')'}}</td>
-                    <td style="text-align: right">{{$stu->total_amount}}</td>
+                    <td style="text-align: right">{{number_format($stu->total_amount,0)}}</td>
                     <td style="text-align: right">{{$stu->less_amount}}</td>
-                    <td style="text-align: right">{{$stu->invoice_total}}</td>
+                    <td style="text-align: right">{{number_format($stu->invoice_total,0)}}</td>
 
                 </tr>
             @endforeach
