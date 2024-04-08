@@ -44,6 +44,7 @@
                         <tr style="background-color: #dff0d8">
                             <th>S.No</th>
                             <th> Quotation Number</th>
+                            <th> Date</th>
                             <th> Customer</th>
                             <th>Submitted By</th>
                             <th>Updated By</th>
@@ -60,6 +61,7 @@
                             <td></td>
                             <td></td>
                             <td></td>
+                            <td></td>
                         </tr>
                         </tfoot>
                         <tbody>
@@ -67,6 +69,7 @@
                             <tr>
                                 <td>{{ $key+1 }}</td>
                                 <td>{{ $data->ref_no }}</td>
+                                <td>{{ Carbon\Carbon::parse($data->pq_date)->format('d-M-y') }}</td>
                                 <td>{{ $data->user->name}}</td>
 
                                 <td>{{ $data->entryBy->name}}<br>
@@ -145,10 +148,10 @@
 //                { targets: [ 0,1,2,3,4, 5, 6, 7, 8, 9 ], className: 'dt-head text-center'  },
 //                { targets: [0,1,2,3,4, 5,6,7 ], className: 'text-center' },
                 {targets: [0], className: 'text-center'},
-                {targets: [5], className: 'text-right'},
-                {targets: [6], className: 'text-center'},
+                {targets: [6], className: 'text-right'},
+                {targets: [7], className: 'text-center'},
                 {
-                    targets: [5],
+                    targets: [6],
                     render: $.fn.dataTable.render.number(',', '.', 0, '')
                 }
             ],
@@ -299,7 +302,7 @@
                 var api = this.api();
                 nb_cols = api.columns().nodes().length -1;
 //                nb_cols = 8;
-                var j = 5;
+                var j = 6;
                 while (j < nb_cols) {
                     var pageTotal = api
                         .column(j, {page: 'current'})

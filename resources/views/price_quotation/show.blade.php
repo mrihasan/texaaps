@@ -207,15 +207,15 @@
                                         </td>
                                         <td style="text-align:center">{{ $details->qty}} </td>
                                         <td style="text-align:center">{{ $details->unit_name}}</td>
-                                        <td style="text-align:right">{{ $details->unit_price}} </td>
-                                        <td style="text-align:right">{{ $details->line_total}} </td>
+                                        <td style="text-align:right">{{ number_format($details->unit_price,0)}} </td>
+                                        <td style="text-align:right">{{ number_format($details->line_total,0)}} </td>
                                     </tr>
                                 @endforeach
                                 <tr></tr>
                                 <tr>
                                     {{--<td colspan="3" style="text-align:center"></td>--}}
                                     <td colspan="5" style="text-align:right">Total (BDT) :</td>
-                                    <td style="text-align:right">{{$price_quotation->invoice_total}}</td>
+                                    <td style="text-align:right">{{number_format($price_quotation->invoice_total,0)}}</td>
 
                                 </tr>
                                 <tr>

@@ -319,6 +319,7 @@ class InvoiceDetailController extends Controller
 
                 if ($request->customer_id == 6) {
                     $customer = new WalkingCustomer();
+                    $customer->type = 'Invoice';
                     $customer->invoice_id = $inventory_transaction_account->id;
                     $customer->ledger_id = null;
                     $customer->name = $request->name;

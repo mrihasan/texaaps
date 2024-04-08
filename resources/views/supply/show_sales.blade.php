@@ -226,7 +226,7 @@
                                         {{--<td style="text-align:right">{{ $details->discountPercentage}} </td>--}}
                                         {{--<td style="text-align:right">{{ $details->discountUnit}} </td>--}}
                                         {{--<td style="text-align:right">{{ $details->discountedMrp}} </td>--}}
-                                        <td style="text-align:right">{{ $details->line_total}} </td>
+                                        <td style="text-align:right">{{ number_format($details->line_total,0)}} </td>
                                         {{--<td style="text-align:right">{{ $details->discountTotal}} </td>--}}
                                         {{--<td style="text-align:right">{{ $details->discountedTotalMrp}} </td>--}}
                                     </tr>
@@ -235,7 +235,7 @@
                                 <tr>
                                     <td colspan="3" style="text-align:center"></td>
                                     <td colspan="2" style="text-align:right">Sub Total :</td>
-                                    <td style="text-align:right">{{$invoice->product_total}}</td>
+                                    <td style="text-align:right">{{number_format($invoice->product_total,0)}}</td>
 
                                 </tr>
                                 <tr>

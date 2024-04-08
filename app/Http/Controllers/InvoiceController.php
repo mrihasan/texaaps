@@ -195,7 +195,7 @@ class InvoiceController extends Controller
         }
 //        dd($invoice);
         if ($invoice->user_id == 6) {
-            $related_customer = WalkingCustomer::where('invoice_id', $invoice->id)->first();
+            $related_customer = WalkingCustomer::where('type', 'Invoice')->where('invoice_id', $invoice->id)->first();
         } else
             $related_customer = null;
         $transactionDetails = DB::table('invoice_details')
@@ -341,7 +341,7 @@ class InvoiceController extends Controller
                 return view('supply.purchaseEdit', compact('invoice', 'inventory', 'supplier', 'branch','brands'));
             else if ($invoice->transaction_type == 'Sales') {
                 if ($invoice->user_id == 6) {
-                    $related_customer = WalkingCustomer::where('invoice_id', $invoice->id)->first();
+                    $related_customer = WalkingCustomer::where('type', 'Invoice')->where('invoice_id', $invoice->id)->first();
                     return view('supply.salesEditWalking', compact('invoice', 'inventory', 'branch', 'customers', 'supplier', 'related_customer','brands'));
                 } else
                     return view('supply.salesEdit', compact('invoice', 'inventory', 'customers', 'supplier', 'branch', 'brands'));
@@ -490,7 +490,7 @@ class InvoiceController extends Controller
             }
             $mrpTotal_e = $mrpTotal_a;
 
-            $related_customer = WalkingCustomer::where('invoice_id', $invoice->id)->first(); //invoice_id, ledger_id
+            $related_customer = WalkingCustomer::where('type', 'Invoice')->where('invoice_id', $invoice->id)->first(); //invoice_id, ledger_id
             $related_ledger = Ledger::where('id', $related_customer->ledger_id)->first();
 
             $del_walking_customer = DB::table('walking_customers')
@@ -532,6 +532,7 @@ class InvoiceController extends Controller
             }
 
             $customer = new WalkingCustomer();
+            $customer->type = 'Invoice';
             $customer->invoice_id = $invoice->id;
             $customer->ledger_id = null;
             $customer->name = $request->name;
