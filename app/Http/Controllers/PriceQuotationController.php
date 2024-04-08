@@ -322,6 +322,8 @@ class PriceQuotationController extends Controller
     public function destroy(PriceQuotation $price_quotation)
     {
 //        abort_if(Gate::denies('SupplyDelete'), redirect('error'));
+        $del_walking_customer = DB::table('walking_customers')
+            ->where('type', 'PQ')->where('invoice_id', $price_quotation->id)->delete();
         $del_pq_details = DB::table('pq_details')
             ->where('price_quotation_id', $price_quotation->id)->delete();
         $price_quotation->delete();
