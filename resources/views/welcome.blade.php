@@ -34,17 +34,36 @@
         margin-bottom: 30px;
     }
 
+    .image-container {
+        position: relative;
+        display: inline-block;
+        /* Ensures the container wraps around the image and text */
+    }
+
+    .facility-image {
+        display: block;
+        /* Ensures the image takes up its container's width */
+        max-width: 100%;
+        /* Ensures the image does not exceed its container's width */
+    }
+
+
 </style>
 @extends('layouts.app')
 
 @section('content')
     <div class="container ">
         <div class="col-md-9">
-            <div class=" m-b-md">
-                {{--<img src="{!! asset( 'imgs/logos/eis_logo.jpg') !!}" class="user-pic" style="width: 150px; height: 150px;">--}}
-                <img src="{!! asset('storage/images/home_banner.png')!!}" alt="home banner"
-                     style="height: 200px; width: auto; align: middle ; "/>
+            <div class="image-container">
+                <div class="sample-name"><strong>{{ $facility->org_name ?? '' }}</strong></div>
+                <img src="{!! asset('storage/images/home_banner.png')!!}" class="facility-image"
+                     alt="home banner">
             </div>
+
+            {{--<div class=" m-b-md">--}}
+                {{--<img src="{!! asset('storage/images/home_banner.png')!!}" alt="home banner"--}}
+                     {{--style="height: 200px; width: auto; align: middle ; "/>--}}
+            {{--</div>--}}
             <h1> {{ config('app.name', 'EIS') }} <br/>Enterprise Resource Planning <small>(V-2.1)</small></h1>
             <h4 style="color: orangered"> Powered By - Eidy ICT Solutions Ltd. (01716-383038)</h4>
         </div>

@@ -14,6 +14,19 @@
 @push('css')
 <style>
     @media print {
+        body {
+            margin: 0;
+            padding: 0;
+            size: A4 portrait;
+        }
+
+        /* Adjust margins to fit content within A4 size */
+        @page {
+            margin: 20mm; /* Adjust as needed */
+        }
+    }
+
+    @media print {
         /*div{*/
         /*page-break-inside: avoid;*/
         /*}*/
@@ -43,32 +56,6 @@
             display: none;
         }
 
-        .table {
-            font-size: 8px;
-        }
-
-        .table > tbody > tr > td,
-        .table > tbody > tr > th,
-        .table > tfoot > tr > td,
-        .table > tfoot > tr > th,
-        .table > thead > tr > td {
-            padding: 0px;
-        !important;
-            /*text-align: center;*/
-            /*line-height: 1.42857;*/
-            /*line-height: 1.42857;*/
-            /*border-top: 1px solid #e7ecf1;*/
-        }
-
-        .table > thead > tr > th {
-            padding: 0px;
-        !important;
-            text-align: center;
-            /*line-height: 1.42857;*/
-            /*line-height: 1.42857;*/
-            /*border-top: 1px solid #e7ecf1;*/
-        }
-
     }
 
     .company-name {
@@ -77,14 +64,6 @@
 
     .company-address {
         font-size: 10px;
-    }
-
-    .customer-name-address {
-        font-size: 10px;
-    }
-
-    td, th {
-        font-size: 10px !important;
     }
 
     table {
@@ -127,7 +106,7 @@
                      aria-labelledby="custom-tabs-one-home-tab">
                     <div class="form-body" id="print_this0">
                         <div class="invoice-content-2 bordered">
-                            <table class="center" width="60%" style="border: none">
+                            <table class="center" width="95%" style="border: none">
 
                                 <tbody>
 
@@ -142,8 +121,8 @@
                                     </td>
 
                                     <td style="text-align:center;border: none " width="30%">
-                                        <h4 style="text-align: center;margin-top: 0px;margin-bottom: 0px; text-decoration: underline" class="company-name">
-                                            <strong>Purchase BILL</strong></h4>
+                                        <h3 style="text-align: center;margin-top: 0px;margin-bottom: 0px; text-decoration: underline" class="company-name">
+                                            <strong>Purchase BILL</strong></h3>
                                         <br/>
 
                                     </td>
@@ -176,7 +155,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <table class="table-hover center" width="60%" style="table-layout: fixed; ">
+                        <table class="table-hover center" width="95%" style="table-layout: fixed; ">
                             <thead>
                             <tr>
                                 <th style="text-align:center" width="5%">Sl</th>
@@ -280,7 +259,7 @@
 
                             </tbody>
                         </table>
-                        <table class="table-hover center" width="60%" style="table-layout: fixed; border: none">
+                        <table class="table-hover center" width="95%" style="table-layout: fixed; border: none">
                             <tr style="border: none">
                                 <td colspan="5" style="text-align:left; border:none">
                                     <small>Software By : www.eidyict.com 01716-383038</small>

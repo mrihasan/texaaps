@@ -82,7 +82,7 @@
         @page {
             margin: 20mm; /* Adjust as needed */
         }
-        }
+    }
 </style>
 
 @endpush
@@ -107,7 +107,8 @@
                             <table class="center" width="90%" style="border: none">
                                 <tr style="border: none">
                                     <td style="border: none"><img
-                                                src="{!! asset( 'storage/images/pad_top.png'. '?'. 'time='. time()) !!}" width="50%"
+                                                src="{!! asset( 'storage/images/pad_top.png'. '?'. 'time='. time()) !!}"
+                                                width="50%"
                                                 class="" style="border: none"></td>
                                 </tr>
                                 <tr style="border: none">
@@ -345,7 +346,7 @@
                                         Prepared by<br/><br/>
                                         @if($payment_request->user->employee && ($payment_request->user->imageprofile->sign!='default_sign'||$payment_request->user->imageprofile->sign!=null))
                                             <img src="{!! asset( 'storage/sign/'. $payment_request->user->imageprofile->sign. '?'. 'time='. time()) !!}"
-                                                    class="img-fluid" alt="Sign Image">
+                                                 class="img-fluid" alt="Sign Image">
                                         @endif
 
                                         <address>

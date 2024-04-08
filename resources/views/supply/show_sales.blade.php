@@ -14,6 +14,18 @@
 @push('css')
 <style>
     @media print {
+        body {
+            margin: 0;
+            padding: 0;
+            size: A4 portrait;
+        }
+        /* Adjust margins to fit content within A4 size */
+        @page {
+            margin: 20mm; /* Adjust as needed */
+        }
+    }
+
+    @media print {
         .pagebreak {
             page-break-before: always;
         }
