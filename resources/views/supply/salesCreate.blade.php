@@ -250,7 +250,7 @@
                                                         autocomplete="off" required></td>
                             <td class="d-none"><input type="text" data-type="productId" name="productId[]"
                                                       id="productId_1"
-                                                      class="form-control productID autocomplete_txt"
+                                                      class="form-control productID "
                                                       autocomplete="off"></td>
 
                             <td>{{ Form::select('brandId[]', ['' => 'Select brand'] + $brands, null, ['class'=>'form-control', 'id'=>'brand_1', 'required'] ) }}</td>
@@ -266,7 +266,7 @@
                                        ondrop="return false;" onpaste="return false;"></td>
                             <td><input type="text" name="unit_name[]" readonly
                                        id="unit_name_1" style="text-align:center"
-                                       class="form-control autocomplete_txt "
+                                       class="form-control "
                                        autocomplete="off"></td>
                             <td><input type="text" step="any" name="stock[]" id="stock_1" readonly
                                        class="form-control in_stock">
@@ -275,11 +275,11 @@
                             {{--<td><input type="text" data-type="unitBuyPrice" name="unitBuyPrice[]"--}}
                                        {{--readonly--}}
                                        {{--id="unitBuyPrice_1" style="text-align:right"--}}
-                                       {{--class="form-control autocomplete_txt unitBuyPrice"--}}
+                                       {{--class="form-control  unitBuyPrice"--}}
                                        {{--autocomplete="off"></td>--}}
                             <td><input type="number" data-type="unitSellPrice" name="unitSellPrice[]"
                                        id="unitSellPrice_1" style="text-align:right" step="any"
-                                       class="form-control autocomplete_txt changesNo"
+                                       class="form-control  changesNo"
                                        autocomplete="off"></td>
                             <td><input readonly type="number" step="any" name="mrpTotal[]"
                                        id="mrpTotal_1" class="form-control changesNo mrpTotal"

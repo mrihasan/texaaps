@@ -157,7 +157,7 @@
                         <div class="form-group row {{ $errors->has('reference') ? ' has-error' : '' }}">
                             <label class="col-md-12 control-label text-md-left">Reference :</label>
                             <div class="col-md-12">
-                                {!! Form::number('reference', null,['class'=>'form-control ', 'placeholder'=>'Enter Reference']) !!}
+                                {!! Form::text('reference', null,['class'=>'form-control ', 'placeholder'=>'Enter Reference']) !!}
                                 @if ($errors->has('reference'))
                                     <span class="help-block">
                                         <strong>{{ $errors->first('reference') }}</strong>
@@ -217,7 +217,7 @@
                             <td><input type="text" name="unit_name[]" readonly
                                        value="<?php echo $stu->unit_name ?>"
                                        id="unit_name_<?php echo $stu->id ?>" style="text-align:center"
-                                       class="form-control autocomplete_txt "
+                                       class="form-control  "
                                        autocomplete="off"></td>
                             <td><input type="text" step="any" name="stock[]" id="stock_<?php echo $stu->id ?>" readonly
                                        value="<?php echo static_product_stock($stu->product_id)['stock']  ?>" class="form-control in_stock">
@@ -225,7 +225,7 @@
                             <td><input type="number" data-type="unitSellPrice" name="unitSellPrice[]"
                                        value="<?php echo $stu->usell_price ?>" step="any"
                                        id="unitSellPrice_<?php echo $stu->id ?>" style="text-align:right"
-                                       class="form-control autocomplete_txt changesNo"
+                                       class="form-control  changesNo"
                                        autocomplete="off"></td>
                             <td><input readonly type="number" step="any" name="mrpTotal[]"
                                        value="<?php echo $stu->line_total ?>"

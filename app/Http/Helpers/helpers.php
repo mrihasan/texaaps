@@ -656,3 +656,34 @@ if (!function_exists('getInvoiceSls')) {
             ->get();
     }
 }
+//_________________
+if (!function_exists('pqSl')) {
+    function pqSl($initial, $transaction_date )
+    {
+        $monthly_count_pq = DB::table('price_quotations')
+            ->whereYear('pq_date', $transaction_date->format('Y'))
+            ->whereMonth('pq_date', $transaction_date->format('m'))
+            ->count();
+        $date = $transaction_date->format('ym'); // Current month and year
+        $sl = $initial . $date . '-' . str_pad($monthly_count_pq + 1, 4, '0', STR_PAD_LEFT);
+        $allSls = getPqSls($sl);
+        if (!$allSls->contains('sl_no', $sl)) {
+            return $sl;
+        }
+        // Just append numbers like a savage until we find not used.
+        for ($i = 1; $i <= 10; $i++) {
+            $newSl = $sl . '-' . $i;
+            if (!$allSls->contains('sl_no', $newSl)) {
+                return $newSl;
+            }
+        }
+        throw new \Exception('Can not create a unique sl');
+    }
+}
+if (!function_exists('getPqSls')) {
+    function getPqSls($sl)
+    {
+        return DB::table('price_quotations')->select('ref_no')->where('ref_no', 'like', $sl . '%')
+            ->get();
+    }
+}

@@ -43,7 +43,6 @@
             display: block; /* Show header and footer when printing */
             position: fixed;
             width: 100%;
-            background-color: #f0f0f0; /* Change background color as needed */
             text-align: left;
             padding: 0;
         }
@@ -119,7 +118,7 @@
                                             <strong>Price Quotation</strong></h4>
                                     </td>
                                     <td style="border: none; text-align: right" class="company-name" width="35%">
-                                        <strong>{{' Date: '.Carbon\Carbon::parse($price_quotation->transaction_date)->format('d-M-Y').','}}</strong><br/>
+                                        <strong>{{' Date: '.Carbon\Carbon::parse($price_quotation->pq_date)->format('d-M-Y')}}</strong><br/>
                                         <strong>
                                             {{'Reference: '.$price_quotation->reference}}
                                         </strong>
@@ -167,7 +166,7 @@
                                     <td style="text-align:left; border: none"  colspan="3">
                                         Dear Sir,<br/>
                                         As per your requirements, We are delighted to provide the Price Quotation for the following items for your kind consideration.<br/>
-                                        {{$price_quotation->additional_notes}}
+                                        <p style="white-space: pre-wrap">{{$price_quotation->additional_notes}}</p>
                                     </td>
 
                                     {{--<td style="text-align:center; border: none" width="30%">--}}
@@ -251,17 +250,21 @@
                                 <tr style="border: none">
                                     <td colspan="6" style="border: none">
                                         <div class="pad_footer">
-                                            <p>
-                                                <img src="{!! asset( 'storage/images/pad_bottom.jpg'. '?'. 'time='. time()) !!}"
-                                                     class="img-fluid" style="border: none" width="75%"></p>
                                             <div class="row">
-                                                <p class="col-md-6">
+                                                <p>
+                                                <img src="{!! asset( 'storage/images/pad_bottom.jpg'. '?'. 'time='. time()) !!}"
+                                                      style="border: none" width="75%"></p>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+
                                                     <small>Software By : www.eidyict.com 01716-383038</small>
-                                                </p>
-                                                <p class="col-md-6" style="text-align: right">
-                                                    <small>Print
+
+                                                </div>
+                                                <div class="col-md-6" style="text-align: right">
+                                                    <small style="padding-right: 50px">Print
                                                         Time:{{\Carbon\Carbon::now()->format(' D, d-M-Y, h:ia')}}</small>
-                                                </p>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -280,7 +283,7 @@
                         @can('SupplyDelete')
                             {!! Form::open([
                     'method'=>'DELETE',
-                    'url' => ['invoice', $price_quotation->id],
+                    'url' => ['price_quotation', $price_quotation->id],
                     'style' => 'display:inline'
                 ]) !!}
                             {!! Form::button('<span class="far fa-trash-alt" aria-hidden="true" title="Delete" />', array(
@@ -292,7 +295,7 @@
                             {!! Form::close() !!}
                         @endcan
                         @can('SupplyAccess')
-                            <a href="{{ url('invoice/' . $price_quotation->id . '/edit') }}"
+                            <a href="{{ url('price_quotation/' . $price_quotation->id . '/edit') }}"
                                class="btn btn-info btn-xs fa-pull-right" title="Edit" style="margin-right: 10px"><span
                                         class="far fa-edit"
                                         aria-hidden="true"></span></a>
