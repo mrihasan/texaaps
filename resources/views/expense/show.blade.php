@@ -136,7 +136,56 @@
                                 Submitted Date
                             </th>
                             <td>
-                                {{ Carbon\Carbon::parse($expense->created_at)->format('d-M-Y h:i:s') }}
+                                {{ Carbon\Carbon::parse($expense->created_at)->format('d-M-Y h:iA') }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Last Updated By
+                            </th>
+                            <td>
+                                {{ $expense->updatedBy->name??'N/A' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Last Updated Date
+                            </th>
+                            <td>
+                                {{ ($expense->updated_by)?Carbon\Carbon::parse($expense->updated_at)->format('d-M-Y h:iA'):'N/A' }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Checked By
+                            </th>
+                            <td>
+                                @if( $expense->checked_by == null && Auth::user()->hasRole('Checked'))
+                                    <button class="btn btn-warning btn-xs" title="Verify" type="button"
+                                            onclick="checkedPost({{$expense->id}})">
+                                        <i class="fa fa-check-circle"></i>
+                                        <span>Check please</span>
+                                    </button>
+                                    <form method="post" action="{{route('checked_expense', $expense->id)}}"
+                                          id="check-form{{$expense->id}}" style="display: none;">
+                                        @csrf
+                                        @method('PUT')
+                                    </form>
+                                @elseif( $expense->checked_by == null)
+                                    <span class="right badge badge-danger">Not Yet Checked</span>
+                                @else
+                                    {{$expense->checkedBy->name??''}}
+                                @endif
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Checked Date
+                            </th>
+                            <td>
+                                {{ ($expense->checked_date)?Carbon\Carbon::parse($expense->checked_date)->format('d-M-Y h:i:s'):'Not Yet checked' }}
                             </td>
                         </tr>
 
@@ -145,6 +194,10 @@
                                 Approved By
                             </th>
                             <td>
+                                @if($expense->checked_by == null)
+                                    <span class="right badge badge-danger">Not Yet Verified</span>
+                                @else
+
                                 @if( $expense->approved_by == null && Auth::user()->hasRole('Approval'))
                                     <button class="btn btn-success btn-xs" title="Approve" type="button"
                                             onclick="approvePost({{$expense->id}})">
@@ -160,6 +213,7 @@
                                     <span class="right badge badge-danger">Not Yet Approved</span>
                                 @else
                                     {{$expense->approvedBy->name}}
+                                @endif
                                 @endif
 
                             </td>
@@ -379,6 +433,47 @@
     });
 
 </script>
+<script type="text/javascript">
+
+    function checkedPost(id) {
+//        console.log(id);
+        var id = id;
+        const swalWithBootstrapButtons = swal.mixin({
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn btn-danger',
+            buttonsStyling: false
+        })
+
+        swalWithBootstrapButtons({
+            title: 'Are you sure?',
+            text: "You want to verify this Request!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Verify it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.value
+    )
+        {
+            document.getElementById('check-form' + id).submit();
+            event.preventDefault();
+        }
+    else
+        if (
+            // Read more about handling dismissals
+        result.dismiss === swal.DismissReason.cancel
+        ) {
+            swalWithBootstrapButtons(
+                'Cancelled',
+                'The user remain pending :)',
+                'info'
+            )
+        }
+    })
+    }
+</script>
+
 <script type="text/javascript">
 
     function approvePost(id) {

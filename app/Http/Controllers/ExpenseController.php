@@ -216,7 +216,7 @@ class ExpenseController extends Controller
             $exp_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
             $td = new DateTime($exp_date);
             // Compare the month and year
-            if ($inputMonthYear != $givenMonthYear) {
+            if (($inputMonthYear != $givenMonthYear)||$expense->sl_no==null) {
                 $sl_no = createSl('TA-EXP-', 'expenses', 'expense_date', $td);
             } else {
                 $sl_no = $expense->sl_no;
@@ -230,7 +230,9 @@ class ExpenseController extends Controller
         $expense->expense_amount = $request->expense_amount;
         $expense->comments = $request->expense_comments;
         $expense->status = 'Updated';
-        $expense->user_id = Auth::user()->id;
+        $expense->updated_by = Auth::user()->id;
+        $expense->checked_by = null;
+        $expense->checked_date = null;
         $expense->approved_by = null;
         $expense->approved_date = null;
         $expense->transaction_method_id = $request->transaction_method_id;
@@ -277,6 +279,20 @@ class ExpenseController extends Controller
         $expense->delete();
         \Session::flash('flash_message', 'Successfully Deleted');
         return redirect('expense');
+    }
+
+    public function checked_expense($id)
+    {
+//        dd($id);
+//        abort_if(Gate::denies('$payment_request-approval'), redirect('error'));
+        $expense = Expense::find($id);
+        $expense->checked_by = Auth::user()->id;
+        $expense->checked_date = date('Y-m-d H:i:s');
+        $expense->save();
+
+        \Session::flash('flash_message', 'Successfully Saved');
+
+        return redirect()->back();
     }
 
     public function approve_expense($id)

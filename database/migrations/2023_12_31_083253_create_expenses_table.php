@@ -25,9 +25,12 @@ return new class extends Migration
             $table->float('expense_amount',12,1);
             $table->enum('status',['Submitted','Approved','Canceled','Updated']);
             $table->string('comments')->nullable();
-            $table->integer('user_id');
             $table->string('transaction_code',30)->nullable();
             $table->integer('transaction_method_id');
+            $table->integer('user_id');
+            $table->integer('updated_by')->nullable();
+            $table->integer('checked_by')->nullable();
+            $table->timestamp('checked_date')->nullable();
             $table->integer('approved_by')->nullable();
             $table->timestamp('approved_date')->nullable();
             $table->timestamps();

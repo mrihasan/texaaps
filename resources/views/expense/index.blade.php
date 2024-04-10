@@ -51,8 +51,8 @@
                             <th>Comments</th>
                             <th>Status</th>
                             <th>Submitted By</th>
+                            <th>Checked By</th>
                             <th>Approved By</th>
-                            <th>Approved Date</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
@@ -86,6 +86,29 @@
                                 <td>{{ $section->status }}</td>
                                 <td>{{ $section->user->name }}</td>
                                 <td>
+                                    @if( $section->checked_by == null && Auth::user()->hasRole('Checked'))
+                                        <button class="btn btn-warning btn-xs" title="Verify" type="button"
+                                                onclick="checkedPost({{$section->id}})">
+                                            <i class="fa fa-check-circle"></i>
+                                            <span>Check please</span>
+                                        </button>
+                                        <form method="post" action="{{route('checked_expense', $section->id)}}"
+                                              id="check-form{{$section->id}}" style="display: none;">
+                                            @csrf
+                                            @method('PUT')
+                                        </form>
+                                    @elseif( $section->checked_by == null)
+                                        <span class="right badge badge-danger">Not Yet Checked</span>
+                                    @else
+                                        {{$section->checkedBy->name??''}}
+                                    @endif
+                                </td>
+
+                                <td>
+                                    @if($section->checked_by == null)
+                                        <span class="right badge badge-danger">Not Yet Verified</span>
+                                    @else
+
                                     @if( $section->approved_by == null && Auth::user()->hasRole('Approval'))
                                         <button class="btn btn-success btn-xs" title="Approve" type="button"
                                                 onclick="approvePost({{$section->id}})">
@@ -102,8 +125,9 @@
                                     @else
                                         {{$section->approvedBy->name}}
                                     @endif
+                                    @endif
+
                                 </td>
-                                <td>{{ ($section->approved_date==null)?'Not Yet Approved':Carbon\Carbon::parse($section->approved_date)->format('d-M-Y') }}</td>
 
                                 <td>
                                     <a href="{{ url('expense/'.$section->id) }}" class="btn btn-success btn-xs" title="View "><span class="far fa-eye" aria-hidden="true"></span></a>
@@ -473,6 +497,47 @@
 //            console.log(startDate.format('D MMMM YYYY') + ' - ' + endDate.format('D MMMM YYYY'));
 //        });
     });
+</script>
+
+<script type="text/javascript">
+
+    function checkedPost(id) {
+//        console.log(id);
+        var id = id;
+        const swalWithBootstrapButtons = swal.mixin({
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn btn-danger',
+            buttonsStyling: false
+        })
+
+        swalWithBootstrapButtons({
+            title: 'Are you sure?',
+            text: "You want to verify this Request!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Verify it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.value
+    )
+        {
+            document.getElementById('check-form' + id).submit();
+            event.preventDefault();
+        }
+    else
+        if (
+            // Read more about handling dismissals
+        result.dismiss === swal.DismissReason.cancel
+        ) {
+            swalWithBootstrapButtons(
+                'Cancelled',
+                'The user remain pending :)',
+                'info'
+            )
+        }
+    })
+    }
 </script>
 
 <script type="text/javascript">

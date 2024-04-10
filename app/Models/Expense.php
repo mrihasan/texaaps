@@ -41,5 +41,13 @@ class Expense extends Model
     {
         return $this->belongsTo('App\Models\TransactionMethod');
     }
+    public function checkedBy()
+    {
+        return $this->belongsTo('App\Models\User','checked_by');
+    }
+    public function updatedBy()
+    {
+        return $this->belongsTo('App\Models\User','updated_by');
+    }
 
 }

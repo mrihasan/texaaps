@@ -85,6 +85,7 @@ Route::resource('expense_type', '\App\Http\Controllers\ExpenseTypeController');
 Route::get('/expense_approved', '\App\Http\Controllers\ExpenseController@expense_approved')->name('expense_approved');
 Route::get('/date_wise_expense', '\App\Http\Controllers\ExpenseController@date_wise_expense')->name('date_wise_expense');
 Route::get('/expense_dt', '\App\Http\Controllers\ExpenseController@expense_dt')->name('expense_dt');
+Route::put('checked_expense/{id}','\App\Http\Controllers\ExpenseController@checked_expense')->name('checked_expense');
 Route::put('approve_expense/{id}','\App\Http\Controllers\ExpenseController@approve_expense')->name('approve_expense');
 Route::resource('expense', '\App\Http\Controllers\ExpenseController')
     ->name('create', 'expenseCreate')
