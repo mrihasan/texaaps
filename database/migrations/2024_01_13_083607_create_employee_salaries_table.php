@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('employee_salaries', function (Blueprint $table) {
             $table->id();
+            $table->string('sl_no',20)->nullable();
             $table->string('transaction_code')->nullable();
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Gate;
+use DateTime;
 
 class ExpenseController extends Controller
 {
@@ -121,10 +122,15 @@ class ExpenseController extends Controller
         ]);
         $transaction_code = autoTimeStampCode('EXP');
 
+        $exp_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
+        $td = new DateTime($exp_date);
+        $sl_no = createSl('TA-EXP-', 'expenses', 'expense_date', $td);
+
         $expense = new Expense();
+        $expense->sl_no = $sl_no;
         $expense->expense_type_id = $request->expense_type;
         $expense->branch_id = $request->branch;
-        $expense->expense_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
+        $expense->expense_date = $exp_date;
         $expense->expense_amount = $request->expense_amount;
         $expense->comments = $request->expense_comments;
         $expense->status = 'Submitted';
@@ -135,7 +141,8 @@ class ExpenseController extends Controller
 
         $branch_ledger = new BranchLedger();
         $branch_ledger->branch_id = $request->branch;
-        $branch_ledger->transaction_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
+        $branch_ledger->transaction_date = $exp_date;
+        $branch_ledger->sl_no = $sl_no;
         $branch_ledger->transaction_code = $transaction_code;
         $branch_ledger->amount = $request->expense_amount;
         $branch_ledger->transaction_type_id = 2; //Debited
@@ -148,8 +155,9 @@ class ExpenseController extends Controller
         $ledger_banking = new BankLedger();
         $ledger_banking->branch_id = $request->branch;
         $ledger_banking->bank_account_id = $request->bank_account;
+        $ledger_banking->sl_no = $sl_no;
         $ledger_banking->transaction_code = $transaction_code;
-        $ledger_banking->transaction_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
+        $ledger_banking->transaction_date = $exp_date;
         $ledger_banking->transaction_method_id = $request->transaction_method;
         $ledger_banking->transaction_type_id = 2; //Debited
         $ledger_banking->amount = $request->expense_amount;
@@ -195,7 +203,28 @@ class ExpenseController extends Controller
             'transaction_method_id' => 'required',
         ]);
 
+        $inputDate = $request->expense_date;
+        $givenDate = $expense->expense_date;
+        $sl_no=null;
+        if ($inputDate) {
+            // Create DateTime objects for comparison
+            $inputDateTime = new DateTime($inputDate);
+            $givenDateTime = new DateTime($givenDate);
+            // Extract month and year components
+            $inputMonthYear = $inputDateTime->format('Y-m');
+            $givenMonthYear = $givenDateTime->format('Y-m');
+            $exp_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
+            $td = new DateTime($exp_date);
+            // Compare the month and year
+            if ($inputMonthYear != $givenMonthYear) {
+                $sl_no = createSl('TA-EXP-', 'expenses', 'expense_date', $td);
+            } else {
+                $sl_no = $expense->sl_no;
+            }
+        }
+
         $expense->expense_type_id = $request->expense_type;
+        $expense->sl_no = $sl_no;
         $expense->branch_id = $request->branch;
         $expense->expense_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
         $expense->expense_amount = $request->expense_amount;
@@ -207,10 +236,10 @@ class ExpenseController extends Controller
         $expense->transaction_method_id = $request->transaction_method_id;
         $expense->update();
 
-
         $del_lb = DB::table('branch_ledgers')->where('transaction_code', $expense->transaction_code)->delete();
         $ledger_banking = new BranchLedger();
         $ledger_banking->branch_id = $request->branch;
+        $ledger_banking->sl_no = $sl_no;
         $ledger_banking->transaction_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
         $ledger_banking->transaction_code = $expense->transaction_code;
         $ledger_banking->amount = $request->expense_amount;
@@ -224,6 +253,7 @@ class ExpenseController extends Controller
         $del_la = DB::table('bank_ledgers')->where('transaction_code', $expense->transaction_code)->delete();
         $ledger_banking = new BankLedger();
         $ledger_banking->branch_id = $request->branch;
+        $ledger_banking->sl_no = $sl_no;
         $ledger_banking->bank_account_id = $request->bank_account;
         $ledger_banking->transaction_code = $expense->transaction_code;
         $ledger_banking->transaction_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
@@ -256,7 +286,7 @@ class ExpenseController extends Controller
         if ($expense->status == 'Submitted' || $expense->status == 'Updated') {
             $expense->status = 'Approved';
             $expense->approved_by = Auth::user()->id;
-            $expense->approved_date = date('Y-m-d');
+            $expense->approved_date = date('Y-m-d H:i:s');
             $expense->save();
             $ledger_expense = BranchLedger::where('transaction_code', $expense->transaction_code)->first();
             $ledger_expense->approve_status = 'Approved';

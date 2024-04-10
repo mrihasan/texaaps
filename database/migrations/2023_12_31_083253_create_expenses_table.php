@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('expenses', function (Blueprint $table) {
             $table->id();
+            $table->string('sl_no',20)->nullable();
             $table->integer('branch_id')->unsigned();
             $table->integer('expense_type_id')->unsigned();
             $table->foreign('expense_type_id')

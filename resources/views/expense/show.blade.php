@@ -45,7 +45,15 @@
                         </tr>
                         <tr>
                             <th>
-                                Expense Code
+                                Serial No
+                            </th>
+                            <td>
+                                {{ $expense->sl_no??'' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Tracking ID
                             </th>
                             <td>
                                 {{ $expense->transaction_code }}
@@ -73,6 +81,22 @@
                             </th>
                             <td>
                                 {{ number_format($expense->expense_amount,0) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Transaction Made From
+                            </th>
+                            <td>
+                                {{ transactionMadeFromAccount($expense->transaction_code)->bank_account->account_name }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Transaction Method
+                            </th>
+                            <td>
+                                {{ $expense->transaction_method->title }}
                             </td>
                         </tr>
                         <tr>
@@ -109,6 +133,15 @@
                         </tr>
                         <tr>
                             <th>
+                                Submitted Date
+                            </th>
+                            <td>
+                                {{ Carbon\Carbon::parse($expense->created_at)->format('d-M-Y h:i:s') }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
                                 Approved By
                             </th>
                             <td>
@@ -131,6 +164,15 @@
 
                             </td>
                         </tr>
+                        <tr>
+                            <th>
+                                Approved Date
+                            </th>
+                            <td>
+                                {{ ($expense->approved_date)?Carbon\Carbon::parse($expense->approved_date)->format('d-M-Y h:i:s'):'Not Yet Approved' }}
+                            </td>
+                        </tr>
+
                         </tbody>
                     </table>
                 </div>

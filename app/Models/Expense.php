@@ -37,5 +37,9 @@ class Expense extends Model
     {
         return $this->belongsTo('App\Models\User','approved_by');
     }
+    public function transaction_method()
+    {
+        return $this->belongsTo('App\Models\TransactionMethod');
+    }
 
 }
