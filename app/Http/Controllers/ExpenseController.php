@@ -120,54 +120,63 @@ class ExpenseController extends Controller
             'bank_account' => 'required',
             'transaction_method' => 'required',
         ]);
-        $transaction_code = autoTimeStampCode('EXP');
 
-        $exp_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
-        $td = new DateTime($exp_date);
-        $sl_no = createSl('TA-EXP-', 'expenses', 'expense_date', $td);
+        try {
+            DB::transaction(function () use ($request) {
 
-        $expense = new Expense();
-        $expense->sl_no = $sl_no;
-        $expense->expense_type_id = $request->expense_type;
-        $expense->branch_id = $request->branch;
-        $expense->expense_date = $exp_date;
-        $expense->expense_amount = $request->expense_amount;
-        $expense->comments = $request->expense_comments;
-        $expense->status = 'Submitted';
-        $expense->user_id = Auth::user()->id;
-        $expense->transaction_code = $transaction_code;
-        $expense->transaction_method_id = $request->transaction_method;
-        $expense->save();
+                $transaction_code = autoTimeStampCode('EXP');
 
-        $branch_ledger = new BranchLedger();
-        $branch_ledger->branch_id = $request->branch;
-        $branch_ledger->transaction_date = $exp_date;
-        $branch_ledger->sl_no = $sl_no;
-        $branch_ledger->transaction_code = $transaction_code;
-        $branch_ledger->amount = $request->expense_amount;
-        $branch_ledger->transaction_type_id = 2; //Debited
-        $branch_ledger->transaction_method_id = $request->transaction_method;
-        $branch_ledger->comments = $expense->expense_type->expense_name . ' ' . $request->expense_amount;
-        $branch_ledger->entry_by = Auth::user()->id;
-        $branch_ledger->approve_status = 'Not Approved';
-        $branch_ledger->save();
+                $exp_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
+                $td = new DateTime($exp_date);
+                $sl_no = createSl('TA-EXP-', 'expenses', 'expense_date', $td);
 
-        $ledger_banking = new BankLedger();
-        $ledger_banking->branch_id = $request->branch;
-        $ledger_banking->bank_account_id = $request->bank_account;
-        $ledger_banking->sl_no = $sl_no;
-        $ledger_banking->transaction_code = $transaction_code;
-        $ledger_banking->transaction_date = $exp_date;
-        $ledger_banking->transaction_method_id = $request->transaction_method;
-        $ledger_banking->transaction_type_id = 2; //Debited
-        $ledger_banking->amount = $request->expense_amount;
-        $ledger_banking->particulars = $expense->expense_type->expense_name . ' ' . $request->expense_amount;
-        $ledger_banking->entry_by = Auth::user()->id;
-        $ledger_banking->approve_status = 'Not Approved';
-        $ledger_banking->save();
+                $expense = new Expense();
+                $expense->sl_no = $sl_no;
+                $expense->expense_type_id = $request->expense_type;
+                $expense->branch_id = $request->branch;
+                $expense->expense_date = $exp_date;
+                $expense->expense_amount = $request->expense_amount;
+                $expense->comments = $request->expense_comments;
+                $expense->status = 'Submitted';
+                $expense->user_id = Auth::user()->id;
+                $expense->transaction_code = $transaction_code;
+                $expense->transaction_method_id = $request->transaction_method;
+                $expense->save();
+
+                $branch_ledger = new BranchLedger();
+                $branch_ledger->branch_id = $request->branch;
+                $branch_ledger->transaction_date = $exp_date;
+                $branch_ledger->sl_no = $sl_no;
+                $branch_ledger->transaction_code = $transaction_code;
+                $branch_ledger->amount = $request->expense_amount;
+                $branch_ledger->transaction_type_id = 2; //Debited
+                $branch_ledger->transaction_method_id = $request->transaction_method;
+                $branch_ledger->comments = $expense->expense_type->expense_name . ' ' . $request->expense_amount;
+                $branch_ledger->entry_by = Auth::user()->id;
+                $branch_ledger->approve_status = 'Not Approved';
+                $branch_ledger->save();
+
+                $ledger_banking = new BankLedger();
+                $ledger_banking->branch_id = $request->branch;
+                $ledger_banking->bank_account_id = $request->bank_account;
+                $ledger_banking->sl_no = $sl_no;
+                $ledger_banking->transaction_code = $transaction_code;
+                $ledger_banking->transaction_date = $exp_date;
+                $ledger_banking->transaction_method_id = $request->transaction_method;
+                $ledger_banking->transaction_type_id = 2; //Debited
+                $ledger_banking->amount = $request->expense_amount;
+                $ledger_banking->particulars = $expense->expense_type->expense_name . ' ' . $request->expense_amount;
+                $ledger_banking->entry_by = Auth::user()->id;
+                $ledger_banking->approve_status = 'Not Approved';
+                $ledger_banking->save();
+
+            });
+            \Session::flash('flash_message', 'Successfully Added');
 
 
-        \Session::flash('flash_message', 'Successfully Added');
+        } catch (\Exception $e) {
+            \Session::flash('flash_error', 'Failed to save , Try again.');
+        }
         return redirect('expense');
     }
 
@@ -203,72 +212,80 @@ class ExpenseController extends Controller
             'transaction_method_id' => 'required',
         ]);
 
-        $inputDate = $request->expense_date;
-        $givenDate = $expense->expense_date;
-        $sl_no=null;
-        if ($inputDate) {
-            // Create DateTime objects for comparison
-            $inputDateTime = new DateTime($inputDate);
-            $givenDateTime = new DateTime($givenDate);
-            // Extract month and year components
-            $inputMonthYear = $inputDateTime->format('Y-m');
-            $givenMonthYear = $givenDateTime->format('Y-m');
-            $exp_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
-            $td = new DateTime($exp_date);
-            // Compare the month and year
-            if (($inputMonthYear != $givenMonthYear)||$expense->sl_no==null) {
-                $sl_no = createSl('TA-EXP-', 'expenses', 'expense_date', $td);
-            } else {
-                $sl_no = $expense->sl_no;
-            }
+        try {
+            DB::transaction(function () use ($request, $expense) {
+                $inputDate = $request->expense_date;
+                $givenDate = $expense->expense_date;
+                $sl_no = null;
+                if ($inputDate) {
+                    // Create DateTime objects for comparison
+                    $inputDateTime = new DateTime($inputDate);
+                    $givenDateTime = new DateTime($givenDate);
+                    // Extract month and year components
+                    $inputMonthYear = $inputDateTime->format('Y-m');
+                    $givenMonthYear = $givenDateTime->format('Y-m');
+                    $exp_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
+                    $td = new DateTime($exp_date);
+                    // Compare the month and year
+                    if (($inputMonthYear != $givenMonthYear) || $expense->sl_no == null) {
+                        $sl_no = createSl('TA-EXP-', 'expenses', 'expense_date', $td);
+                    } else {
+                        $sl_no = $expense->sl_no;
+                    }
+                }
+
+                $expense->expense_type_id = $request->expense_type;
+                $expense->sl_no = $sl_no;
+                $expense->branch_id = $request->branch;
+                $expense->expense_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
+                $expense->expense_amount = $request->expense_amount;
+                $expense->comments = $request->expense_comments;
+                $expense->status = 'Updated';
+                $expense->updated_by = Auth::user()->id;
+                $expense->checked_by = null;
+                $expense->checked_date = null;
+                $expense->approved_by = null;
+                $expense->approved_date = null;
+                $expense->transaction_method_id = $request->transaction_method_id;
+                $expense->updated_at = date('Y-m-d H:i:s');
+                $expense->update();
+
+                $del_lb = DB::table('branch_ledgers')->where('transaction_code', $expense->transaction_code)->delete();
+                $ledger_banking = new BranchLedger();
+                $ledger_banking->branch_id = $request->branch;
+                $ledger_banking->sl_no = $sl_no;
+                $ledger_banking->transaction_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
+                $ledger_banking->transaction_code = $expense->transaction_code;
+                $ledger_banking->amount = $request->expense_amount;
+                $ledger_banking->transaction_type_id = 2; //Debited
+                $ledger_banking->transaction_method_id = $request->transaction_method_id;
+                $ledger_banking->comments = $expense->expense_type->expense_name . ' ' . $request->expense_amount;
+                $ledger_banking->entry_by = $expense->user_id;
+                $ledger_banking->updated_by = Auth::user()->id;
+                $ledger_banking->approve_status = 'Not Approved';
+                $ledger_banking->save();
+
+                $del_la = DB::table('bank_ledgers')->where('transaction_code', $expense->transaction_code)->delete();
+                $ledger_banking = new BankLedger();
+                $ledger_banking->branch_id = $request->branch;
+                $ledger_banking->sl_no = $sl_no;
+                $ledger_banking->bank_account_id = $request->bank_account;
+                $ledger_banking->transaction_code = $expense->transaction_code;
+                $ledger_banking->transaction_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
+                $ledger_banking->transaction_method_id = $request->transaction_method_id;
+                $ledger_banking->transaction_type_id = 2; //Debited
+                $ledger_banking->amount = $request->expense_amount;
+                $ledger_banking->particulars = $expense->expense_type->expense_name . ' ' . $request->expense_amount;
+                $ledger_banking->entry_by = $expense->user_id;
+                $ledger_banking->updated_by = Auth::user()->id;
+                $ledger_banking->approve_status = 'Not Approved';
+                $ledger_banking->save();
+
+            });
+            \Session::flash('flash_message', 'Successfully Updated');
+        } catch (\Exception $e) {
+            \Session::flash('flash_error', 'Failed to save , Try again.');
         }
-
-        $expense->expense_type_id = $request->expense_type;
-        $expense->sl_no = $sl_no;
-        $expense->branch_id = $request->branch;
-        $expense->expense_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
-        $expense->expense_amount = $request->expense_amount;
-        $expense->comments = $request->expense_comments;
-        $expense->status = 'Updated';
-        $expense->updated_by = Auth::user()->id;
-        $expense->checked_by = null;
-        $expense->checked_date = null;
-        $expense->approved_by = null;
-        $expense->approved_date = null;
-        $expense->transaction_method_id = $request->transaction_method_id;
-        $expense->update();
-
-        $del_lb = DB::table('branch_ledgers')->where('transaction_code', $expense->transaction_code)->delete();
-        $ledger_banking = new BranchLedger();
-        $ledger_banking->branch_id = $request->branch;
-        $ledger_banking->sl_no = $sl_no;
-        $ledger_banking->transaction_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
-        $ledger_banking->transaction_code = $expense->transaction_code;
-        $ledger_banking->amount = $request->expense_amount;
-        $ledger_banking->transaction_type_id = 2; //Debited
-        $ledger_banking->transaction_method_id = $request->transaction_method_id;
-        $ledger_banking->comments = $expense->expense_type->expense_name . ' ' . $request->expense_amount;
-        $ledger_banking->entry_by = Auth::user()->id;
-        $ledger_banking->approve_status = 'Not Approved';
-        $ledger_banking->save();
-
-        $del_la = DB::table('bank_ledgers')->where('transaction_code', $expense->transaction_code)->delete();
-        $ledger_banking = new BankLedger();
-        $ledger_banking->branch_id = $request->branch;
-        $ledger_banking->sl_no = $sl_no;
-        $ledger_banking->bank_account_id = $request->bank_account;
-        $ledger_banking->transaction_code = $expense->transaction_code;
-        $ledger_banking->transaction_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
-        $ledger_banking->transaction_method_id = $request->transaction_method_id;
-        $ledger_banking->transaction_type_id = 2; //Debited
-        $ledger_banking->amount = $request->expense_amount;
-        $ledger_banking->particulars = $expense->expense_type->expense_name . ' ' . $request->expense_amount;
-        $ledger_banking->entry_by = Auth::user()->id;
-        $ledger_banking->approve_status = 'Not Approved';
-        $ledger_banking->save();
-
-
-        \Session::flash('flash_message', 'Successfully Updated');
         return redirect('expense');
     }
 
