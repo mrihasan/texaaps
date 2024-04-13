@@ -15,10 +15,8 @@
 @push('css')
 <link rel="stylesheet" href="{{ asset('supporting/dataTables/bs4/datatables.min.css') }}">
 <link rel="stylesheet" href="{{ asset('supporting/dataTables/fixedHeader.dataTables.min.css') }}">
-{{--<link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.1.5/css/fixedHeader.dataTables.min.css">--}}
-{{--<link rel="stylesheet" href="{{ asset('alte305/plugins/daterangepicker/daterangepicker.css') }}">--}}
-{{--<link rel="stylesheet" href="{{ asset('supporting/sweetalert/sweetalert2.css') }}">--}}
 <link rel="stylesheet" href="{{ asset('supporting/bootstrap-daterangepicker/daterangepicker.min.css') }}">
+<link rel="stylesheet" href="{{ asset('supporting/sweetalert/sweetalert2.css') }}">
 
 @endpush
 @section('maincontent')
@@ -47,11 +45,14 @@
                         <thead>
                         <tr style="background-color: #dff0d8">
                             <th> Date</th>
-                            <th> {{ __('all_settings.Transaction') }}<br/> No</th>
+                            <th> Sl No</th>
                             <th>User<br/> Info</th>
                             <th>Total<br/> Amount</th>
                             <th>Linked Bill</th>
                             <th>Remarks</th>
+                            <th>Status</th>
+                            <th>Checked By</th>
+                            <th>Approved By</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
@@ -59,7 +60,7 @@
                         @foreach($payments as $data)
                             <tr>
                                 <td>{{ Carbon\Carbon::parse($data->transaction_date)->format('d-M-Y') }}</td>
-                                <td>{{ $data->transaction_code }}</td>
+                                <td>{{ $data->sl_no }}</td>
                                 {{--                                            <td>{{$data->user->profile->company_name->title}}</td>--}}
                                 <td>
                                     <a href="{{ route('user.show',$data->user->id) }}" class="btn btn-success btn-xs"
@@ -76,6 +77,51 @@
 
                                 </td>
                                 <td>{{ $data->comments }}</td>
+                                <td>{{ $data->approve_status}}</td>
+                                <td>
+                                    @if( $data->checked_by == null && Auth::user()->hasRole('Checked'))
+                                        <button class="btn btn-warning btn-xs" title="Verify" type="button"
+                                                onclick="checkedPost({{$data->id}})">
+                                            <i class="fa fa-check-circle"></i>
+                                            <span>Check please</span>
+                                        </button>
+                                        <form method="post" action="{{route('checked_ledger', $data->id)}}"
+                                              id="check-form{{$data->id}}" style="display: none;">
+                                            @csrf
+                                            @method('PUT')
+                                        </form>
+                                    @elseif( $data->checked_by == null)
+                                        <span class="right badge badge-danger">Not Yet Checked</span>
+                                    @else
+                                        {{$data->checkedBy->name??''}}
+                                    @endif
+                                </td>
+
+                                <td>
+                                    @if($data->checked_by == null)
+                                        <span class="right badge badge-danger">Not Yet Verified</span>
+                                    @else
+
+                                        @if( $data->approved_by == null && Auth::user()->hasRole('Approval'))
+                                            <button class="btn btn-success btn-xs" title="Approve" type="button"
+                                                    onclick="approvePost({{$data->id}})">
+                                                <i class="fa fa-check-circle"></i>
+                                                <span>Approve Please</span>
+                                            </button>
+                                            <form method="post" action="{{route('approve_ledger', $data->id)}}"
+                                                  id="approval-form{{$data->id}}" style="display: none;">
+                                                @csrf
+                                                @method('PUT')
+                                            </form>
+                                        @elseif( $data->approved_by == null)
+                                            <span class="right badge badge-danger">Not Yet Approved</span>
+                                        @else
+                                            {{$data->approvedBy->name}}
+                                        @endif
+                                    @endif
+
+                                </td>
+
                                 <td class="noprint">
                                     <a href="{{ url('ledger/' . $data->id ) }}" class="btn btn-success btn-xs"
                                     title="Show"><span class="far fa-eye" aria-hidden="true"></span></a>
@@ -110,6 +156,9 @@
                             <th></th>
                             <th></th>
                             <th style="text-align: right"></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
@@ -157,6 +206,7 @@
 {{--<script src="https://cdn.datatables.net/fixedheader/3.1.5/js/dataTables.fixedHeader.min.js"></script>--}}
 <script src="{!! asset('alte305/plugins/moment/moment.min.js')!!}"></script>
 <script src="{{ asset('supporting/bootstrap-daterangepicker/daterangepicker.min.js')}}"></script>
+<script type="text/javascript" src="{{ asset('supporting/sweetalert/sweetalert2.min.js') }}"></script>
 
 <script>
     $(document).ready(function () {
@@ -210,15 +260,18 @@
                              } else {
                              alert(‘Il valore inserito è numerico’);
                              }*/
-                            doc.content[1].table.body[i][0].alignment = 'center';
+                            doc.content[1].table.body[i][0].alignment = 'left';
                             doc.content[1].table.body[i][1].alignment = 'left';
                             doc.content[1].table.body[i][2].alignment = 'left';
                             doc.content[1].table.body[i][3].alignment = 'right';
                             doc.content[1].table.body[i][4].alignment = 'left';
                             doc.content[1].table.body[i][5].alignment = 'left';
                             doc.content[1].table.body[i][6].alignment = 'center';
+                            doc.content[1].table.body[i][7].alignment = 'center';
+                            doc.content[1].table.body[i][8].alignment = 'center';
+                            doc.content[1].table.body[i][8].alignment = 'center';
                         }
-                        doc.content[1].table.widths = ['10%','15%','25%','10%','15%','20%','5%'];
+                        doc.content[1].table.widths = ['10%','10%','15%','10%','10%','15%','5%','10%','10%','5%'];
 //                        doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
                         doc.content.splice(0, 1);
                         var now = new Date();
@@ -415,6 +468,90 @@
 //            console.log(startDate.format('D MMMM YYYY') + ' - ' + endDate.format('D MMMM YYYY'));
 //        });
     });
+</script>
+
+<script type="text/javascript">
+
+    function checkedPost(id) {
+//        console.log(id);
+        var id = id;
+        const swalWithBootstrapButtons = swal.mixin({
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn btn-danger',
+            buttonsStyling: false
+        })
+
+        swalWithBootstrapButtons({
+            title: 'Are you sure?',
+            text: "You want to verify this Request!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Verify it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.value
+    )
+        {
+            document.getElementById('check-form' + id).submit();
+            event.preventDefault();
+        }
+    else
+        if (
+            // Read more about handling dismissals
+        result.dismiss === swal.DismissReason.cancel
+        ) {
+            swalWithBootstrapButtons(
+                'Cancelled',
+                'The user remain pending :)',
+                'info'
+            )
+        }
+    })
+    }
+</script>
+
+<script type="text/javascript">
+
+    function approvePost(id) {
+//        console.log(id);
+        var id = id;
+        const swalWithBootstrapButtons = swal.mixin({
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn btn-danger',
+            buttonsStyling: false
+        })
+
+        swalWithBootstrapButtons({
+            title: 'Are you sure?',
+            text: "You want to approve this Payment!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Approve it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.value
+    )
+        {
+            document.getElementById('approval-form' + id).submit();
+            event.preventDefault();
+        }
+    else
+        if (
+            // Read more about handling dismissals
+        result.dismiss === swal.DismissReason.cancel
+        ) {
+            swalWithBootstrapButtons(
+                'Cancelled',
+                'The user remain pending :)',
+                'info'
+            )
+        }
+    })
+
+    }
+
 </script>
 
 

@@ -111,6 +111,9 @@ Route::get('/purchaseTransaction', '\App\Http\Controllers\InvoiceController@purc
 Route::get('/purchaseCreate', '\App\Http\Controllers\InvoiceDetailController@purchaseCreate')->name('purchaseCreate');
 
 //Ledger Route________________________________________________________________________
+Route::put('checked_ledger/{id}','\App\Http\Controllers\LedgerController@checked_ledger')->name('checked_ledger');
+Route::put('approve_ledger/{id}','\App\Http\Controllers\LedgerController@approve_ledger')->name('approve_ledger');
+
 Route::get('/receipt_index', '\App\Http\Controllers\LedgerController@receipt_index')->name('receipt_index');
 Route::get('/receipt', '\App\Http\Controllers\LedgerController@receipt')->name('receipt');
 Route::get('/payment_index', '\App\Http\Controllers\LedgerController@payment_index')->name('payment_index');

@@ -11,11 +11,17 @@ class Ledger extends Model
     protected $fillable = [
         'transaction_date',
         'transaction_code',
+        'sl_no',
         'transaction_type',
         'amount',
         'transaction_method',
         'entry_by',
         'comments',
+        'checked_by',
+        'approved_by',
+        'checked_date',
+        'approved_date',
+
     ];
     public function walking_customers()
     {
@@ -45,6 +51,18 @@ class Ledger extends Model
     public function invoice()
     {
         return $this->belongsTo('App\Models\Invoice');
+    }
+    public function checkedBy()
+    {
+        return $this->belongsTo('App\Models\User','checked_by');
+    }
+    public function updatedBy()
+    {
+        return $this->belongsTo('App\Models\User','updated_by');
+    }
+    public function approvedBy()
+    {
+        return $this->belongsTo('App\Models\User','approved_by');
     }
 
 }

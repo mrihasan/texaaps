@@ -30,6 +30,11 @@ return new class extends Migration
             $table->integer('entry_by');
             $table->integer('updated_by');
             $table->bigInteger('invoice_id')->nullable();
+            $table->enum('approve_status',['Submitted','Approved','Canceled','Updated']);
+            $table->integer('checked_by')->nullable();
+            $table->timestamp('checked_date')->nullable();
+            $table->integer('approved_by')->nullable();
+            $table->timestamp('approved_date')->nullable();
             $table->timestamps();
         });
     }

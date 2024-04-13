@@ -15,10 +15,13 @@ class Expense extends Model
         'status',
         'comments',
         'branch_id',
+        'checked_by',
         'approved_by',
+        'checked_date',
         'approved_date',
         'usr_id',
         'transaction_code',
+        'sl_no',
     ];
 
     public function expense_type()

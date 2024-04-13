@@ -34,7 +34,7 @@ return new class extends Migration
             $table->string('ref_no')->nullable();
             $table->integer('entry_by')->nullable();
             $table->integer('updated_by')->nullable();
-            $table->enum('approve_status',['Approved','Not Approved'])->default('Approved');
+            $table->enum('approve_status',['Submitted','Approved','Canceled','Updated'])->default('Submitted');
 
             $table->timestamps();
         });

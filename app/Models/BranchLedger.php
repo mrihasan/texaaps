@@ -12,11 +12,16 @@ class BranchLedger extends Model
         'branch_id',
         'transaction_date',
         'transaction_code',
+        'sl_no',
         'transaction_method_id',
         'amount',
         'comments',
         'entry_by',
-        'approve_status'
+        'approve_status',
+        'checked_by',
+        'approved_by',
+        'checked_date',
+        'approved_date',
     ];
     public function branch()
     {

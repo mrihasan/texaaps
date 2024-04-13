@@ -13,6 +13,7 @@ use DB;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Gate;
+use DateTime;
 
 class LedgerController extends Controller
 {
@@ -84,7 +85,7 @@ class LedgerController extends Controller
         $invoices = DB::table('invoices')->where('transaction_type', 'Purchase')->pluck('sl_no', 'id')->prepend('Select Invoice', '')->toArray();
         $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
         $transaction_methods = TransactionMethod::orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Method', '')->toArray();
-        return view('accounting.payment', compact('user', 'branches', 'transaction_methods', 'to_accounts','invoices'));
+        return view('accounting.payment', compact('user', 'branches', 'transaction_methods', 'to_accounts', 'invoices'));
     }
 
     public function receipt()
@@ -95,7 +96,7 @@ class LedgerController extends Controller
         $invoices = DB::table('invoices')->where('transaction_type', 'Sales')->pluck('sl_no', 'id')->prepend('Select Invoice', '')->toArray();
         $transaction_methods = TransactionMethod::orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Method', '')->toArray();
         $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
-        return view('accounting.receipt', compact('user', 'branches', 'transaction_methods', 'to_accounts','transaction_methods','invoices'));
+        return view('accounting.receipt', compact('user', 'branches', 'transaction_methods', 'to_accounts', 'transaction_methods', 'invoices'));
     }
 
     public function store(Request $request)
@@ -113,24 +114,35 @@ class LedgerController extends Controller
         try {
             DB::transaction(function () use ($request) {
 
+                $ledger_date = date('Y-m-d', strtotime($request->transaction_date)) . date(' H:i:s');
+                $td = new DateTime($ledger_date);
+
                 $ledger = new Ledger();
                 $ledger_branch = new BranchLedger();
                 $ledger_banking = new BankLedger();
                 if ($request->ledger_type == 'Payment') {
+                    $sl_no = createSl('TA-LP-', 'ledgers', 'transaction_date', $td);
                     $tcode = autoTimeStampCode('LP');
                     $ledger->transaction_type_id = 4; //4=payment
                     $ledger->transaction_code = $tcode;
+                    $ledger->sl_no = $sl_no;
                     $ledger_branch->transaction_code = $tcode;
+                    $ledger_branch->sl_no = $sl_no;;
                     $ledger_branch->transaction_type_id = 4;//4=payment
                     $ledger_banking->transaction_code = $tcode;
+                    $ledger_banking->sl_no = $sl_no;;
                     $ledger_banking->transaction_type_id = 4;//4=payment
                 } elseif ($request->ledger_type == 'Receipt') {
+                    $sl_no = createSl('TA-LR-', 'ledgers', 'transaction_date', $td);
                     $tcode = autoTimeStampCode('LR');
                     $ledger->transaction_type_id = 3; //3=received
                     $ledger->transaction_code = $tcode;
+                    $ledger->sl_no = $sl_no;
                     $ledger_branch->transaction_code = $tcode;
+                    $ledger_branch->sl_no = $sl_no;
                     $ledger_branch->transaction_type_id = 3; //3=received
                     $ledger_banking->transaction_code = $tcode;
+                    $ledger_banking->sl_no = $sl_no;
                     $ledger_banking->transaction_type_id = 3; //3=received
                 } else {
                     die();
@@ -139,6 +151,7 @@ class LedgerController extends Controller
                 $ledger->branch_id = $request->branch;
                 $ledger->transaction_method_id = $request->transaction_method;
                 $ledger->transaction_date = date('Y-m-d', strtotime($request->transaction_date)) . date(' H:i:s');
+                $ledger->approve_status = 'Submitted';
                 $ledger->amount = $request->amount;
                 $ledger->comments = $request->comments;
                 $ledger->entry_by = Auth::user()->id;
@@ -150,7 +163,7 @@ class LedgerController extends Controller
                 $ledger_branch->transaction_method_id = $request->transaction_method;
                 $ledger_branch->comments = $request->comments;
                 $ledger_branch->entry_by = Auth::user()->id;
-                $ledger_branch->approve_status = 'Approved';
+                $ledger_branch->approve_status = 'Submitted';
 
                 $ledger_banking->branch_id = $request->branch;
                 $ledger_banking->bank_account_id = $request->bank_account;
@@ -161,7 +174,7 @@ class LedgerController extends Controller
                 $ledger_banking->ref_date = ($request->ref_date != null) ? date('Y-m-d', strtotime($request->ref_date)) : null;
                 $ledger_banking->ref_no = $request->ref_no;
                 $ledger_banking->entry_by = Auth::user()->id;
-                $ledger_banking->approve_status = 'Approved';
+                $ledger_banking->approve_status = 'Submitted';
 
                 $ledger->save();
                 $ledger_branch->save();
@@ -191,13 +204,13 @@ class LedgerController extends Controller
         if ($ledger->transaction_type_id == 4) //4=Payment
         {
             $user = supplier_list();
-            $invoices = DB::table('invoices')->where('transaction_type', 'Purchase')->pluck('transaction_code', 'id')->prepend('Select Invoice', '')->toArray();
-            return view('accounting.edit_payment', compact('user', 'branches', 'transaction_methods', 'ledger', 'bank_ledger', 'to_accounts','invoices'));
+            $invoices = DB::table('invoices')->where('transaction_type', 'Purchase')->pluck('sl_no', 'id')->prepend('Select Invoice', '')->toArray();
+            return view('accounting.edit_payment', compact('user', 'branches', 'transaction_methods', 'ledger', 'bank_ledger', 'to_accounts', 'invoices'));
         } elseif ($ledger->transaction_type_id == 3) //3=Receipt
         {
             $user = customer_list();
-            $invoices = DB::table('invoices')->where('transaction_type', 'Sales')->pluck('transaction_code', 'id')->prepend('Select Invoice', '')->toArray();
-            return view('accounting.edit_receipt', compact('user', 'branches', 'transaction_methods', 'ledger', 'bank_ledger', 'to_accounts','invoices'));
+            $invoices = DB::table('invoices')->where('transaction_type', 'Sales')->pluck('sl_no', 'id')->prepend('Select Invoice', '')->toArray();
+            return view('accounting.edit_receipt', compact('user', 'branches', 'transaction_methods', 'ledger', 'bank_ledger', 'to_accounts', 'invoices'));
         } else {
             $user = user_list();
             return view('accounting.edit', compact('user', 'branches', 'transaction_methods', 'ledger', 'bank_ledger', 'to_accounts'));
@@ -215,15 +228,43 @@ class LedgerController extends Controller
             'transaction_date' => 'required',
             'amount' => 'required'
         ]);
+
+        $inputDate = $request->transaction_date;
+        $givenDate = $ledger->transaction_date;
+        $sl_no = null;
+        if ($inputDate) {
+            // Create DateTime objects for comparison
+            $inputDateTime = new DateTime($inputDate);
+            $givenDateTime = new DateTime($givenDate);
+            // Extract month and year components
+            $inputMonthYear = $inputDateTime->format('Y-m');
+            $givenMonthYear = $givenDateTime->format('Y-m');
+            $ledger_date = date('Y-m-d', strtotime($request->transaction_date)) . date(' H:i:s');
+            $td = new DateTime($ledger_date);
+            // Compare the month and year
+            if (($inputMonthYear != $givenMonthYear) || $ledger->sl_no == null) {
+                if ($ledger->transaction_type_id == 3)//3=receipt
+                    $sl_no = createSl('TA-LR-', 'ledgers', 'transaction_date', $td);
+                elseif ($ledger->transaction_type_id == 4)//4=payment
+                    $sl_no = createSl('TA-LP-', 'ledgers', 'transaction_date', $td);
+                else
+                    $sl_no = createSl('TA-L-', 'ledgers', 'transaction_date', $td);
+            } else {
+                $sl_no = $ledger->sl_no;
+            }
+        }
+
         $ledger->user_id = $request->user;
         $ledger->branch_id = $request->branch;
         $ledger->transaction_type_id = $request->ledger_type; //4=Payment, 3=Receipt
         $ledger->transaction_method_id = $request->transaction_method;
         $ledger->transaction_date = date('Y-m-d', strtotime($request->transaction_date)) . date(' H:i:s');
+        $ledger->approve_status = 'Updated';
         $ledger->amount = $request->amount;
         $ledger->comments = $request->comments;
         $ledger->entry_by = Auth::user()->id;
         $ledger->invoice_id = $request->invoice;
+        $ledger->sl_no = $sl_no;
         $ledger->update();
 
         $del_lb = DB::table('branch_ledgers')->where('transaction_code', $ledger->transaction_code)->delete();
@@ -236,7 +277,8 @@ class LedgerController extends Controller
         $ledger_branch->transaction_method_id = $request->transaction_method;
         $ledger_branch->comments = $ledger->comments;
         $ledger_branch->entry_by = Auth::user()->id;
-        $ledger_branch->approve_status = 'Approved';
+        $ledger_branch->approve_status = 'Updated';
+        $ledger_branch->sl_no = $sl_no;;
         $ledger_branch->save();
 
         $del_la = DB::table('bank_ledgers')->where('transaction_code', $ledger->transaction_code)->delete();
@@ -252,29 +294,31 @@ class LedgerController extends Controller
         $ledger_banking->ref_date = ($request->ref_date != null) ? date('Y-m-d', strtotime($request->ref_date)) : null;
         $ledger_banking->ref_no = $request->ref_no;
         $ledger_banking->entry_by = Auth::user()->id;
-        $ledger_banking->approve_status = 'Approved';
+        $ledger_banking->approve_status = 'Updated';
+        $ledger_banking->sl_no = $sl_no;
         $ledger_banking->save();
 
         \Session::flash('flash_message', 'Successfully Updated');
-        if ($request->ledger_type == 'Payment')
+        if ($ledger->transaction_type_id == 4)
             return redirect('payment_index');
-        elseif ($request->ledger_type == 'Receipt')
+        elseif ($ledger->transaction_type_id == 3)
             return redirect('receipt_index');
         else
             return redirect('ledger');
     }
+
     public function show(Ledger $ledger)
     {
 //        dd($ledger);
-        $transaction_type1=$ledger->transaction_type->title;
-        if ($transaction_type1=='Payment')
-            $transaction_type= 'manage_payment';
-        elseif ($transaction_type1=='Receipt')
-            $transaction_type= 'manage_receipt';
+        $transaction_type1 = $ledger->transaction_type->title;
+        if ($transaction_type1 == 'Payment')
+            $transaction_type = 'manage_payment';
+        elseif ($transaction_type1 == 'Receipt')
+            $transaction_type = 'manage_receipt';
         else
-            $transaction_type= 'manage_ledger';
+            $transaction_type = 'manage_ledger';
 
-        return view('accounting.show_ledger', compact('ledger','transaction_type'));
+        return view('accounting.show_ledger', compact('ledger', 'transaction_type'));
     }
 
     public function destroy(Ledger $ledger)
@@ -287,5 +331,45 @@ class LedgerController extends Controller
 
         return back();
     }
+
+    public function checked_ledger($id)
+    {
+//        dd($id);
+//        abort_if(Gate::denies('$payment_request-approval'), redirect('error'));
+        $ledger = Ledger::find($id);
+        $ledger->checked_by = Auth::user()->id;
+        $ledger->checked_date = date('Y-m-d H:i:s');
+        $ledger->save();
+
+        \Session::flash('flash_message', 'Successfully Saved');
+
+        return redirect()->back();
+    }
+
+    public function approve_ledger($id)
+    {
+//        abort_if(Gate::denies('ledger-approval'), redirect('error'));
+        $ledger = Ledger::find($id);
+        if ($ledger->approve_status == 'Submitted' || $ledger->status == 'Updated') {
+            $ledger->approve_status = 'Approved';
+            $ledger->approved_by = Auth::user()->id;
+            $ledger->approved_date = date('Y-m-d H:i:s');
+            $ledger->save();
+            $ledger_ledger = BranchLedger::where('transaction_code', $ledger->transaction_code)->first();
+            $ledger_ledger->approve_status = 'Approved';
+            $ledger_ledger->save();
+            $bankledger_ledger = BankLedger::where('transaction_code', $ledger->transaction_code)->first();
+            $bankledger_ledger->approve_status = 'Approved';
+            $bankledger_ledger->save();
+
+            \Session::flash('flash_message', 'Successfully Approved');
+        } else {
+            \Session::flash('flash_message', 'Already Approved');
+
+        }
+
+        return redirect()->back();
+    }
+
 
 }
