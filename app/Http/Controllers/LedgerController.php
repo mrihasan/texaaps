@@ -156,6 +156,7 @@ class LedgerController extends Controller
                 $ledger->comments = $request->comments;
                 $ledger->entry_by = Auth::user()->id;
                 $ledger->invoice_id = $request->invoice;
+                $ledger->save();
 
                 $ledger_branch->branch_id = $request->branch;
                 $ledger_branch->transaction_date = date('Y-m-d', strtotime($request->transaction_date)) . date(' H:i:s');
@@ -164,6 +165,9 @@ class LedgerController extends Controller
                 $ledger_branch->comments = $request->comments;
                 $ledger_branch->entry_by = Auth::user()->id;
                 $ledger_branch->approve_status = 'Submitted';
+                $ledger_branch->reftbl = 'ledgers';
+                $ledger_branch->reftbl_id = $ledger->id;
+                $ledger_branch->save();
 
                 $ledger_banking->branch_id = $request->branch;
                 $ledger_banking->bank_account_id = $request->bank_account;
@@ -175,9 +179,8 @@ class LedgerController extends Controller
                 $ledger_banking->ref_no = $request->ref_no;
                 $ledger_banking->entry_by = Auth::user()->id;
                 $ledger_banking->approve_status = 'Submitted';
-
-                $ledger->save();
-                $ledger_branch->save();
+                $ledger_banking->reftbl = 'ledgers';
+                $ledger_banking->reftbl_id = $ledger->id;
                 $ledger_banking->save();
             });
 
@@ -278,7 +281,9 @@ class LedgerController extends Controller
         $ledger_branch->comments = $ledger->comments;
         $ledger_branch->entry_by = Auth::user()->id;
         $ledger_branch->approve_status = 'Updated';
-        $ledger_branch->sl_no = $sl_no;;
+        $ledger_branch->sl_no = $sl_no;
+        $ledger_branch->reftbl = 'ledgers';
+        $ledger_branch->reftbl_id = $ledger->id;
         $ledger_branch->save();
 
         $del_la = DB::table('bank_ledgers')->where('transaction_code', $ledger->transaction_code)->delete();
@@ -296,6 +301,8 @@ class LedgerController extends Controller
         $ledger_banking->entry_by = Auth::user()->id;
         $ledger_banking->approve_status = 'Updated';
         $ledger_banking->sl_no = $sl_no;
+        $ledger_banking->reftbl = 'ledgers';
+        $ledger_banking->reftbl_id = $ledger->id;
         $ledger_banking->save();
 
         \Session::flash('flash_message', 'Successfully Updated');

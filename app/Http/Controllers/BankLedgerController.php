@@ -37,6 +37,22 @@ class BankLedgerController extends Controller
         return view('banking.bank_ledger_index', compact('ledger', 'header_title'));
     }
 
+    public function manage_account_ledger(Request $request)
+    {
+//        abort_if(Gate::denies('payment-access'), redirect('error'));
+        if ($request->start_date == null) {
+            $start_date = Carbon::now()->subDays(90)->format('Y-m-d') . ' 00:00:00';
+            $end_date = date('Y-m-d') . ' 23:59:59';
+        } else {
+            $start_date = date('Y-m-d', strtotime($request->start_date)) . ' 00:00:00';
+            $end_date = date('Y-m-d', strtotime($request->end_date)) . ' 23:59:59';
+        }
+        $ledger = BankLedger::whereBetween('bank_ledgers.transaction_date', [$start_date, $end_date])->latest()->get();
+
+        $header_title = 'Manage Account Ledger From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
+        return view('banking.manage_account_ledger', compact('ledger', 'header_title'));
+    }
+
     public function account_statement(Request $request)
     {
 //        abort_if(Gate::denies('payment-access'), redirect('error'));
@@ -157,6 +173,8 @@ class BankLedgerController extends Controller
             $ledger_branch->comments = $request->particulars;
             $ledger_branch->entry_by = Auth::user()->id;
             $ledger_branch->approve_status = 'Submitted';
+            $ledger_branch->reftbl = 'bank_ledgers';
+            $ledger_branch->reftbl_id = $ledger_banking->id;
             $ledger_branch->save();
 
         }
@@ -262,6 +280,8 @@ class BankLedgerController extends Controller
             $ledger_branch->updated_by = Auth::user()->id;
             $ledger_branch->approve_status = 'Updated';
             $ledger_branch->sl_no = $sl_no;
+            $ledger_branch->reftbl = 'bank_ledgers';
+            $ledger_branch->reftbl_id = $bank_ledger->id;
             $ledger_branch->save();
         } elseif ($request->edit_type == 'transfer') {
 

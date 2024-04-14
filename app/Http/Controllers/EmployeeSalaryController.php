@@ -129,10 +129,6 @@ class EmployeeSalaryController extends Controller
                 $transaction_code = autoTimeStampCode('ESP');
 
                 $items = new EmployeeSalary();
-                $ledger = new Ledger();
-                $ledger_branch = new BranchLedger();
-                $ledger_banking = new BankLedger();
-
                 $items->type = $request->type;
                 $items->user_id = $request->user_id;
                 $items->branch_id = $request->branch;
@@ -146,7 +142,9 @@ class EmployeeSalaryController extends Controller
                 $items->paidsalary_amount = $request->paidsalary_amount;
                 $items->created_at = date('Y-m-d H:i:s', strtotime($request->create_date));
                 $items->entry_by = Auth::user()->id;
+                $items->save();
 
+                $ledger = new Ledger();
                 $ledger->user_id = $request->user_id;
                 $ledger->branch_id = $request->branch;
                 $ledger->transaction_type_id = 4; //4=payment
@@ -156,7 +154,10 @@ class EmployeeSalaryController extends Controller
                 $ledger->amount = $request->paidsalary_amount;
                 $ledger->comments = $request->salary_type . ' of ' . entryBy($request->user_id) . ' for ' . date("F", mktime(0, 0, 0, $request->salary_month, 10)) . ' - ' . $request->year;
                 $ledger->entry_by = Auth::user()->id;
+                $ledger->reftbl = 'employee_salaries';
+                $ledger->reftbl_id = $items->id;
 
+                $ledger_branch = new BranchLedger();
                 $ledger_branch->branch_id = $request->branch;
                 $ledger_branch->transaction_date = date('Y-m-d H:i:s', strtotime($request->create_date));
                 $ledger_branch->transaction_code = $transaction_code;
@@ -167,7 +168,10 @@ class EmployeeSalaryController extends Controller
                     . ' (' . $request->comments . ')';
                 $ledger_branch->entry_by = Auth::user()->id;
                 $ledger_branch->approve_status = 'Approved';
+                $ledger_branch->reftbl = 'employee_salaries';
+                $ledger_branch->reftbl_id = $items->id;
 
+                $ledger_banking = new BankLedger();
                 $ledger_banking->branch_id = $request->branch;
                 $ledger_banking->bank_account_id = $request->bank_account;
                 $ledger_banking->transaction_code = $transaction_code;
@@ -179,9 +183,9 @@ class EmployeeSalaryController extends Controller
                     . ' (' . $request->comments . ')';
                 $ledger_banking->entry_by = Auth::user()->id;
                 $ledger_banking->approve_status = 'Approved';
+                $ledger_banking->reftbl = 'employee_salaries';
+                $ledger_banking->reftbl_id = $items->id;
 
-
-                $items->save();
                 $ledger->save();
                 $ledger_branch->save();
                 $ledger_banking->save();
@@ -239,8 +243,6 @@ class EmployeeSalaryController extends Controller
                 $transaction_code = autoTimeStampCode('ESP');
 //dd($transaction_code);
                 $items = new EmployeeSalary();
-                $ledger = new Ledger();
-
                 $items->type = $request->type;
                 $items->user_id = $employees[$i]->user_id;
                 $items->branch_id = $employees[$i]->branch_id;
@@ -249,7 +251,9 @@ class EmployeeSalaryController extends Controller
                 $items->salary_amount = ($request->type == 'Bonus Payslip') ? ($employees[$i]->salary_amount * $employees[$i]->bonus_amount) / 100 : $employees[$i]->salary_amount;
                 $items->transaction_code = $transaction_code;
                 $items->entry_by = Auth::user()->id;
+                $items->save();
 
+                $ledger = new Ledger();
                 $ledger->user_id = $employees[$i]->user_id;
                 $ledger->branch_id = $employees[$i]->branch_id;
                 $ledger->transaction_type_id = 7; //7=Payslip
@@ -259,8 +263,8 @@ class EmployeeSalaryController extends Controller
                 $ledger->amount = ($request->type == 'Bonus Payslip') ? ($employees[$i]->salary_amount * $employees[$i]->bonus_amount) / 100 : $employees[$i]->salary_amount;
                 $ledger->comments = $request->type . ' of ' . date("F", mktime(0, 0, 0, $request->salary_month, 10)) . ' - ' . $request->year;
                 $ledger->entry_by = Auth::user()->id;
-
-                $items->save();
+                $ledger->reftbl = 'employee_salaries';
+                $ledger->reftbl_id = $items->id;
                 $ledger->save();
             }
             Session::flash('flash_success', 'Successfully Added');
@@ -307,8 +311,6 @@ class EmployeeSalaryController extends Controller
         $employees = Employee::where('user_id', $request->user_id)->first();
 
         $items = new EmployeeSalary();
-        $ledger = new Ledger();
-
         $items->type = $request->type;
         $items->user_id = $request->user_id;
         $items->branch_id = $employees->branch_id;
@@ -317,7 +319,9 @@ class EmployeeSalaryController extends Controller
         $items->salary_amount = ($request->type == 'Bonus Payslip') ? ($employees->salary_amount * $employees->bonus_amount) / 100 : $employees->salary_amount;
         $items->transaction_code = $transaction_code;
         $items->entry_by = Auth::user()->id;
+        $items->save();
 
+        $ledger = new Ledger();
         $ledger->user_id = $request->user_id;
         $ledger->branch_id = $employees->branch_id;
         $ledger->transaction_type_id = 7; //7=Payslip
@@ -327,8 +331,8 @@ class EmployeeSalaryController extends Controller
         $ledger->amount = ($request->type == 'Bonus Payslip') ? ($employees->salary_amount * $employees->bonus_amount) / 100 : $employees->salary_amount;
         $ledger->comments = $request->type . ' of ' . date("F", mktime(0, 0, 0, $request->salary_month, 10)) . ' - ' . $request->year;
         $ledger->entry_by = Auth::user()->id;
-
-        $items->save();
+        $ledger->reftbl = 'employee_salaries';
+        $ledger->reftbl_id = $items->id;
         $ledger->save();
 
         Session::flash('flash_success', 'Successfully Added');
@@ -421,14 +425,9 @@ class EmployeeSalaryController extends Controller
             $items->updated_by = Auth::user()->id;
             $items->save();
 
-            $ledger = new Ledger();
-            $ledger_branch = new BranchLedger();
-            $ledger_banking = new BankLedger();
 
             $del_l = DB::table('ledgers')->where('transaction_code', $items->transaction_code)->delete();
-            $del_bl = DB::table('bank_ledgers')->where('transaction_code', $items->transaction_code)->delete();
-            $del_bl = DB::table('branch_ledgers')->where('transaction_code', $items->transaction_code)->delete();
-
+            $ledger = new Ledger();
             $ledger->user_id = $items->user_id;
             $ledger->branch_id = $request->branch;
             $ledger->transaction_type_id = 4; //4=payment
@@ -439,7 +438,13 @@ class EmployeeSalaryController extends Controller
             $ledger->comments = $request->salary_type . ' of ' . entryBy($request->user_id) . ' for ' . date("F", mktime(0, 0, 0, $request->salary_month, 10)) . ' - ' . $request->year;
             $ledger->entry_by = $items->entry_by;
             $ledger->updated_by = Auth::user()->id;
+            $ledger->approve_status = 'Updated';
+            $ledger->reftbl = 'employee_salaries';
+            $ledger->reftbl_id = $items->id;
+            $ledger->save();
 
+            $del_bl = DB::table('branch_ledgers')->where('transaction_code', $items->transaction_code)->delete();
+            $ledger_branch = new BranchLedger();
             $ledger_branch->branch_id = $request->branch;
             $ledger_branch->transaction_date = date('Y-m-d H:i:s', strtotime($request->create_date));
             $ledger_branch->transaction_code = $items->transaction_code;
@@ -450,8 +455,13 @@ class EmployeeSalaryController extends Controller
                 . ' (' . $request->comments . ')';
             $ledger_branch->entry_by = $items->entry_by;
             $ledger_branch->updated_by = Auth::user()->id;
-            $ledger_branch->approve_status = 'Approved';
+            $ledger_branch->approve_status = 'Updated';
+            $ledger_branch->reftbl = 'employee_salaries';
+            $ledger_branch->reftbl_id = $items->id;
+            $ledger_branch->save();
 
+            $del_bl = DB::table('bank_ledgers')->where('transaction_code', $items->transaction_code)->delete();
+            $ledger_banking = new BankLedger();
             $ledger_banking->branch_id = $request->branch;
             $ledger_banking->bank_account_id = $request->bank_account;
             $ledger_banking->transaction_code = $items->transaction_code;
@@ -463,10 +473,9 @@ class EmployeeSalaryController extends Controller
                 . ' (' . $request->comments . ')';
             $ledger_banking->entry_by = $items->entry_by;
             $ledger_banking->updated_by = Auth::user()->id;
-            $ledger_banking->approve_status = 'Approved';
-
-            $ledger->save();
-            $ledger_branch->save();
+            $ledger_banking->approve_status = 'Updated';
+            $ledger_banking->reftbl = 'employee_salaries';
+            $ledger_banking->reftbl_id = $items->id;
             $ledger_banking->save();
         } elseif ($request->salary_type == 'Salary Payslip'||$request->salary_type == 'Bonus Payslip') {
             $this->validate($request, [
@@ -495,6 +504,9 @@ class EmployeeSalaryController extends Controller
             $ledger->comments = $request->salary_type . ' of ' . entryBy($items->user_id) . ' for ' . date("F", mktime(0, 0, 0, $request->salary_month, 10)) . ' - ' . $request->year;
             $ledger->entry_by = $items->entry_by;
             $ledger->updated_by = Auth::user()->id;
+            $ledger->approve_status = 'Updated';
+            $ledger->reftbl = 'employee_salaries';
+            $ledger->reftbl_id = $items->id;
             $ledger->save();
         }
 

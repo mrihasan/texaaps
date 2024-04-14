@@ -495,7 +495,7 @@ function ledger_account_all($start_date, $end_date)
         'transaction_date' => $before1day,
         'transaction_code' => null,
         'sl_no' => null,
-        'amount' => $balance_brought_down,
+    'amount' => $balance_brought_down,
         'transaction_type' => 'Credited',
         'reference' => 'Balance Brought Down',
         'account_name' => null,

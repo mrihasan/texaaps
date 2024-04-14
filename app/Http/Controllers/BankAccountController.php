@@ -63,7 +63,7 @@ class BankAccountController extends Controller
         $ledger_banking->transaction_method_id = 1;
         $ledger_banking->ref_date = null;
         $ledger_banking->particulars = 'Opening';
-        $ledger_banking->approve_status = 'Approved';
+        $ledger_banking->approve_status = 'Submitted';
         $ledger_banking->entry_by = Auth::user()->id;
         $ledger_banking->save();
 
@@ -76,7 +76,9 @@ class BankAccountController extends Controller
         $ledger_branch->transaction_method_id = 1;
         $ledger_branch->comments = 'Bank Account Opening';
         $ledger_branch->entry_by = Auth::user()->id;
-        $ledger_branch->approve_status = 'Approved';
+        $ledger_branch->approve_status = 'Submitted';
+        $ledger_branch->reftbl = 'bank_ledgers';
+        $ledger_branch->reftbl_id = $ledger_banking->id;
         $ledger_branch->save();
 
 

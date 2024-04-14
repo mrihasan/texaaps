@@ -154,6 +154,8 @@ class ExpenseController extends Controller
                 $branch_ledger->comments = $expense->expense_type->expense_name . ' ' . $request->expense_amount;
                 $branch_ledger->entry_by = Auth::user()->id;
                 $branch_ledger->approve_status = 'Not Approved';
+                $branch_ledger->reftbl = 'expenses';
+                $branch_ledger->reftbl_id = $expense->id;
                 $branch_ledger->save();
 
                 $ledger_banking = new BankLedger();
@@ -168,6 +170,8 @@ class ExpenseController extends Controller
                 $ledger_banking->particulars = $expense->expense_type->expense_name . ' ' . $request->expense_amount;
                 $ledger_banking->entry_by = Auth::user()->id;
                 $ledger_banking->approve_status = 'Not Approved';
+                $ledger_banking->reftbl = 'expenses';
+                $ledger_banking->reftbl_id = $expense->id;
                 $ledger_banking->save();
 
             });
@@ -251,19 +255,21 @@ class ExpenseController extends Controller
                 $expense->update();
 
                 $del_lb = DB::table('branch_ledgers')->where('transaction_code', $expense->transaction_code)->delete();
-                $ledger_banking = new BranchLedger();
-                $ledger_banking->branch_id = $request->branch;
-                $ledger_banking->sl_no = $sl_no;
-                $ledger_banking->transaction_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
-                $ledger_banking->transaction_code = $expense->transaction_code;
-                $ledger_banking->amount = $request->expense_amount;
-                $ledger_banking->transaction_type_id = 2; //Debited
-                $ledger_banking->transaction_method_id = $request->transaction_method_id;
-                $ledger_banking->comments = $expense->expense_type->expense_name . ' ' . $request->expense_amount;
-                $ledger_banking->entry_by = $expense->user_id;
-                $ledger_banking->updated_by = Auth::user()->id;
-                $ledger_banking->approve_status = 'Not Approved';
-                $ledger_banking->save();
+                $branch_ledger = new BranchLedger();
+                $branch_ledger->branch_id = $request->branch;
+                $branch_ledger->sl_no = $sl_no;
+                $branch_ledger->transaction_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
+                $branch_ledger->transaction_code = $expense->transaction_code;
+                $branch_ledger->amount = $request->expense_amount;
+                $branch_ledger->transaction_type_id = 2; //Debited
+                $branch_ledger->transaction_method_id = $request->transaction_method_id;
+                $branch_ledger->comments = $expense->expense_type->expense_name . ' ' . $request->expense_amount;
+                $branch_ledger->entry_by = $expense->user_id;
+                $branch_ledger->updated_by = Auth::user()->id;
+                $branch_ledger->approve_status = 'Not Approved';
+                $branch_ledger->reftbl = 'expenses';
+                $branch_ledger->reftbl_id = $expense->id;
+                $branch_ledger->save();
 
                 $del_la = DB::table('bank_ledgers')->where('transaction_code', $expense->transaction_code)->delete();
                 $ledger_banking = new BankLedger();
@@ -279,6 +285,8 @@ class ExpenseController extends Controller
                 $ledger_banking->entry_by = $expense->user_id;
                 $ledger_banking->updated_by = Auth::user()->id;
                 $ledger_banking->approve_status = 'Not Approved';
+                $ledger_banking->reftbl = 'expenses';
+                $ledger_banking->reftbl_id = $expense->id;
                 $ledger_banking->save();
 
             });

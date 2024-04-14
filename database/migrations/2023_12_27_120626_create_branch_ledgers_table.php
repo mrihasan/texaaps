@@ -29,6 +29,8 @@ return new class extends Migration
             $table->integer('entry_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->enum('approve_status',['Submitted','Approved','Canceled','Updated'])->default('Submitted');
+            $table->string('reftbl')->nullable();
+            $table->bigInteger('reftbl_id')->nullable();
 
             $table->timestamps();
         });
