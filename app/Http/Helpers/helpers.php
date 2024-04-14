@@ -390,6 +390,7 @@ function ledger_account($account_id, $start_date, $end_date)
     $balance_brought_down_entry = (object) [
         'transaction_date' => $before1day,
         'transaction_code' => null,
+        'sl_no' => null,
         'amount' => $balance_brought_down,
         'transaction_type' => 'Credited',
         'reference' => 'Balance Brought Down',
@@ -399,7 +400,7 @@ function ledger_account($account_id, $start_date, $end_date)
     ];
 
     $ledger = DB::table('bank_ledgers')->select('bank_ledgers.transaction_date', 'bank_ledgers.transaction_code', 'bank_ledgers.amount',
-        'transaction_types.title as transaction_type', 'bank_ledgers.particulars as reference',
+        'transaction_types.title as transaction_type', 'bank_ledgers.particulars as reference', 'bank_ledgers.sl_no',
         'bank_ledgers.ref_date', 'bank_ledgers.ref_no', 'bank_ledgers.created_at')
         ->join('transaction_types', 'transaction_types.id', '=', 'bank_ledgers.transaction_type_id')
         ->where('bank_ledgers.bank_account_id', $account_id)
@@ -417,6 +418,7 @@ function ledger_account($account_id, $start_date, $end_date)
     $ledger_balance['transaction_type'] = [];
     $ledger_balance['transaction_date'] = [];
     $ledger_balance['transaction_code'] = [];
+    $ledger_balance['sl_no'] = [];
     $ledger_balance['reference'] = [];
     $ledger_balance['ref_date'] = [];
     $ledger_balance['ref_no'] = [];
@@ -459,6 +461,7 @@ function ledger_account($account_id, $start_date, $end_date)
         $ledger_balance['transaction_type'][] = $sort_array[$i]->transaction_type;
         $ledger_balance['transaction_date'][] = $sort_array[$i]->transaction_date;
         $ledger_balance['transaction_code'][] = $sort_array[$i]->transaction_code;
+        $ledger_balance['sl_no'][] = $sort_array[$i]->sl_no;
         $ledger_balance['reference'][] = $sort_array[$i]->reference;
         $ledger_balance['ref_no'][] = $sort_array[$i]->ref_no;
         $ledger_balance['ref_date'][] = $sort_array[$i]->ref_date;
@@ -491,6 +494,7 @@ function ledger_account_all($start_date, $end_date)
     $balance_brought_down_entry = (object) [
         'transaction_date' => $before1day,
         'transaction_code' => null,
+        'sl_no' => null,
         'amount' => $balance_brought_down,
         'transaction_type' => 'Credited',
         'reference' => 'Balance Brought Down',
@@ -500,7 +504,7 @@ function ledger_account_all($start_date, $end_date)
 //        'balance_brought_down' => $balance_brought_down,
     ];
     $ledger = DB::table('bank_ledgers')->select('bank_ledgers.transaction_date', 'bank_ledgers.transaction_code', 'bank_ledgers.amount',
-        'transaction_types.title as transaction_type', 'bank_ledgers.particulars as reference',
+        'transaction_types.title as transaction_type', 'bank_ledgers.particulars as reference', 'bank_ledgers.sl_no',
         'bank_accounts.account_name', 'branches.title as branch_name', 'bank_ledgers.created_at')
         ->join('transaction_types', 'transaction_types.id', '=', 'bank_ledgers.transaction_type_id')
         ->join('branches', 'branches.id', '=', 'bank_ledgers.branch_id')
@@ -519,6 +523,7 @@ function ledger_account_all($start_date, $end_date)
     $ledger_balance['transaction_type'] = [];
     $ledger_balance['transaction_date'] = [];
     $ledger_balance['transaction_code'] = [];
+    $ledger_balance['sl_no'] = [];
     $ledger_balance['reference'] = [];
     $ledger_balance['branch_name'] = [];
     $ledger_balance['account_name'] = [];
@@ -561,6 +566,7 @@ function ledger_account_all($start_date, $end_date)
         $ledger_balance['transaction_type'][] = $sort_array[$i]->transaction_type;
         $ledger_balance['transaction_date'][] = $sort_array[$i]->transaction_date;
         $ledger_balance['transaction_code'][] = $sort_array[$i]->transaction_code;
+        $ledger_balance['sl_no'][] = $sort_array[$i]->sl_no;
         $ledger_balance['reference'][] = $sort_array[$i]->reference;
         $ledger_balance['branch_name'][] = $sort_array[$i]->branch_name;
         $ledger_balance['account_name'][] = $sort_array[$i]->account_name;
@@ -679,7 +685,8 @@ if (!function_exists('createSl')) {
             ->whereMonth($dateColumn, $transaction_date->format('m'))
             ->count();
 //dd($monthly_count_table);
-        $date = date('ym'); // Current month and year
+        $date = date($transaction_date->format('y').$transaction_date->format('m')); // transaction month and year
+//        $date = date('ym'); // Current month and year
         $sl = $initial . $date . '-' . str_pad($monthly_count_table + 1, 4, '0', STR_PAD_LEFT);
         $allSls = getRelatedSls($sl, $table);
         if (!$allSls->contains('sl_no', $sl)) {

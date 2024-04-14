@@ -53,7 +53,7 @@
                             <th>Ref.No</th>
                             <th>Ref.Date</th>
                             <th>{{ __('all_settings.Transaction') }} <br/>Type</th>
-                            <th>{{ __('all_settings.Transaction') }} <br/>Code</th>
+                            <th>Sl No</th>
                             <th>Credit<br/>Amount(+)</th>
                             <th>Debit<br/>Amount(-)</th>
                             <th>Balance</th>
@@ -80,7 +80,7 @@
                                 <td>{{$data['ref_no'][$key]}}</td>
                                 <td>{{$data['ref_date'][$key]}}</td>
                                 <td>{{$data['transaction_type'][$key] }}</td>
-                                <td>{{$data['transaction_code'][$key]}}</td>
+                                <td>{{$data['sl_no'][$key]}}</td>
                                 {{--<td style="text-align: right">{{($data['transaction_type'][$key]=='Credited'||$data['transaction_type'][$key]=='Receipt'||$data['transaction_type'][$key]=='Deposit')?$data['transaction_amount'][$key]:''}}</td>--}}
                                 {{--<td style="text-align: right">{{($data['transaction_type'][$key]=='Debited'||$data['transaction_type'][$key]=='Payment'||$data['transaction_type'][$key]=='Withdraw')?$data['transaction_amount'][$key]:''}}</td>--}}
                                 <td style="text-align: right">{{($data['transaction_type'][$key]=='Credited'||$data['transaction_type'][$key]=='Receipt'||
