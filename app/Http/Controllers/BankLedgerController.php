@@ -23,6 +23,7 @@ class BankLedgerController extends Controller
 
     public function index(Request $request)
     {
+//        dd($request);
 //        abort_if(Gate::denies('payment-access'), redirect('error'));
         if ($request->start_date == null) {
             $start_date = Carbon::now()->subDays(90)->format('Y-m-d') . ' 00:00:00';
@@ -39,6 +40,7 @@ class BankLedgerController extends Controller
 
     public function manage_account_ledger(Request $request)
     {
+//        dd($request);
 //        abort_if(Gate::denies('payment-access'), redirect('error'));
         if ($request->start_date == null) {
             $start_date = Carbon::now()->subDays(90)->format('Y-m-d') . ' 00:00:00';
@@ -386,6 +388,42 @@ class BankLedgerController extends Controller
         \Session::flash('flash_message', 'Successfully Deleted');
 
         return back();
+    }
+    public function checked_acledger($id)
+    {
+//        dd($id);
+//        abort_if(Gate::denies('$payment_request-approval'), redirect('error'));
+        $ledger = BankLedger::find($id);
+        $ledger->checked_by = Auth::user()->id;
+        $ledger->checked_date = date('Y-m-d H:i:s');
+        $ledger->save();
+
+        \Session::flash('flash_message', 'Successfully Saved');
+
+        return redirect()->back();
+    }
+
+    public function approve_acledger($id)
+    {
+//        abort_if(Gate::denies('ledger-approval'), redirect('error'));
+        $ledger = BankLedger::find($id);
+        if ($ledger->approve_status == 'Submitted' || $ledger->status == 'Updated') {
+            $ledger->approve_status = 'Approved';
+            $ledger->approved_by = Auth::user()->id;
+            $ledger->approved_date = date('Y-m-d H:i:s');
+            $ledger->save();
+
+            $branch_ledger = BranchLedger::where('transaction_code', $ledger->transaction_code)->first();
+            $branch_ledger->approve_status = 'Approved';
+            $branch_ledger->save();
+
+            \Session::flash('flash_message', 'Successfully Approved');
+        } else {
+            \Session::flash('flash_message', 'Already Approved');
+
+        }
+
+        return redirect()->back();
     }
 
 

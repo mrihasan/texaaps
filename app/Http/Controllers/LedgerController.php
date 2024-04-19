@@ -24,6 +24,7 @@ class LedgerController extends Controller
 
     public function index(Request $request)
     {
+//        dd($request);
         abort_if(Gate::denies('AccountMgtAccess'), redirect('error'));
         if ($request->start_date == null) {
             $start_date = Carbon::now()->subDays(90)->format('Y-m-d') . ' 00:00:00';
@@ -52,6 +53,8 @@ class LedgerController extends Controller
         }
         $payments = Ledger::with('user')->with('entryby')
             ->where('transaction_type_id', 4)//4=Payment
+            ->where('reftbl', null )
+            ->orWhere('reftbl', 'ledgers')
             ->whereBetween('transaction_date', [$start_date, $end_date])
             ->orderBy('transaction_date', 'desc')->get();
 //        dd($payments);
@@ -71,6 +74,8 @@ class LedgerController extends Controller
         }
         $receipts = Ledger::with('user')->with('entryby')
             ->where('transaction_type_id', 3)//3=Received
+            ->where('reftbl', null )
+            ->orWhere('reftbl', 'ledgers')
             ->whereBetween('transaction_date', [$start_date, $end_date])
             ->orderBy('transaction_date', 'desc')->get();
         $header_title = 'Receipt From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');

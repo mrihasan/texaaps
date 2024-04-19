@@ -49,7 +49,7 @@
                             <th>Amount</th>
                             <th>Branch</th>
                             <th>Comments</th>
-                            <th>Status</th>
+                            <th>Sl No</th>
                             <th>Submitted By</th>
                             <th>Checked By</th>
                             <th>Approved By</th>
@@ -83,7 +83,7 @@
                                 <td style="text-align:right">{{ $section->expense_amount }}</td>
                                 <td>{{ $section->branch->title }}</td>
                                 <td>{{ $section->comments }}</td>
-                                <td>{{ $section->status }}</td>
+                                <td>{{ $section->sl_no }}</td>
                                 <td>{{ $section->user->name }}</td>
                                 <td>
                                     @if( $section->checked_by == null && Auth::user()->hasRole('Checked'))
@@ -475,7 +475,7 @@
             },
 
             function (start, end) {
-                console.log("Callback has been called!");
+//                console.log("Callback has been called!");
                 $('#reportrange span').html(start.format('D MMMM YYYY') + ' - ' + end.format('D MMMM YYYY'));
                 startDate = start;
                 endDate = end;

@@ -38,6 +38,7 @@ Route::get('/clear_all', [\App\Http\Controllers\SettingController::class, 'clear
 Route::get('/storage_link', [\App\Http\Controllers\SettingController::class, 'storage_link']);
 Route::get('/getSeeder/{table}', [\App\Http\Controllers\SettingController::class, 'getSeeder']);
 Route::get('/backupDatabase{code}', [\App\Http\Controllers\SettingController::class, 'backupDatabase']);
+Route::get('/reftbl_fix/{table}', [\App\Http\Controllers\SettingController::class, 'reftbl_fix'])->name('reftbl_fix');
 
 Route::post('/select_user_action', [\App\Http\Controllers\UserController::class, 'select_user_action'])->name('select_user_action');
 Route::patch('/user/Auth::user()', [\App\Http\Controllers\UserController::class, 'password_update'])->name('password_update');
@@ -63,6 +64,9 @@ Route::get('lowStockProduct', '\App\Http\Controllers\ProductController@lowStockP
 Route::resource('product', \App\Http\Controllers\ProductController::class);
 Route::resource('branch', \App\Http\Controllers\BranchController::class);
 Route::resource('bank_account', \App\Http\Controllers\BankAccountController::class);
+
+Route::put('checked_acledger/{id}','\App\Http\Controllers\BankLedgerController@checked_acledger')->name('checked_acledger');
+Route::put('approve_acledger/{id}','\App\Http\Controllers\BankLedgerController@approve_acledger')->name('approve_acledger');
 Route::get('/account_transfer', '\App\Http\Controllers\BankLedgerController@account_transfer')->name('account_transfer');
 Route::get('/deposit', '\App\Http\Controllers\BankLedgerController@deposit')->name('deposit');
 Route::get('/withdraw', '\App\Http\Controllers\BankLedgerController@withdraw')->name('withdraw');

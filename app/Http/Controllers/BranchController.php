@@ -59,12 +59,17 @@ class BranchController extends Controller
         $ledger_banking->branch_id = $branch->id;
         $ledger_banking->transaction_date = date('Y-m-d H:i:s');
         $ledger_banking->transaction_code = $transaction_code;
+        $ledger_banking->sl_no = createSl('TA-LBO-','branch_ledgers','transaction_date',date('Y-m-d H:i:s'));
         $ledger_banking->amount = 0;
         $ledger_banking->transaction_type_id = 1;
         $ledger_banking->transaction_method_id = 1;
         $ledger_banking->comments = 'Opening';
         $ledger_banking->approve_status = 'Approved';
         $ledger_banking->entry_by = Auth::user()->id;
+        $ledger_banking->checked_by = Auth::user()->id;
+        $ledger_banking->checked_date = date('Y-m-d H:i:s');
+        $ledger_banking->approved_by = Auth::user()->id;
+        $ledger_banking->approved_date = date('Y-m-d H:i:s');
         $ledger_banking->save();
 
         \Session::flash('flash_message', 'Successfully Added');

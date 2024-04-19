@@ -47,7 +47,7 @@
                         <thead>
                         <tr style="background-color: #dff0d8">
                             <th> Date</th>
-                            <th> {{ __('all_settings.Transaction') }}<br/> No</th>
+                            <th> Sl No</th>
                             <th>User<br/> Info</th>
                             <th>Type</th>
                             <th>Total<br/> Amount</th>
@@ -60,7 +60,7 @@
                         @foreach($payments as $data)
                             <tr>
                                 <td>{{ Carbon\Carbon::parse($data->transaction_date)->format('d-M-Y') }}</td>
-                                <td>{{ $data->transaction_code }}</td>
+                                <td>{{ $data->sl_no }}</td>
                                 {{--                                            <td>{{$data->user->profile->company_name->title}}</td>--}}
                                 <td><a href="{{ route('user.show',$data->user->id) }}" class="btn btn-success btn-xs"
                                        title="User Profile View"><span class="far fa-user-circle" aria-hidden="true"></span></a>

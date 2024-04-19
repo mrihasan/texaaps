@@ -1,7 +1,7 @@
 @extends('layouts.al305_main')
 @section('accounting_mo','menu-open')
 @section('accounting','active')
-@section('manage_bank_ledger','active')
+@section('manage_account_ledger','active')
 @section('title',$header_title)
 @section('breadcrumb')
     <li class="nav-item d-none d-sm-inline-block">
@@ -22,10 +22,8 @@
 
 <link rel="stylesheet" href="{{ asset('supporting/dataTables/bs4/datatables.min.css') }}">
 <link rel="stylesheet" href="{{ asset('supporting/dataTables/fixedHeader.dataTables.min.css') }}">
-{{--<link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.1.5/css/fixedHeader.dataTables.min.css">--}}
-{{--<link rel="stylesheet" href="{{ asset('alte305/plugins/daterangepicker/daterangepicker.css') }}">--}}
-{{--<link rel="stylesheet" href="{{ asset('supporting/sweetalert/sweetalert2.css') }}">--}}
 <link rel="stylesheet" href="{{ asset('supporting/bootstrap-daterangepicker/daterangepicker.min.css') }}">
+<link rel="stylesheet" href="{{ asset('supporting/sweetalert/sweetalert2.css') }}">
 
 @endpush
 @section('maincontent')
@@ -57,6 +55,10 @@
                             <th>Branch</th>
                             <th>Account</th>
                             <th>Sl No</th>
+                            <th>Status</th>
+                            <th>Checked By</th>
+                            <th>Approved By</th>
+
                             <th>{{ __('all_settings.Transaction') }} <br/>Type</th>
                             <th>Amount</th>
                             <th>Action</th>
@@ -64,6 +66,9 @@
                         </thead>
                         <tfoot>
                         <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -81,6 +86,55 @@
                                 <td>{{$data->branch->title}}</td>
                                 <td>{{$data->bank_account->account_name}}</td>
                                 <td>{{$data->sl_no}}</td>
+                                <td>{{ $data->approve_status}}</td>
+                                <td>
+                                    @if( $data->reftbl=='bank_ledgers')
+                                    @if( $data->checked_by == null && Auth::user()->hasRole('Checked'))
+                                        <button class="btn btn-warning btn-xs" title="Verify" type="button"
+                                                onclick="checkedPost({{$data->id}})">
+                                            <i class="fa fa-check-circle"></i>
+                                            <span>Check please</span>
+                                        </button>
+                                        <form method="post" action="{{route('checked_acledger', $data->id)}}"
+                                              id="check-form{{$data->id}}" style="display: none;">
+                                            @csrf
+                                            @method('PUT')
+                                        </form>
+                                    @elseif( $data->checked_by == null)
+                                        <span class="right badge badge-danger">Not Yet Checked</span>
+                                    @else
+                                        {{$data->checkedBy->name??''}}
+                                    @endif
+                                        @else
+                                        <span class="right badge badge-danger">N/A</span>
+                                    @endif
+                                </td>
+
+                                <td>
+                                    @if($data->checked_by == null)
+                                        <span class="right badge badge-danger">Not Yet Verified</span>
+                                    @else
+
+                                        @if( $data->approved_by == null && Auth::user()->hasRole('Approval'))
+                                            <button class="btn btn-success btn-xs" title="Approve" type="button"
+                                                    onclick="approvePost({{$data->id}})">
+                                                <i class="fa fa-check-circle"></i>
+                                                <span>Approve Please</span>
+                                            </button>
+                                            <form method="post" action="{{route('approve_acledger', $data->id)}}"
+                                                  id="approval-form{{$data->id}}" style="display: none;">
+                                                @csrf
+                                                @method('PUT')
+                                            </form>
+                                        @elseif( $data->approved_by == null)
+                                            <span class="right badge badge-danger">Not Yet Approved</span>
+                                        @else
+                                            {{$data->approvedBy->name}}
+                                        @endif
+                                    @endif
+
+                                </td>
+
                                 <td>{{$data->transaction_type->title }}</td>
                                 <td style="text-align: right">{{$data->amount}}</td>
                                 <td>
@@ -143,13 +197,95 @@
 @endsection
 
 @push('js')
-{{--<script src="{!! asset('alte305/plugins/moment/moment.min.js')!!}"></script>--}}
-{{--<script src="{!! asset('alte305/plugins/daterangepicker/daterangepicker.js')!!}"></script>--}}
 <script src="{{ asset('supporting/dataTables/bs4/datatables.min.js')}}"></script>
 <script src="{{ asset('supporting/dataTables/dataTables.fixedHeader.min.js')}}"></script>
-{{--<script src="https://cdn.datatables.net/fixedheader/3.1.5/js/dataTables.fixedHeader.min.js"></script>--}}
 <script src="{!! asset('alte305/plugins/moment/moment.min.js')!!}"></script>
 <script src="{{ asset('supporting/bootstrap-daterangepicker/daterangepicker.min.js')}}"></script>
+<script type="text/javascript" src="{{ asset('supporting/sweetalert/sweetalert2.min.js') }}"></script>
+
+<script type="text/javascript">
+
+    function checkedPost(id) {
+//        console.log(id);
+        var id = id;
+        const swalWithBootstrapButtons = swal.mixin({
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn btn-danger',
+            buttonsStyling: false
+        })
+
+        swalWithBootstrapButtons({
+            title: 'Are you sure?',
+            text: "You want to verify this Request!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Verify it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.value
+    )
+        {
+            document.getElementById('check-form' + id).submit();
+            event.preventDefault();
+        }
+    else
+        if (
+            // Read more about handling dismissals
+        result.dismiss === swal.DismissReason.cancel
+        ) {
+            swalWithBootstrapButtons(
+                'Cancelled',
+                'The user remain pending :)',
+                'info'
+            )
+        }
+    })
+    }
+</script>
+
+<script type="text/javascript">
+
+    function approvePost(id) {
+//        console.log(id);
+        var id = id;
+        const swalWithBootstrapButtons = swal.mixin({
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn btn-danger',
+            buttonsStyling: false
+        })
+
+        swalWithBootstrapButtons({
+            title: 'Are you sure?',
+            text: "You want to approve this Payment!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Approve it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.value
+    )
+        {
+            document.getElementById('approval-form' + id).submit();
+            event.preventDefault();
+        }
+    else
+        if (
+            // Read more about handling dismissals
+        result.dismiss === swal.DismissReason.cancel
+        ) {
+            swalWithBootstrapButtons(
+                'Cancelled',
+                'The user remain pending :)',
+                'info'
+            )
+        }
+    })
+
+    }
+
+</script>
 
 <script>
     $(document).ready(function () {
@@ -204,13 +340,13 @@
                             doc.content[1].table.body[i][3].alignment = 'left';
                             doc.content[1].table.body[i][4].alignment = 'left';
                             doc.content[1].table.body[i][5].alignment = 'left';
-                            doc.content[1].table.body[i][6].alignment = 'right';
-                            doc.content[1].table.body[i][7].alignment = 'right';
+                            doc.content[1].table.body[i][6].alignment = 'center';
+                            doc.content[1].table.body[i][7].alignment = 'center';
                             doc.content[1].table.body[i][8].alignment = 'right';
                             doc.content[1].table.body[i][9].alignment = 'center';
                         }
-//                        doc.content[1].table.widths = ['10%','15%','25%','10%','15%','20%','5%'];
-                        doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                        doc.content[1].table.widths = ['10%','15%','10%','10%','10%','5%','10%','10%','5%','10%','5%'];
+//                        doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
                         doc.content.splice(0, 1);
                         var now = new Date();
                         var jsDate = now.getDate() + '-' + (now.getMonth() + 1) + '-' + now.getFullYear() + ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
@@ -310,7 +446,7 @@
                 var api = this.api();
                 nb_cols = api.columns().nodes().length -1;
 //                nb_cols = 8;
-                var j = 6;
+                var j = 9;
                 while (j < nb_cols) {
                     var pageTotal = api
                         .column(j, {page: 'current'})
@@ -325,7 +461,7 @@
             },
             columnDefs: [
                 {
-                    targets: [6],
+                    targets: [9],
                     render: $.fn.dataTable.render.number(',', '.', 1, '')
                 }
             ]

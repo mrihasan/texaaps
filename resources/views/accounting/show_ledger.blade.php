@@ -45,7 +45,15 @@
                         </tr>
                         <tr>
                             <th>
-                                Transaction Code
+                                Transaction Sl No
+                            </th>
+                            <td>
+                                {{ $ledger->sl_no??'' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Tracking ID
                             </th>
                             <td>
                                 {{ $ledger->transaction_code }}
@@ -104,6 +112,14 @@
                             </th>
                             <td>
                                 {{ $ledger->comments}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Approval Status
+                            </th>
+                            <td>
+                                {{ $ledger->approve_status }}
                             </td>
                         </tr>
                         <tr>

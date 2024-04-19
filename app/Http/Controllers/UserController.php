@@ -126,9 +126,14 @@ class UserController extends Controller
                     $ledger->transaction_type_id = 1;
                     $ledger->transaction_date = date('Y-m-d H:i:s');
                     $ledger->transaction_code = autoTimeStampCode('LOB');
+                    $ledger->sl = createSl('TA-LOB-','ledgers','transaction_date',date('Y-m-d H:i:s'));
                     $ledger->transaction_method_id = 5;
                     $ledger->comments = 'Opening';
                     $ledger->entry_by = Auth::user()->id;
+                    $ledger->checked_by = Auth::user()->id;
+                    $ledger->checked_date = date('Y-m-d H:i:s');
+                    $ledger->approved_by = Auth::user()->id;
+                    $ledger->approved_date = date('Y-m-d H:i:s');
                     $ledger->save();
 
                     $role_ids = $request->user_type;

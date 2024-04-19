@@ -51,13 +51,15 @@ class BankAccountController extends Controller
         $banking->details = $request->details;
         $banking->save();
 
-        $transaction_code = autoTimeStampCode('BL');;
+        $transaction_code = autoTimeStampCode('BL');
+        $sl_no=createSl('TA-BL-','bank_ledgers','transaction_date',date('Y-m-d H:i:s'));
 
         $ledger_banking = new BankLedger();
         $ledger_banking->branch_id = $request->branch;
         $ledger_banking->bank_account_id = $banking->id;
         $ledger_banking->transaction_date = date('Y-m-d H:i:s');
         $ledger_banking->transaction_code = $transaction_code;
+        $ledger_banking->sl_no = $sl_no;
         $ledger_banking->amount = $request->opening_balance;
         $ledger_banking->transaction_type_id = 8;
         $ledger_banking->transaction_method_id = 1;
@@ -71,6 +73,7 @@ class BankAccountController extends Controller
         $ledger_branch->branch_id = $request->branch;
         $ledger_branch->transaction_date = date('Y-m-d H:i:s');
         $ledger_branch->transaction_code = $transaction_code;
+        $ledger_branch->sl_no = $sl_no;
         $ledger_branch->amount = $request->opening_balance;
         $ledger_branch->transaction_type_id = 8;
         $ledger_branch->transaction_method_id = 1;

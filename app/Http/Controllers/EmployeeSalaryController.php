@@ -175,7 +175,7 @@ class EmployeeSalaryController extends Controller
                 $ledger_banking->branch_id = $request->branch;
                 $ledger_banking->bank_account_id = $request->bank_account;
                 $ledger_banking->transaction_code = $transaction_code;
-                $ledger_banking->transaction_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
+                $ledger_banking->transaction_date = date('Y-m-d', strtotime($request->create_date)) . date(' H:i:s');
                 $ledger_banking->transaction_method_id = $request->transaction_method;
                 $ledger_banking->transaction_type_id = 4; //4=payzment
                 $ledger_banking->amount = $request->paidsalary_amount;
@@ -465,7 +465,7 @@ class EmployeeSalaryController extends Controller
             $ledger_banking->branch_id = $request->branch;
             $ledger_banking->bank_account_id = $request->bank_account;
             $ledger_banking->transaction_code = $items->transaction_code;
-            $ledger_banking->transaction_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
+            $ledger_banking->transaction_date = date('Y-m-d', strtotime($request->create_date)) . date(' H:i:s');
             $ledger_banking->transaction_method_id = $request->transaction_method;
             $ledger_banking->transaction_type_id = 4; //4=payzment
             $ledger_banking->amount = $request->paidsalary_amount;

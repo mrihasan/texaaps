@@ -49,7 +49,7 @@
                             <th>Amount</th>
                             <th>Branch</th>
                             <th>Comments</th>
-                            <th>Status</th>
+                            <th>Sl No</th>
                             <th>Submitted By</th>
                             <th>Approved By</th>
                             <th>Approved Date</th>
@@ -73,7 +73,8 @@
                                 <td style="text-align:right">{{ $section->expense_amount }}</td>
                                 <td>{{ $section->branch->title }}</td>
                                 <td>{{ $section->comments }}</td>
-                                <td><span class="badge badge-success">{{ $section->status }}</span></td>
+                                <td>{{ $section->sl_no }}</td>
+                                {{--<td><span class="badge badge-success">{{ $section->status }}</span></td>--}}
                                 <td>{{ $section->user->name }}</td>
                                 <td>
                                     @if($section->approved_by == null)

@@ -347,11 +347,12 @@ class ExpenseController extends Controller
 
     public function date_wise_expense(Request $request)
     {
-        abort_if(Gate::denies('expense-access'), redirect('error'));
+//        dd($request->start_date);
+//        abort_if(Gate::denies('expense-access'), redirect('error'));
         $start_date = date('Y-m-d', strtotime($request->start_date));
         $end_date = date('Y-m-d', strtotime($request->end_date));
         $header_title = 'Expense From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
-
+//dd($header_title);
         if ($request->approval_type == 'Approved') {
             $expense = Expense::with('user')->with('approvedBy')->with('expense_type')
                 ->whereBetween('expense_date', [$start_date, $end_date])
@@ -370,5 +371,7 @@ class ExpenseController extends Controller
                 ->orderBy('expense_date', 'desc')->orderBy('created_at', 'desc')->get();
         return view('expense.index', compact('expense', 'header_title'));
     }
+
+
 
 }

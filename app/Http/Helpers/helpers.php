@@ -684,16 +684,22 @@ if (!function_exists('createSl')) {
             ->whereYear($dateColumn, $transaction_date->format('Y'))
             ->whereMonth($dateColumn, $transaction_date->format('m'))
             ->count();
+//        dd($monthly_count_table);
+        $monthly_count_null_sl = DB::table($table)
+            ->whereYear($dateColumn, $transaction_date->format('Y'))
+            ->whereMonth($dateColumn, $transaction_date->format('m'))
+            ->where('sl_no', null)
+            ->count();
 //dd($monthly_count_table);
         $date = date($transaction_date->format('y').$transaction_date->format('m')); // transaction month and year
 //        $date = date('ym'); // Current month and year
-        $sl = $initial . $date . '-' . str_pad($monthly_count_table + 1, 4, '0', STR_PAD_LEFT);
+        $sl = $initial . $date . '-' . str_pad(($monthly_count_table-$monthly_count_null_sl + 1), 4, '0', STR_PAD_LEFT);
         $allSls = getRelatedSls($sl, $table);
         if (!$allSls->contains('sl_no', $sl)) {
             return $sl;
         }
         // Just append numbers like a savage until we find not used.
-        for ($i = 1; $i <= 10; $i++) {
+        for ($i = 1; $i <= 100; $i++) {
             $newSl = $sl . '-' . $i;
             if (!$allSls->contains('sl_no', $newSl)) {
                 return $newSl;

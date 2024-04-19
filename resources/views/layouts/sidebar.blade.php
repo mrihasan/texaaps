@@ -272,6 +272,12 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a href="{{ url('manage_account_ledger') }}" class="nav-link @yield('manage_account_ledger')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Manage Account Ledger</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="{{ url('account_statement') }}" class="nav-link @yield('manage_account_statement')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Account Statement</p>
