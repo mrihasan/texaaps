@@ -115,6 +115,7 @@
                                         {!! Form::close() !!}
                                     @endcan
 
+
                                 </td>
                             </tr>
                         @endforeach

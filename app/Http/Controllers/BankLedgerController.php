@@ -49,7 +49,7 @@ class BankLedgerController extends Controller
             $start_date = date('Y-m-d', strtotime($request->start_date)) . ' 00:00:00';
             $end_date = date('Y-m-d', strtotime($request->end_date)) . ' 23:59:59';
         }
-        $ledger = BankLedger::whereBetween('bank_ledgers.transaction_date', [$start_date, $end_date])->latest()->get();
+        $ledger = BankLedger::where('reftbl',null)->whereBetween('bank_ledgers.transaction_date', [$start_date, $end_date])->latest()->get();
 
         $header_title = 'Manage Account Ledger From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
         return view('banking.manage_account_ledger', compact('ledger', 'header_title'));
@@ -190,9 +190,10 @@ class BankLedgerController extends Controller
 //        dd($ledger_branch1);
         abort_if(Gate::denies('AccountMgtAccess'), redirect('error'));
 
-        $ledger_check = DB::table('ledgers')->where('transaction_code', $transaction_code)->first();
-        if ($ledger_check) {
-            return redirect('ledger/' . $ledger_check->id . '/edit');
+        $ledger_check = DB::table('bank_ledgers')->where('transaction_code', $transaction_code)->first();
+        if ($ledger_check->reftbl!=null) {
+            \Session::flash('flash_error', 'Not Editable from here');
+            return redirect()->back();
         } elseif (substr($transaction_code, 0, 1) === 'W' || substr($transaction_code, 0, 1) === 'D') {
 //            dd(substr($transaction_code, 1));
             $bank_ledger = DB::table('bank_ledgers')->where('transaction_code', 'W' . substr($transaction_code, 1))->first();
