@@ -675,11 +675,9 @@ if (!function_exists('getPqSls')) {
 //_________________All
 if (!function_exists('createSl')) {
     function createSl($initial, $table, $dateColumn, $transaction_date)
+
     {
-//        dd($transaction_date->format('Y'));
-//        $monthly_count_invoice = DB::table($table)->whereYear('created_at', now()->year)
-//            ->whereMonth('created_at', now()->month)
-//            ->count();
+//        dd($transaction_date);
         $monthly_count_table = DB::table($table)
             ->whereYear($dateColumn, $transaction_date->format('Y'))
             ->whereMonth($dateColumn, $transaction_date->format('m'))

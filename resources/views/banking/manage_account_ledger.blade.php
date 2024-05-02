@@ -88,7 +88,7 @@
                                 <td>{{$data->sl_no}}</td>
                                 <td>{{ $data->approve_status}}</td>
                                 <td>
-                                    @if( $data->reftbl=='bank_ledgers')
+                                    @if( $data->reftbl==null)
                                     @if( $data->checked_by == null && Auth::user()->hasRole('Checked'))
                                         <button class="btn btn-warning btn-xs" title="Verify" type="button"
                                                 onclick="checkedPost({{$data->id}})">
@@ -111,6 +111,7 @@
                                 </td>
 
                                 <td>
+                                    @if( $data->reftbl==null)
                                     @if($data->checked_by == null)
                                         <span class="right badge badge-danger">Not Yet Verified</span>
                                     @else
@@ -131,6 +132,9 @@
                                         @else
                                             {{$data->approvedBy->name}}
                                         @endif
+                                    @endif
+                                    @else
+                                        <span class="right badge badge-danger">N/A</span>
                                     @endif
 
                                 </td>

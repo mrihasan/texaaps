@@ -17,6 +17,7 @@ use DB;
 use Illuminate\Support\Facades\Auth;
 use  \Redirect, \Validator, \Session, \Hash;
 use Illuminate\Support\Arr;
+use DateTime;
 
 
 class UserController extends Controller
@@ -120,13 +121,14 @@ class UserController extends Controller
                     $image_profile->user_id = $user->id;
                     $image_profile->save();
 
+                    $td = new DateTime();
                     $ledger = new Ledger();
                     $ledger->user_id = $user->id;
                     $ledger->branch_id = (session()->get('branch') != 'all') ? session()->get('branch') : 1;
                     $ledger->transaction_type_id = 1;
                     $ledger->transaction_date = date('Y-m-d H:i:s');
                     $ledger->transaction_code = autoTimeStampCode('LOB');
-                    $ledger->sl = createSl('TA-LOB-','ledgers','transaction_date',date('Y-m-d H:i:s'));
+                    $ledger->sl_no = createSl('TA-LOB-','ledgers','transaction_date',$td);
                     $ledger->transaction_method_id = 5;
                     $ledger->comments = 'Opening';
                     $ledger->entry_by = Auth::user()->id;

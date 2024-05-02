@@ -173,6 +173,7 @@ class SettingController extends Controller
 
     public function reftbl_fix($table)
     {
+        dd('no need');
         if ($table == 'expenses') {
             $unfixed = DB::table($table)->orderBy('expense_date', 'asc')->get();
             for ($i = 0; $i < $unfixed->count(); $i++) {
