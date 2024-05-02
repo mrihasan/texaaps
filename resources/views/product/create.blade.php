@@ -40,7 +40,7 @@
                             @endif
                         </div>
                         <div class="form-group row {{ $errors->has('product_type_id') ? ' has-error' : '' }}">
-                            <label class="control-label col-md-4 text-right">Product Type/Category :</label>
+                            <label class="control-label col-md-4 text-right">Product Type/Category :<span class="required"> * </span></label>
                             <div class="col-md-6">
                                 <select name="product_type_id" class="form-control select2" id="product_type_id" >
                                     <option value="">Select Product Type/Category</option>

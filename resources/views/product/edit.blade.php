@@ -38,7 +38,7 @@
                             @endif
                         </div>
                         <div class="form-group row {{ $errors->has('product_type_id') ? ' has-error' : '' }}">
-                            <label class="control-label col-md-4 text-right">Product Type/Category :</label>
+                            <label class="control-label col-md-4 text-right">Product Type/Category :<span class="required"> * </span></label>
                             <div class="col-md-6">
                                 {{ Form::select('product_type_id', $product_types,null, ['class'=>'form-control select2', 'required', 'data-live-search'=>'true'] ) }}
 

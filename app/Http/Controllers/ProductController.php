@@ -43,6 +43,9 @@ class ProductController extends Controller
         abort_if(Gate::denies('ProductMgtAccess'), redirect('error'));
         $this->validate($request, [
             'title' => 'required|unique:products',
+            'product_type_id' => 'required',
+            'unit_id' => 'required',
+            'low_stock' => 'required',
 //            'company_name_id' => 'required',
         ]);
         $product = Product::create($request->all());
@@ -66,8 +69,9 @@ class ProductController extends Controller
         abort_if(Gate::denies('ProductMgtAccess'), redirect('error'));
         $this->validate($request, [
             'title' => 'required|unique:products,title,' . $product->id . ',id',
-//            'company_name_id' => 'required',
+            'product_type_id' => 'required',
             'unit_id' => 'required',
+            'low_stock' => 'required',
         ]);
         $product->update($request->all());
 
