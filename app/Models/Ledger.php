@@ -21,6 +21,8 @@ class Ledger extends Model
         'approved_by',
         'checked_date',
         'approved_date',
+        'reftbl',
+        'reftbl_id',
 
     ];
     public function walking_customers()
