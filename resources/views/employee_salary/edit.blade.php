@@ -46,12 +46,31 @@
                         </div>
 
                         <div class="col-md-6">
-                            <div class="form-group row{{ $errors->has('create_date') ? ' has-error' : '' }}">
+                            {{--<div class="form-group row{{ $errors->has('create_date') ? ' has-error' : '' }}">--}}
+                                {{--<label class="col-md-5 control-label text-md-right">Create Date : <span--}}
+                                            {{--class="required"> * </span></label>--}}
+                                {{--<div class="col-md-7 input-group date" id="create_date" data-target-input="nearest">--}}
+                                    {{--<input type="text" class="form-control datetimepicker-input" name="create_date"--}}
+                                           {{--value="{{ isset($employee_salary) ? $employee_salary->created_at : old('create_date') }}" data-target="#create_date"/>--}}
+                                    {{--<div class="input-group-append" data-target="#create_date"--}}
+                                         {{--data-toggle="datetimepicker">--}}
+                                        {{--<div class="input-group-text"><i class="fa fa-calendar"></i></div>--}}
+                                    {{--</div>--}}
+                                {{--</div>--}}
+                                {{--@if ($errors->has('create_date'))--}}
+                                    {{--<span class="help-block">--}}
+                                        {{--<strong>{{ $errors->first('create_date') }}</strong>--}}
+                                    {{--</span>--}}
+                                {{--@endif--}}
+                            {{--</div>--}}
+
+                            <div class="form-group row {{ $errors->has('create_date') ? ' has-error' : '' }}">
                                 <label class="col-md-5 control-label text-md-right">Create Date : <span
                                             class="required"> * </span></label>
                                 <div class="col-md-7 input-group date" id="create_date" data-target-input="nearest">
                                     <input type="text" class="form-control datetimepicker-input" name="create_date"
-                                           value="{{ isset($employee_salary) ? $employee_salary->created_at : old('create_date') }}" data-target="#create_date"/>
+                                           value="{{Carbon\Carbon::parse(date('Y-m-d ', strtotime($employee_salary->created_at)))->format('dd-mm-YYYY')}}"
+                                           data-target="#create_date"/>
                                     {{--                                  {!! Form::input('text', 'create_date', \Carbon\Carbon::now()->format('d-M-Y'),['class'=>'form-control']) !!}--}}
                                     <div class="input-group-append" data-target="#create_date"
                                          data-toggle="datetimepicker">
@@ -64,6 +83,7 @@
                                     </span>
                                 @endif
                             </div>
+
 
                         </div>
                     </div>
@@ -246,7 +266,7 @@
         //Date range picker
         $('#create_date').datetimepicker({
 //            date: moment(),
-            format: 'DD-MM-Y H:mm:ss',
+            format: 'DD-MM-YYYY',
             // minDate: '03/06/2019',
         });
 
