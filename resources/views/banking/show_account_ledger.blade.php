@@ -39,15 +39,23 @@
                             <th>
                                 ID
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ $bank_ledger->id }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Sl NO
+                            </th>
+                            <td colspan="2">
+                                {{ $bank_ledger->sl_no}}
                             </td>
                         </tr>
                         <tr>
                             <th>
                                 Transaction Code
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ $bank_ledger->transaction_code }}
                             </td>
                         </tr>
@@ -55,7 +63,7 @@
                             <th>
                                 Transaction Date
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ Carbon\Carbon::parse($bank_ledger->transaction_date)->format('d-M-Y') }}
                             </td>
                         </tr>
@@ -63,7 +71,7 @@
                             <th>
                                 Transaction Type
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ $bank_ledger->transaction_type->title}}
                             </td>
                         </tr>
@@ -71,7 +79,7 @@
                             <th>
                                 Transaction Amount
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ $bank_ledger->amount }}
                             </td>
                         </tr>
@@ -79,7 +87,7 @@
                             <th>
                                 Branch
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ $bank_ledger->branch->title }}
                             </td>
                         </tr>
@@ -87,7 +95,7 @@
                             <th>
                                 Account Name
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ $bank_ledger->bank_account->account_name}}
                             </td>
                         </tr>
@@ -95,7 +103,7 @@
                             <th>
                                 Account Number
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ $bank_ledger->bank_account->account_no}}
                             </td>
                         </tr>
@@ -103,7 +111,7 @@
                             <th>
                                 Bank Name
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ $bank_ledger->bank_account->bank_name??'N/A'}}
                             </td>
                         </tr>
@@ -111,7 +119,7 @@
                             <th>
                                 Particulars
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ $bank_ledger->particulars }}
                             </td>
                         </tr>
@@ -119,7 +127,7 @@
                             <th>
                                 Ref Date
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ Carbon\Carbon::parse($bank_ledger->ref_date)->format('d-M-Y') }}
                             </td>
                         </tr>
@@ -127,7 +135,7 @@
                             <th>
                                 Ref No
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ $bank_ledger->ref_no }}
                             </td>
                         </tr>
@@ -135,7 +143,7 @@
                             <th>
                                 Created By
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ entryBy($bank_ledger->entry_by) }}
                             </td>
                         </tr>
@@ -143,7 +151,7 @@
                             <th>
                                 Created at
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ Carbon\Carbon::parse($bank_ledger->created_at)->format('d-M-Y H:i:s') }}
                             </td>
                         </tr>
@@ -151,7 +159,7 @@
                             <th>
                                 Updated By
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ entryBy($bank_ledger->updated_by) }}
                             </td>
                         </tr>
@@ -159,10 +167,61 @@
                             <th>
                                 Updated at
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ Carbon\Carbon::parse($bank_ledger->updated_at)->format('d-M-Y H:i:s') }}
                             </td>
                         </tr>
+                        <tr style="border: none">
+                            <td style="text-align:left; border: none" width="35%">
+                                Prepared by<br/><br/>
+                                @if($bank_ledger->entryby->employee && ($bank_ledger->entryby->imageprofile->sign!='default_sign'||$bank_ledger->entryby->imageprofile->sign!=null))
+                                    <img src="{!! asset( 'storage/sign/'. $bank_ledger->entryby->imageprofile->sign. '?'. 'time='. time()) !!}"
+                                         class="img-fluid" alt="Sign Image">
+                                @endif
+
+                                <address>
+                                    ______________________<br/>
+                                    {{$bank_ledger->entryby->name}}<br/>
+                                    {{($bank_ledger->entryby->employee)?$bank_ledger->entryby->employee->designation:'N/A'}}
+                                    <br/>
+                                    {{setting_info()['org_name']}}
+                                </address>
+                            </td>
+
+                            <td style="text-align:center; border: none" width="30%">
+                                Checked by<br/><br/>
+                                @if( $bank_ledger->checked_by!=null && $bank_ledger->checkedBy->employee && ($bank_ledger->checkedBy->imageprofile->sign!='default_sign'||$bank_ledger->checkedBy->imageprofile->sign!=null))
+                                    <img src="{!! asset( 'storage/sign/'. $bank_ledger->checkedBy->employee->user->imageprofile->sign. '?'. 'time='. time()) !!}"
+                                         class="img-fluid" alt="Sign Image">
+                                @endif
+                                <address>
+                                    ______________________<br/>
+                                    {{($bank_ledger->checked_by)?$bank_ledger->checkedBy->name:'Not Yet Checked'}}
+                                    <br/>
+                                    {{($bank_ledger->checked_by && $bank_ledger->checkedBy->employee)?$bank_ledger->checkedBy->employee->designation:'N/A'}}
+                                    <br/>
+                                    {{($bank_ledger->checked_by)?setting_info()['org_name']:''}}
+                                </address>
+                            </td>
+                            <td style="text-align:right; border: none" width="35%">
+                                Approved By<br/><br/>
+                                @if($bank_ledger->approved_by!=null && $bank_ledger->approvedBy->employee && ($bank_ledger->approvedBy->imageprofile->sign!='default_sign'||$bank_ledger->approvedBy->imageprofile->sign!=null))
+                                    <img src="{!! asset( 'storage/sign/'. $bank_ledger->approvedBy->imageprofile->sign. '?'. 'time='. time()) !!}"
+                                         class="img-fluid" alt="Sign Image">
+                                @endif
+
+                                <address>
+                                    ______________________<br/>
+                                    {{($bank_ledger->approved_by)?$bank_ledger->approvedBy->name:'Not Yet Approved'}}
+                                    <br/>
+                                    {{($bank_ledger->approved_by && $bank_ledger->approvedBy->employee)?$bank_ledger->approvedBy->employee->designation:'N/A'}}
+                                    <br/>
+                                    {{($bank_ledger->approved_by)?setting_info()['org_name']:''}}
+                                </address>
+                            </td>
+
+                        </tr>
+
                         </tbody>
                     </table>
                 </div>

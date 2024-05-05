@@ -352,7 +352,7 @@
                                         <address>
                                             ______________________<br/>
                                             {{$payment_request->user->name}}<br/>
-                                            {{($payment_request->user->employee)?$payment_request->user->employee->designation:''}}
+                                            {{($payment_request->user->employee)?$payment_request->user->employee->designation:'N/A'}}
                                             <br/>
                                             {{setting_info()['org_name']}}
                                         </address>
@@ -360,7 +360,7 @@
 
                                     <td style="text-align:center; border: none" width="30%">
                                         Checked by<br/><br/>
-                                        @if($payment_request->checked_by!=null && ($payment_request->checkedBy->employee->user->imageprofile->sign!='default_sign'||$payment_request->checkedBy->employee->user->imageprofile->sign!=null))
+                                        @if($payment_request->user->employee && $payment_request->checked_by!=null && ($payment_request->checkedBy->employee->user->imageprofile->sign!='default_sign'||$payment_request->checkedBy->employee->user->imageprofile->sign!=null))
                                             <img src="{!! asset( 'storage/sign/'. $payment_request->checkedBy->employee->user->imageprofile->sign. '?'. 'time='. time()) !!}"
                                                  class="img-fluid" alt="Sign Image">
                                         @endif
@@ -375,7 +375,7 @@
                                     </td>
                                     <td style="text-align:right; border: none" width="35%">
                                         Approved By<br/><br/>
-                                        @if($payment_request->approved_by!=null && ($payment_request->approvedBy->employee->user->imageprofile->sign!='default_sign'||$payment_request->approvedBy->employee->user->imageprofile->sign!=null))
+                                        @if($payment_request->user->employee && $payment_request->approved_by!=null && ($payment_request->approvedBy->employee->user->imageprofile->sign!='default_sign'||$payment_request->approvedBy->employee->user->imageprofile->sign!=null))
                                             <img src="{!! asset( 'storage/sign/'. $payment_request->approvedBy->employee->user->imageprofile->sign. '?'. 'time='. time()) !!}"
                                                  class="img-fluid" alt="Sign Image">
                                         @endif

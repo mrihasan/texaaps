@@ -39,7 +39,7 @@
                             <th>
                                 ID
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ $expense->id }}
                             </td>
                         </tr>
@@ -47,7 +47,7 @@
                             <th>
                                 Serial No
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ $expense->sl_no??'' }}
                             </td>
                         </tr>
@@ -55,7 +55,7 @@
                             <th>
                                 Tracking ID
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ $expense->transaction_code }}
                             </td>
                         </tr>
@@ -63,7 +63,7 @@
                             <th>
                                 Expense Date
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ Carbon\Carbon::parse($expense->expense_date)->format('d-M-Y') }}
                             </td>
                         </tr>
@@ -71,7 +71,7 @@
                             <th>
                                 Expense Type
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ $expense->expense_type->expense_name }}
                             </td>
                         </tr>
@@ -79,7 +79,7 @@
                             <th>
                                 Expense Amount
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ number_format($expense->expense_amount,0) }}
                             </td>
                         </tr>
@@ -87,7 +87,7 @@
                             <th>
                                 Transaction Made From
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ transactionMadeFromAccount($expense->transaction_code)->bank_account->account_name }}
                             </td>
                         </tr>
@@ -95,7 +95,7 @@
                             <th>
                                 Transaction Method
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ $expense->transaction_method->title }}
                             </td>
                         </tr>
@@ -103,7 +103,7 @@
                             <th>
                                 Branch
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ $expense->branch->title }}
                             </td>
                         </tr>
@@ -111,7 +111,7 @@
                             <th>
                                 Comments
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ $expense->comments }}
                             </td>
                         </tr>
@@ -119,7 +119,7 @@
                             <th>
                                 Status
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ $expense->status }}
                             </td>
                         </tr>
@@ -127,7 +127,7 @@
                             <th>
                                 Submitted By
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ $expense->user->name }}
                             </td>
                         </tr>
@@ -135,7 +135,7 @@
                             <th>
                                 Submitted Date
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ Carbon\Carbon::parse($expense->created_at)->format('d-M-Y h:iA') }}
                             </td>
                         </tr>
@@ -143,7 +143,7 @@
                             <th>
                                 Last Updated By
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ $expense->updatedBy->name??'N/A' }}
                             </td>
                         </tr>
@@ -151,7 +151,7 @@
                             <th>
                                 Last Updated Date
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ ($expense->updated_by)?Carbon\Carbon::parse($expense->updated_at)->format('d-M-Y h:iA'):'N/A' }}
                             </td>
                         </tr>
@@ -160,7 +160,7 @@
                             <th>
                                 Checked By
                             </th>
-                            <td>
+                            <td colspan="2">
                                 @if( $expense->checked_by == null && Auth::user()->hasRole('Checked'))
                                     <button class="btn btn-warning btn-xs" title="Verify" type="button"
                                             onclick="checkedPost({{$expense->id}})">
@@ -184,7 +184,7 @@
                             <th>
                                 Checked Date
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ ($expense->checked_date)?Carbon\Carbon::parse($expense->checked_date)->format('d-M-Y h:i:s'):'Not Yet checked' }}
                             </td>
                         </tr>
@@ -193,7 +193,7 @@
                             <th>
                                 Approved By
                             </th>
-                            <td>
+                            <td colspan="2">
                                 @if($expense->checked_by == null)
                                     <span class="right badge badge-danger">Not Yet Verified</span>
                                 @else
@@ -219,13 +219,64 @@
                             </td>
                         </tr>
                         <tr>
-                            <th>
+                            <th style="text-align:left; border: none" width="45%">
                                 Approved Date
                             </th>
-                            <td>
+                            <td style="text-align:left; border: none" width="55%" colspan="2">
                                 {{ ($expense->approved_date)?Carbon\Carbon::parse($expense->approved_date)->format('d-M-Y h:i:s'):'Not Yet Approved' }}
                             </td>
                         </tr>
+                        <tr style="border: none">
+                            <td style="text-align:left; border: none" width="35%">
+                                Prepared by<br/><br/>
+                                @if($expense->user->employee && ($expense->user->imageprofile->sign!='default_sign'||$expense->user->imageprofile->sign!=null))
+                                    <img src="{!! asset( 'storage/sign/'. $expense->user->imageprofile->sign. '?'. 'time='. time()) !!}"
+                                         class="img-fluid" alt="Sign Image">
+                                @endif
+
+                                <address>
+                                    ______________________<br/>
+                                    {{$expense->user->name}}<br/>
+                                    {{($expense->user->employee)?$expense->user->employee->designation:'N/A'}}
+                                    <br/>
+                                    {{setting_info()['org_name']}}
+                                </address>
+                            </td>
+
+                            <td style="text-align:center; border: none" width="30%">
+                                Checked by<br/><br/>
+                                @if($expense->user->employee && $expense->checked_by!=null && ($expense->checkedBy->employee->user->imageprofile->sign!='default_sign'||$expense->checkedBy->employee->user->imageprofile->sign!=null))
+                                    <img src="{!! asset( 'storage/sign/'. $expense->checkedBy->employee->user->imageprofile->sign. '?'. 'time='. time()) !!}"
+                                         class="img-fluid" alt="Sign Image">
+                                @endif
+                                <address>
+                                    ______________________<br/>
+                                    {{($expense->checked_by)?$expense->checkedBy->name:'Not Yet Checked'}}
+                                    <br/>
+                                    {{($expense->checked_by && $expense->checkedBy->employee)?$expense->checkedBy->employee->designation:'N/A'}}
+                                    <br/>
+                                    {{($expense->checked_by)?setting_info()['org_name']:''}}
+                                </address>
+                            </td>
+                            <td style="text-align:right; border: none" width="35%">
+                                Approved By<br/><br/>
+                                @if($expense->user->employee && $expense->approved_by!=null && ($expense->approvedBy->employee->user->imageprofile->sign!='default_sign'||$expense->approvedBy->employee->user->imageprofile->sign!=null))
+                                    <img src="{!! asset( 'storage/sign/'. $expense->approvedBy->employee->user->imageprofile->sign. '?'. 'time='. time()) !!}"
+                                         class="img-fluid" alt="Sign Image">
+                                @endif
+
+                                <address>
+                                    ______________________<br/>
+                                    {{($expense->approved_by)?$expense->approvedBy->name:'Not Yet Approved'}}
+                                    <br/>
+                                    {{($expense->approved_by && $expense->approvedBy->employee)?$expense->approvedBy->employee->designation:'N/A'}}
+                                    <br/>
+                                    {{($expense->approved_by)?setting_info()['org_name']:''}}
+                                </address>
+                            </td>
+
+                        </tr>
+
 
                         </tbody>
                     </table>

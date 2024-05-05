@@ -39,7 +39,7 @@
                             <th>
                                 ID
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ $ledger->id }}
                             </td>
                         </tr>
@@ -47,7 +47,7 @@
                             <th>
                                 Transaction Sl No
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ $ledger->sl_no??'' }}
                             </td>
                         </tr>
@@ -55,7 +55,7 @@
                             <th>
                                 Tracking ID
                             </th>
-                            <td>
+                            <td  colspan="2">
                                 {{ $ledger->transaction_code }}
                             </td>
                         </tr>
@@ -63,7 +63,7 @@
                             <th>
                                 Transaction Date
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ Carbon\Carbon::parse($ledger->transaction_date)->format('d-M-Y') }}
                             </td>
                         </tr>
@@ -71,7 +71,7 @@
                             <th>
                                 Transaction Type
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ $ledger->transaction_type->title}}
                             </td>
                         </tr>
@@ -79,7 +79,7 @@
                             <th>
                                 Transaction Amount
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ number_format($ledger->amount,0) }}
                             </td>
                         </tr>
@@ -88,7 +88,7 @@
                             <th>
                                 Linked Bill
                             </th>
-                            <td>
+                            <td colspan="2">
                                 @if($ledger->invoice_id)
                                     {{ $ledger->invoice->sl_no}}
                                     <a href="{{ url('invoice/' . $ledger->invoice_id ) }}" class="btn btn-outline-info btn-xs"
@@ -102,7 +102,7 @@
                             <th>
                                 Branch
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ $ledger->branch->title }}
                             </td>
                         </tr>
@@ -110,7 +110,7 @@
                             <th>
                                 Particulars
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ $ledger->comments}}
                             </td>
                         </tr>
@@ -118,7 +118,7 @@
                             <th>
                                 Approval Status
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ $ledger->approve_status }}
                             </td>
                         </tr>
@@ -126,7 +126,7 @@
                             <th>
                                 Created By
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ entryBy($ledger->entry_by) }}
                             </td>
                         </tr>
@@ -134,15 +134,47 @@
                             <th>
                                 Created at
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ Carbon\Carbon::parse($ledger->created_at)->format('d-M-Y H:i:s') }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Checked By
+                            </th>
+                            <td colspan="2">
+                                {{ entryBy($ledger->checked_by) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Checked at
+                            </th>
+                            <td colspan="2">
+                                {{($ledger->checked_by)? Carbon\Carbon::parse($ledger->checked_date)->format('d-M-Y H:i:s'):'N/A' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Approved By
+                            </th>
+                            <td colspan="2">
+                                {{ entryBy($ledger->approved_by) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Approved at
+                            </th>
+                            <td colspan="2">
+                                {{($ledger->approved_by)? Carbon\Carbon::parse($ledger->approved_date)->format('d-M-Y H:i:s'):'N/A' }}
                             </td>
                         </tr>
                         <tr>
                             <th>
                                 Updated By
                             </th>
-                            <td>
+                            <td colspan="2">
                                 {{ entryBy($ledger->updated_by) }}
                             </td>
                         </tr>
@@ -150,10 +182,61 @@
                             <th>
                                 Updated at
                             </th>
-                            <td>
-                                {{ Carbon\Carbon::parse($ledger->updated_at)->format('d-M-Y H:i:s') }}
+                            <td colspan="2">
+                                {{($ledger->updated_by)? Carbon\Carbon::parse($ledger->updated_at)->format('d-M-Y H:i:s'):'N/A' }}
                             </td>
                         </tr>
+                        <tr style="border: none">
+                            <td style="text-align:left; border: none" width="35%">
+                                Prepared by<br/><br/>
+                                @if($ledger->entryby->employee && ($ledger->entryby->imageprofile->sign!='default_sign'||$ledger->entryby->imageprofile->sign!=null))
+                                    <img src="{!! asset( 'storage/sign/'. $ledger->entryby->imageprofile->sign. '?'. 'time='. time()) !!}"
+                                         class="img-fluid" alt="Sign Image">
+                                @endif
+
+                                <address>
+                                    ______________________<br/>
+                                    {{$ledger->entryby->name}}<br/>
+                                    {{($ledger->entryby->employee)?$ledger->entryby->employee->designation:'N/A'}}
+                                    <br/>
+                                    {{setting_info()['org_name']}}
+                                </address>
+                            </td>
+
+                            <td style="text-align:center; border: none" width="30%">
+                                Checked by<br/><br/>
+                                @if( $ledger->checked_by!=null && $ledger->checkedBy->employee && ($ledger->checkedBy->imageprofile->sign!='default_sign'||$ledger->checkedBy->imageprofile->sign!=null))
+                                    <img src="{!! asset( 'storage/sign/'. $ledger->checkedBy->employee->user->imageprofile->sign. '?'. 'time='. time()) !!}"
+                                         class="img-fluid" alt="Sign Image">
+                                @endif
+                                <address>
+                                    ______________________<br/>
+                                    {{($ledger->checked_by)?$ledger->checkedBy->name:'Not Yet Checked'}}
+                                    <br/>
+                                    {{($ledger->checked_by && $ledger->checkedBy->employee)?$ledger->checkedBy->employee->designation:'N/A'}}
+                                    <br/>
+                                    {{($ledger->checked_by)?setting_info()['org_name']:''}}
+                                </address>
+                            </td>
+                            <td style="text-align:right; border: none" width="35%">
+                                Approved By<br/><br/>
+                                @if($ledger->approved_by!=null && $ledger->approvedBy->employee && ($ledger->approvedBy->imageprofile->sign!='default_sign'||$ledger->approvedBy->imageprofile->sign!=null))
+                                    <img src="{!! asset( 'storage/sign/'. $ledger->approvedBy->imageprofile->sign. '?'. 'time='. time()) !!}"
+                                         class="img-fluid" alt="Sign Image">
+                                @endif
+
+                                <address>
+                                    ______________________<br/>
+                                    {{($ledger->approved_by)?$ledger->approvedBy->name:'Not Yet Approved'}}
+                                    <br/>
+                                    {{($ledger->approved_by && $ledger->approvedBy->employee)?$ledger->approvedBy->employee->designation:'N/A'}}
+                                    <br/>
+                                    {{($ledger->approved_by)?setting_info()['org_name']:''}}
+                                </address>
+                            </td>
+
+                        </tr>
+
                         </tbody>
                     </table>
                 </div>
