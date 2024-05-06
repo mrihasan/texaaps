@@ -36,8 +36,8 @@ class ReportController extends Controller
                     DB::raw('count(*) as total'),
                     DB::Raw('DATE(expense_date) day')
                 )
-                ->where('branch_id', session()->get('branch'))
                 ->whereBetween('expense_date', [$start_date, $end_date])
+                ->where('branch_id', session()->get('branch'))
                 ->groupBy('day')
                 ->get();
 //            dd($expense);
@@ -69,8 +69,8 @@ class ReportController extends Controller
                         DB::raw('sum(expense_amount) as expense_amount'),
                         DB::raw('count(*) as total')
                     )
-                    ->where('branch_id', session()->get('branch'))
                     ->whereBetween('expense_date', [$start_date, $end_date])
+                    ->where('branch_id', session()->get('branch'))
                     ->groupBy(DB::raw('expense_date'))
                     ->get();
             else
@@ -79,9 +79,9 @@ class ReportController extends Controller
                         DB::raw('sum(expense_amount) as expense_amount'),
                         DB::raw('count(*) as total')
                     )
+                    ->whereBetween('expense_date', [$start_date, $end_date])
                     ->where('branch_id', session()->get('branch'))
                     ->where('status', $request->approval_type)
-                    ->whereBetween('expense_date', [$start_date, $end_date])
                     ->groupBy(DB::raw('expense_date'))
                     ->get();
         } else {
@@ -100,8 +100,8 @@ class ReportController extends Controller
                         DB::raw('sum(expense_amount) as expense_amount'),
                         DB::raw('count(*) as total')
                     )
-                    ->where('status', $request->approval_type)
                     ->whereBetween('expense_date', [$start_date, $end_date])
+                    ->where('status', $request->approval_type)
                     ->groupBy(DB::raw('expense_date'))
                     ->get();
         }
@@ -138,8 +138,8 @@ class ReportController extends Controller
                     DB::raw('count(*) as total')
                 )
                 ->join('expense_types', 'expense_types.id', '=', 'expenses.expense_type_id')
-                ->where('expenses.branch_id', session()->get('branch'))
                 ->whereBetween('expense_date', [$start_date, $end_date])
+                ->where('expenses.branch_id', session()->get('branch'))
                 ->groupBy(DB::raw('expenses.expense_type_id'))
                 ->get();
         } else {
@@ -171,8 +171,8 @@ class ReportController extends Controller
                         DB::raw('count(*) as total')
                     )
                     ->join('expense_types', 'expense_types.id', '=', 'expenses.expense_type_id')
-                    ->where('expenses.branch_id', session()->get('branch'))
                     ->whereBetween('expenses.expense_date', [$start_date, $end_date])
+                    ->where('expenses.branch_id', session()->get('branch'))
                     ->groupBy(DB::raw('expenses.expense_type_id'))
                     ->get();
             } else {
@@ -182,9 +182,9 @@ class ReportController extends Controller
                         DB::raw('count(*) as total')
                     )
                     ->join('expense_types', 'expense_types.id', '=', 'expenses.expense_type_id')
+                    ->whereBetween('expenses.expense_date', [$start_date, $end_date])
                     ->where('expenses.branch_id', session()->get('branch'))
                     ->where('expenses.status', $request->approval_type)
-                    ->whereBetween('expenses.expense_date', [$start_date, $end_date])
                     ->groupBy(DB::raw('expenses.expense_type_id'))
                     ->get();
             }
@@ -206,8 +206,8 @@ class ReportController extends Controller
                         DB::raw('count(*) as total')
                     )
                     ->join('expense_types', 'expense_types.id', '=', 'expenses.expense_type_id')
-                    ->where('expenses.status', $request->approval_type)
                     ->whereBetween('expenses.expense_date', [$start_date, $end_date])
+                    ->where('expenses.status', $request->approval_type)
                     ->groupBy(DB::raw('expenses.expense_type_id'))
                     ->get();
             }
@@ -318,12 +318,13 @@ class ReportController extends Controller
         $title_date_range = 'Ledger Report of ' . entryBy($request->user) . ' From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
         $transaction_account = DB::table('invoices')
             ->select('transaction_date', 'transaction_code', 'invoice_total as amount', 'transaction_type', 'reference', 'created_at')
+            ->whereBetween('transaction_date', [$start_date, $end_date])
             ->where('transaction_type', '!=', 'Order')->where('user_id', $request->user)
-            ->whereBetween('transaction_date', [$start_date, $end_date])->get();
+            ->get();
         $ledger = DB::table('ledgers')->select('ledgers.transaction_date', 'ledgers.transaction_code', 'ledgers.amount',
             'transaction_types.title as transaction_type', 'ledgers.comments as reference', 'ledgers.created_at')
             ->join('transaction_types', 'transaction_types.id', '=', 'ledgers.transaction_type_id')
-            ->where('ledgers.user_id', $request->user)->whereBetween('transaction_date', [$start_date, $end_date])->get();
+            ->whereBetween('transaction_date', [$start_date, $end_date])->where('ledgers.user_id', $request->user)->get();
         $myall = array_merge($transaction_account->all(), $ledger->all());
         $merged_ledger = collect($myall)->sortBy('transaction_date')->sortBy('created_at');
         $sort_array = [];
@@ -387,8 +388,8 @@ class ReportController extends Controller
         $title_date_range = 'Ledger Report of ' . $account->title . ' From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
         $ledger = DB::table('branch_ledgers')->select('transaction_date', 'transaction_code', 'amount', 'transaction_types.title as transaction_type', 'comments as reference', 'branch_ledgers.created_at')
             ->join('transaction_types', 'transaction_types.id', '=', 'branch_ledgers.transaction_type_id')
-            ->where('branch_id', $request->account)
             ->whereBetween('transaction_date', [$start_date, $end_date])
+            ->where('branch_id', $request->account)
             ->get();
 
         $sort_array = [];

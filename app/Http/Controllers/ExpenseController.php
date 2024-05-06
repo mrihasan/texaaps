@@ -33,18 +33,18 @@ class ExpenseController extends Controller
         if (session()->get('branch') != 'all') {
             $expense = Expense::with('user')->with('approvedBy')->with('expense_type')
                 ->with('branch')
+                ->whereBetween('expense_date', [$start_date, $end_date])
                 ->where('status', 'Submitted')
                 ->orWhere('status', 'Updated')
                 ->where('branch_id', session()->get('branch'))
-                ->whereBetween('expense_date', [$start_date, $end_date])
                 ->orderBy('expense_date', 'desc')->orderBy('created_at', 'desc')->get();
 
         } else {
             $expense = Expense::with('user')->with('approvedBy')->with('expense_type')
                 ->with('branch')
+                ->whereBetween('expense_date', [$start_date, $end_date])
                 ->where('status', 'Submitted')
                 ->orWhere('status', 'Updated')
-                ->whereBetween('expense_date', [$start_date, $end_date])
                 ->orderBy('expense_date', 'desc')->orderBy('created_at', 'desc')->get();
         }
 

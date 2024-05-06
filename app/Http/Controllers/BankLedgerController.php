@@ -49,7 +49,7 @@ class BankLedgerController extends Controller
             $start_date = date('Y-m-d', strtotime($request->start_date)) . ' 00:00:00';
             $end_date = date('Y-m-d', strtotime($request->end_date)) . ' 23:59:59';
         }
-        $ledger = BankLedger::where('reftbl',null)->whereBetween('bank_ledgers.transaction_date', [$start_date, $end_date])->latest()->get();
+        $ledger = BankLedger::whereBetween('bank_ledgers.transaction_date', [$start_date, $end_date])->where('reftbl',null)->latest()->get();
 
         $header_title = 'Manage Account Ledger From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
         return view('banking.manage_account_ledger', compact('ledger', 'header_title'));

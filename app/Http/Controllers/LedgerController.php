@@ -53,12 +53,13 @@ class LedgerController extends Controller
         }
         $payments = Ledger::with('user')->with('entryby')
             ->where('transaction_type_id', 4)//4=Payment
+            ->whereBetween('transaction_date', [$start_date, $end_date])
             ->where('reftbl', null )
             ->orWhere('reftbl', 'ledgers')
-            ->whereBetween('transaction_date', [$start_date, $end_date])
             ->orderBy('transaction_date', 'desc')->get();
 //        dd($payments);
         $header_title = 'Payment From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
+//        dd($header_title);
         return view('accounting.payment_index', compact('payments', 'header_title'));
     }
 
@@ -74,9 +75,9 @@ class LedgerController extends Controller
         }
         $receipts = Ledger::with('user')->with('entryby')
             ->where('transaction_type_id', 3)//3=Received
+            ->whereBetween('transaction_date', [$start_date, $end_date])
             ->where('reftbl', null )
             ->orWhere('reftbl', 'ledgers')
-            ->whereBetween('transaction_date', [$start_date, $end_date])
             ->orderBy('transaction_date', 'desc')->get();
         $header_title = 'Receipt From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
         return view('accounting.receipt_index', compact('receipts', 'header_title'));
