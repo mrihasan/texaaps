@@ -59,8 +59,11 @@ class ReportController extends Controller
     public function datewise_expense_summary(Request $request)
     {
         abort_if(Gate::denies('ReportAccess'), redirect('error'));
-        $start_date = date('Y-m-d', strtotime($request->start_date));
-        $end_date = date('Y-m-d', strtotime($request->end_date));
+//        $start_date = date('Y-m-d', strtotime($request->start_date));
+//        $end_date = date('Y-m-d', strtotime($request->end_date));
+        $start_date = date('Y-m-d', strtotime($request->start_date)) . ' 00:00:00';
+        $end_date = date('Y-m-d', strtotime($request->end_date)) . ' 23:59:59';
+
         $title_date_range = 'Expense Summary From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
         if (session()->get('branch') != 'all') {
             if ($request->approval_type == 'All')
@@ -160,8 +163,11 @@ class ReportController extends Controller
     public function typewise_expense_summary(Request $request)
     {
         abort_if(Gate::denies('ReportAccess'), redirect('error'));
-        $start_date = date('Y-m-d', strtotime($request->start_date));
-        $end_date = date('Y-m-d', strtotime($request->end_date));
+//        $start_date = date('Y-m-d', strtotime($request->start_date));
+//        $end_date = date('Y-m-d', strtotime($request->end_date));
+        $start_date = date('Y-m-d', strtotime($request->start_date)) . ' 00:00:00';
+        $end_date = date('Y-m-d', strtotime($request->end_date)) . ' 23:59:59';
+
         $title_date_range = 'Type Wise Expense From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
         if (session()->get('branch') != 'all') {
             if ($request->approval_type == 'All') {
@@ -233,8 +239,11 @@ class ReportController extends Controller
     public function expense_details_home()
     {
         abort_if(Gate::denies('ReportAccess'), redirect('error'));
-        $start_date = date('Y-m-d', strtotime(Carbon::now()->subDays(30)));
-        $end_date = date('Y-m-d', strtotime(Carbon::now()));
+//        $start_date = date('Y-m-d', strtotime(Carbon::now()->subDays(30)));
+//        $end_date = date('Y-m-d', strtotime(Carbon::now()));
+        $start_date = Carbon::now()->subDays(90)->format('Y-m-d') . ' 00:00:00';
+        $end_date = date('Y-m-d') . ' 23:59:59';
+
         $title_date_range = 'Expense From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
 
         if (session()->get('branch') != 'all') {
@@ -251,8 +260,11 @@ class ReportController extends Controller
     public function expense_details_daterange(Request $request)
     {
         abort_if(Gate::denies('ReportAccess'), redirect('error'));
-        $start_date = date('Y-m-d', strtotime($request->start_date));
-        $end_date = date('Y-m-d', strtotime($request->end_date));
+//        $start_date = date('Y-m-d', strtotime($request->start_date));
+//        $end_date = date('Y-m-d', strtotime($request->end_date));
+        $start_date = date('Y-m-d', strtotime($request->start_date)) . ' 00:00:00';
+        $end_date = date('Y-m-d', strtotime($request->end_date)) . ' 23:59:59';
+
         $title_date_range = 'Expense From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
 
         if (session()->get('branch') != 'all') {
@@ -460,6 +472,7 @@ class ReportController extends Controller
 
     public function balance_report(Request $request)
     {
+//        dd($request);
         abort_if(Gate::denies('ReportAccess'), redirect('error'));
         $start_date = date('Y-m-d', strtotime($request->start_date)) . ' 00:00:00';
         $end_date = date('Y-m-d', strtotime($request->end_date)) . ' 23:59:59';
@@ -476,6 +489,7 @@ class ReportController extends Controller
         $bd_total_expense = DB::table('expenses')
             ->whereBetween('expense_date', [$mindate_expense, $before1day])
             ->sum('expense_amount');
+//        dd($bd_total_expense);
         $bd_total_salary = DB::table('employee_salaries')
             ->whereBetween('created_at', [$mindate_salary, $before1day])
             ->sum('paidsalary_amount');
@@ -485,16 +499,20 @@ class ReportController extends Controller
             ->whereBetween('transaction_date', [$mindate_invoice, $before1day])
             ->sum('invoice_total');
         $bd_salesamount_collect = DB::table('ledgers')
-            ->where('transaction_type_id', 3)
+            ->where('transaction_type_id', 3) //3=Receipt
             ->whereBetween('transaction_date', [$mindate_ledger, $before1day])
+            ->where('reftbl', null )
+            ->orWhere('reftbl', 'ledgers')
             ->sum('amount');
         $bd_purchaseamount = DB::table('invoices')
             ->where('transaction_type', 'Purchase')
             ->whereBetween('transaction_date', [$mindate_invoice, $before1day])
             ->sum('invoice_total');
         $bd_purchaseamount_paid = DB::table('ledgers')
-            ->where('transaction_type_id', 4)
+            ->where('transaction_type_id', 4)//4=payment
             ->whereBetween('transaction_date', [$mindate_ledger, $before1day])
+            ->where('reftbl', null )
+            ->orWhere('reftbl', 'ledgers')
             ->sum('amount');
         $balance_bd = $bd_salesamount - $bd_purchaseamount - $bd_total_expense - $bd_total_salary;
         $balance_bd_collect = $bd_salesamount_collect - $bd_purchaseamount_paid - $bd_total_expense - $bd_total_salary;
@@ -517,11 +535,15 @@ class ReportController extends Controller
             ->whereBetween('transaction_date', [$start_date, $end_date])
             ->where('amount', '>', 0)
             ->where('transaction_type_id', 3)
+            ->where('reftbl', null )
+            ->orWhere('reftbl', 'ledgers')
             ->get();
         $payment = Ledger::orderBy('transaction_date', 'desc')
             ->whereBetween('transaction_date', [$start_date, $end_date])
             ->where('amount', '>', 0)
             ->where('transaction_type_id', 4)
+            ->where('reftbl', null )
+            ->orWhere('reftbl', 'ledgers')
             ->get();
 //        dd($sales);
         $total_salesamount = DB::table('invoices')
@@ -539,10 +561,13 @@ class ReportController extends Controller
         $total_purchaseamount_paid = DB::table('ledgers')
             ->where('transaction_type_id', 4)
             ->whereBetween('transaction_date', [$start_date, $end_date])
+            ->where('reftbl', null )
+            ->orWhere('reftbl', 'ledgers')
             ->sum('amount');
         $total_income = $total_salesamount_collect - $total_purchaseamount_paid;
         //        Expense in given date range
-        $expense = Expense::with('expense_type')->orderBy('expense_date', 'desc')
+        $expense = Expense::with('expense_type')
+            ->orderBy('expense_date', 'desc')
             ->whereBetween('expense_date', [$start_date, $end_date])
             ->get();
         $total_expense = DB::table('expenses')
@@ -551,6 +576,7 @@ class ReportController extends Controller
 
         $salary = EmployeeSalary::with('user.profile')->orderBy('created_at', 'desc')
             ->whereBetween('created_at', [$start_date, $end_date])
+            ->where('paidsalary_amount','>',0)
             ->get();
         $total_salary = DB::table('employee_salaries')
             ->whereBetween('created_at', [$start_date, $end_date])
@@ -588,12 +614,16 @@ class ReportController extends Controller
             ->sum('invoice_total');
         $total_salesamount_collect = DB::table('ledgers')
             ->where('transaction_type_id', 3)
+            ->where('reftbl', null )
+            ->orWhere('reftbl', 'ledgers')
             ->sum('amount');
         $total_purchaseamount = DB::table('invoices')
             ->where('transaction_type', 'Purchase')
             ->sum('invoice_total');
         $total_purchaseamount_paid = DB::table('ledgers')
             ->where('transaction_type_id', 4)
+            ->where('reftbl', null )
+            ->orWhere('reftbl', 'ledgers')
             ->sum('amount');
         $total_expense = DB::table('expenses')
             ->sum('expense_amount');

@@ -349,8 +349,11 @@ class ExpenseController extends Controller
     {
 //        dd($request->start_date);
 //        abort_if(Gate::denies('expense-access'), redirect('error'));
-        $start_date = date('Y-m-d', strtotime($request->start_date));
-        $end_date = date('Y-m-d', strtotime($request->end_date));
+//        $start_date = date('Y-m-d', strtotime($request->start_date));
+//        $end_date = date('Y-m-d', strtotime($request->end_date));
+        $start_date = date('Y-m-d', strtotime($request->start_date)) . ' 00:00:00';
+        $end_date = date('Y-m-d', strtotime($request->end_date)) . ' 23:59:59';
+
         $header_title = 'Expense From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
 //dd($header_title);
         if ($request->approval_type == 'Approved') {
