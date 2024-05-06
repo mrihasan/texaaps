@@ -6,7 +6,7 @@
         <table class="table  table-striped table-bordered table-hover tab_1_table">
             <thead>
             <tr>
-                <th>{{ __('all_settings.Transaction') }} <br/>Code</th>
+                <th>Sl No</th>
                 <th>{{ __('all_settings.Transaction') }} <br/>Date</th>
                 <th>{{ __('all_settings.Transaction') }} <br/>Type</th>
                 <th>Product <br/>Total</th>
@@ -35,7 +35,7 @@
                     <td>
                         <a href="{{ url('invoice/' . $stu->id ) }}" class="btn btn-success btn-xs"
                            title="Show"><span class="far fa-eye" aria-hidden="true"></span></a>
-                        {{$stu->transaction_code}}</td>
+                        {{$stu->sl_no}}</td>
                     <td>{{Carbon\Carbon::parse($stu->transaction_date)->format('d-M-Y')}}</td>
                     <td>{{$stu->transaction_type}}</td>
                     <td style="text-align: right">{{$stu->product_total}}</td>

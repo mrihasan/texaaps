@@ -173,7 +173,7 @@
                 <div class="tab-pane fade" id="custom-tabs-one-profile" role="tabpanel"
                      aria-labelledby="custom-tabs-one-profile-tab">
 
-                    {!! Form::open(array('method' => 'get', 'url' => 'bank_ledger','class'=>'form-horizontal')) !!}
+                    {!! Form::open(array('method' => 'get', 'url' => 'manage_account_ledger','class'=>'form-horizontal')) !!}
                     {!! Form::hidden('start_date', null,['class'=>'StartDate','id'=>'StartDate'] )!!}
                     {!! Form::hidden('end_date', null,['class'=>'EndDate','id'=>'EndDate'] )!!}
 

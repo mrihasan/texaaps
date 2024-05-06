@@ -230,9 +230,9 @@ function numberToWord($num)
 function ledger_balancce($user_id)
 {
     $transaction_account = DB::table('invoices')
-        ->select('transaction_date', 'transaction_code', 'invoice_total as amount', 'transaction_type', 'reference', 'created_at')
+        ->select('transaction_date', 'transaction_code','sl_no', 'invoice_total as amount', 'transaction_type', 'reference', 'created_at')
         ->where('transaction_type', '!=', 'Order')->where('user_id', $user_id)->get();
-    $ledger = DB::table('ledgers')->select('ledgers.transaction_date', 'ledgers.transaction_code', 'ledgers.amount',
+    $ledger = DB::table('ledgers')->select('ledgers.transaction_date', 'ledgers.transaction_code','ledgers.sl_no', 'ledgers.amount',
         'transaction_types.title as transaction_type', 'ledgers.comments as reference', 'ledgers.created_at')
         ->join('transaction_types', 'transaction_types.id', '=', 'ledgers.transaction_type_id')
         ->where('ledgers.user_id', $user_id)->get();
@@ -247,6 +247,7 @@ function ledger_balancce($user_id)
     $ledger_balance['transaction_type'] = [];
     $ledger_balance['transaction_date'] = [];
     $ledger_balance['transaction_code'] = [];
+    $ledger_balance['sl_no'] = [];
     $ledger_balance['reference'] = [];
     $ledger_balance['transaction_amount'] = [];
     $ledger_balance['balance'] = [];
@@ -283,6 +284,7 @@ function ledger_balancce($user_id)
         $ledger_balance['transaction_type'][] = $sort_array[$i]->transaction_type;
         $ledger_balance['transaction_date'][] = $sort_array[$i]->transaction_date;
         $ledger_balance['transaction_code'][] = $sort_array[$i]->transaction_code;
+        $ledger_balance['sl_no'][] = $sort_array[$i]->sl_no;
         $ledger_balance['reference'][] = $sort_array[$i]->reference;
         $ledger_balance['transaction_amount'][] = $sort_array[$i]->amount;
         $ledger_balance['balance'][] = $runningSum;

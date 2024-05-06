@@ -6,7 +6,7 @@
         <table class="table  table-striped table-bordered table-hover tab_2_table">
             <thead>
             <tr>
-                <th>{{ __('all_settings.Transaction') }} <br/>Code</th>
+                <th>Sl No</th>
                 <th>{{ __('all_settings.Transaction') }} <br/>Date</th>
                 <th>{{ __('all_settings.Transaction') }}<br/>Type</th>
                 <th>{{ __('all_settings.Transaction') }}<br/>Method</th>
@@ -27,7 +27,7 @@
             </tfoot>
             @foreach($user->ledgers as $stu)
                 <tr>
-                    <td>{{$stu->transaction_code}}</td>
+                    <td>{{$stu->sl_no}}</td>
                     <td>{{Carbon\Carbon::parse($stu->transaction_date)->format('d-M-Y')}}</td>
                     <td>{{$stu->transaction_type->title}}</td>
                     <td>{{$stu->transaction_method->title}}</td>
