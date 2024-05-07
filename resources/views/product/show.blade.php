@@ -120,7 +120,7 @@
                     </table>
                 </div>
                 <div class="tab-pane" id="custom-tabs-one-profile">
-                    <table class="table dataTables table-striped table-bordered table-hover tab_4_table">
+                    <table class="table dataTables table-striped table-bordered table-hover tab_4_table" >
                         <thead>
                         <tr>
                             <th>{{ __('all_settings.Transaction') }}<br/> Code</th>
@@ -228,7 +228,6 @@
             copyTagClasses: false
         });
     });
-
 </script>
 
 <script>

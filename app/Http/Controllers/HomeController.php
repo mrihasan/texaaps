@@ -51,6 +51,8 @@ class HomeController extends Controller
             $admin_db['collect'] = DB::table('ledgers')
                 ->where('transaction_type_id', 3)
                 ->whereDate('transaction_date', \Carbon\Carbon::now()->format('Y-m-d'))
+                ->where('reftbl', null )
+                ->orWhere('reftbl', 'ledgers')
                 ->sum('amount');
             $admin_db['purchase'] = DB::table('invoices')
                 ->where('transaction_type', 'Purchase')
@@ -59,6 +61,8 @@ class HomeController extends Controller
             $admin_db['paid'] = DB::table('ledgers')
                 ->where('transaction_type_id', 4)
                 ->whereDate('transaction_date', \Carbon\Carbon::now()->format('Y-m-d'))
+                ->where('reftbl', null )
+                ->orWhere('reftbl', 'ledgers')
                 ->sum('amount');
             $admin_db['expense'] = DB::table('expenses')
                 ->whereDate('expense_date', \Carbon\Carbon::now()->format('Y-m-d'))
@@ -139,6 +143,8 @@ class HomeController extends Controller
 //            ->whereIn('transaction_date', $day30)
             ->groupBy(DB::raw('transaction_date'))
             ->orderBy('transaction_date', 'desc')
+            ->where('reftbl', null )
+            ->orWhere('reftbl', 'ledgers')
             ->get()->toArray();
         $payment_date = [];
         $payment_amount = [];
@@ -161,6 +167,8 @@ class HomeController extends Controller
 //            ->whereIn('transaction_date', $day30)
             ->groupBy(DB::raw('transaction_date'))
             ->orderBy('transaction_date', 'desc')
+            ->where('reftbl', null )
+            ->orWhere('reftbl', 'ledgers')
             ->get()->toArray();
         $receipt_date = [];
         $receipt_amount = [];
