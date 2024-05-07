@@ -61,6 +61,7 @@ Route::resource('brand', \App\Http\Controllers\BrandController::class);
 Route::resource('unit', \App\Http\Controllers\UnitController::class);
 
 Route::get('lowStockProduct', '\App\Http\Controllers\ProductController@lowStockProduct')->name('lowStockProduct');
+Route::get('product_stock_report', '\App\Http\Controllers\ProductController@product_stock_report')->name('product_stock_report');
 Route::resource('product', \App\Http\Controllers\ProductController::class);
 Route::resource('branch', \App\Http\Controllers\BranchController::class);
 Route::resource('bank_account', \App\Http\Controllers\BankAccountController::class);

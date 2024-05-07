@@ -29,7 +29,7 @@ class PaymentRequestController extends Controller
 
     public function create()
     {
-//        abort_if(Gate::denies('superadmin-access'), redirect('error'));
+        abort_if(Gate::denies('PaymentMgtAccess'), redirect('error'));
         $branches = branch_list();
         $customer = customer_list();
         $supplier = supplier_list();
@@ -43,7 +43,7 @@ class PaymentRequestController extends Controller
     public function store(Request $request)
     {
 //        dd($request);
-//        abort_if(Gate::denies('superadmin-access'), redirect('error'));
+        abort_if(Gate::denies('PaymentMgtAccess'), redirect('error'));
 //        $this->validate($request, [
 //            'title' => 'required|unique:payment_requests',
 //            'code_no' => 'nullable|unique:payment_requests',
@@ -87,6 +87,7 @@ class PaymentRequestController extends Controller
 
     public function edit(PaymentRequest $payment_request)
     {
+        abort_if(Gate::denies('PaymentMgtAccess'), redirect('error'));
         $branches = branch_list();
         $customer = customer_list();
         $supplier = supplier_list();
@@ -101,6 +102,7 @@ class PaymentRequestController extends Controller
     public function update(Request $request, PaymentRequest $payment_request)
     {
 //        dd($request);
+        abort_if(Gate::denies('PaymentMgtAccess'), redirect('error'));
         $this->validate($request, [
 //            'title' => 'required|unique:payment_requests,title,' . $pr->id . ',id',
 //            'code_no' => 'nullable|unique:payment_requests,code_no,' . $pr->id . ',id',
@@ -167,7 +169,7 @@ class PaymentRequestController extends Controller
 
     public function destroy(PaymentRequest $payment_request)
     {
-//        abort_if(Gate::denies('ProductMgtDelete'), redirect('error'));
+        abort_if(Gate::denies('PaymentMgtAccess'), redirect('error'));
         $payment_request->delete();
         \Session::flash('flash_message', 'Successfully Deleted');
 

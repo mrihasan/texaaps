@@ -25,7 +25,7 @@ class LedgerController extends Controller
     public function index(Request $request)
     {
 //        dd($request);
-        abort_if(Gate::denies('AccountMgtAccess'), redirect('error'));
+        abort_if(Gate::denies('PaymentMgtAccess'), redirect('error'));
         if ($request->start_date == null) {
             $start_date = Carbon::now()->subDays(90)->format('Y-m-d') . ' 00:00:00';
             $end_date = date('Y-m-d') . ' 23:59:59';
@@ -43,7 +43,7 @@ class LedgerController extends Controller
 
     public function payment_index(Request $request)
     {
-        abort_if(Gate::denies('AccountMgtAccess'), redirect('error'));
+        abort_if(Gate::denies('PaymentMgtAccess'), redirect('error'));
         if ($request->start_date == null) {
             $start_date = Carbon::now()->subDays(90)->format('Y-m-d') . ' 00:00:00';
             $end_date = date('Y-m-d') . ' 23:59:59';
@@ -65,7 +65,7 @@ class LedgerController extends Controller
 
     public function receipt_index(Request $request)
     {
-        abort_if(Gate::denies('AccountMgtAccess'), redirect('error'));
+        abort_if(Gate::denies('PaymentMgtAccess'), redirect('error'));
         if ($request->start_date == null) {
             $start_date = Carbon::now()->subDays(90)->format('Y-m-d') . ' 00:00:00';
             $end_date = date('Y-m-d') . ' 23:59:59';
@@ -85,7 +85,7 @@ class LedgerController extends Controller
 
     public function payment()
     {
-        abort_if(Gate::denies('AccountMgtAccess'), redirect('error'));
+        abort_if(Gate::denies('PaymentMgtAccess'), redirect('error'));
         $user = supplier_list();
         $branches = branch_list();
         $invoices = DB::table('invoices')->where('transaction_type', 'Purchase')->pluck('sl_no', 'id')->prepend('Select Invoice', '')->toArray();
@@ -96,7 +96,7 @@ class LedgerController extends Controller
 
     public function receipt()
     {
-        abort_if(Gate::denies('AccountMgtAccess'), redirect('error'));
+        abort_if(Gate::denies('PaymentMgtAccess'), redirect('error'));
         $user = customer_list();
         $branches = branch_list();
         $invoices = DB::table('invoices')->where('transaction_type', 'Sales')->pluck('sl_no', 'id')->prepend('Select Invoice', '')->toArray();
@@ -107,7 +107,7 @@ class LedgerController extends Controller
 
     public function store(Request $request)
     {
-        abort_if(Gate::denies('AccountMgtAccess'), redirect('error'));
+        abort_if(Gate::denies('PaymentMgtAccess'), redirect('error'));
         $this->validate($request, [
             'branch' => 'required',
             'bank_account' => 'required',
@@ -204,7 +204,7 @@ class LedgerController extends Controller
 
     public function edit(Ledger $ledger)
     {
-        abort_if(Gate::denies('AccountMgtAccess'), redirect('error'));
+        abort_if(Gate::denies('PaymentMgtAccess'), redirect('error'));
         $branches = branch_list();
         $transaction_methods = TransactionMethod::orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Method', '')->toArray();
         $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
@@ -228,7 +228,7 @@ class LedgerController extends Controller
 
     public function update(Request $request, Ledger $ledger)
     {
-        abort_if(Gate::denies('AccountMgtAccess'), redirect('error'));
+        abort_if(Gate::denies('PaymentMgtAccess'), redirect('error'));
         $this->validate($request, [
             'branch' => 'required',
             'bank_account' => 'required',

@@ -233,12 +233,12 @@
                                     <p>Manage Receipt</p>
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a href="{{ url('ledger') }}" class="nav-link @yield('manage_ledger')">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Manage User's Ledger</p>
-                                </a>
-                            </li>
+                            {{--<li class="nav-item">--}}
+                                {{--<a href="{{ url('ledger') }}" class="nav-link @yield('manage_ledger')">--}}
+                                    {{--<i class="far fa-circle nav-icon"></i>--}}
+                                    {{--<p>Manage User's Ledger</p>--}}
+                                {{--</a>--}}
+                            {{--</li>--}}
                         </ul>
                     </li>
                 @endcan
@@ -443,6 +443,13 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ url('product_stock_report') }}"
+                                   class="nav-link @yield('product_stock_report' )">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Product Stock</p>
+                                </a>
+                            </li>
                             <li class="nav-item">
                                 <a href="{{ url('datewise_expense_summary_home') }}"
                                    class="nav-link @yield((request()->segment(1) == 'datewise_expense_details'||request()->segment(1) == ('datewise_expense_summary_home'||'datewise_expense_summary')) ? 'report_expense_date' : '' )">

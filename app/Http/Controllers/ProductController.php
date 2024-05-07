@@ -27,6 +27,22 @@ class ProductController extends Controller
         $title = __('all_settings.Product List');
         return $dataTable->render('product.index', compact(['title']));
     }
+    public function product_stock_report()
+    {
+        $products = Product::with('inventory_details')->get();
+        foreach ($products as $product) {
+//            $totalStock = $product->inventory_details()->where('transaction_type', 'Purchase')->sum('qty');
+//            $totalStock -= $product->inventory_details()->where('transaction_type', 'Sales')->sum('qty');
+//            $product->stock = $totalStock;
+            $totalPurchase = $product->inventory_details()->where('transaction_type', 'Purchase')->sum('qty');
+            $totalSales = $product->inventory_details()->where('transaction_type', 'Sales')->sum('qty');
+            $product->totalPurchase = $totalPurchase;
+            $product->totalSales = $totalSales;
+            $product->stock = $totalPurchase-$totalSales;
+        }
+        $header_title='Product stock report';
+        return view('report.product_stock_report', compact('products','header_title'));
+    }
 
     public function create()
     {
