@@ -44,6 +44,7 @@
                         <thead>
                         <tr>
                             <th class="col-md-1"> Date</th>
+                            <th> Due Days</th>
                             <th> Sl No</th>
                             <th >Customer<br/>Info</th>
                             <th >Total<br/>amount</th>
@@ -59,14 +60,17 @@
                             <th></th>
                             <th></th>
                             <th></th>
+                            <th></th>
                         </tr>
                         </tfoot>
                         <tbody>
                         @foreach($invoicesWithDueAndPaymentHistory as $data)
                             <tr>
                                 <td>
-                                    {{--{{$data['invoice']}}--}}
                                     {{ Carbon\Carbon::parse($data['invoice']->transaction_date)->format('d-M-Y') }}
+                                </td>
+                                <td>
+                                    {{ Carbon\Carbon::parse($data['invoice']->transaction_date)->diffInDays(); }}
                                 </td>
                                 <td>
                                     {{ $data['invoice']->sl_no }}
@@ -141,9 +145,9 @@
 //                { targets: [ 0,1,2,3,4, 5, 6, 7, 8, 9 ], className: 'dt-head text-center'  },
 //                { targets: [0,1,2,3,4, 5,6,7 ], className: 'text-center' },
                 {targets: [0], className: 'text-center'},
-//                {targets: [4], className: 'text-right'},
+                {targets: [1], className: 'text-right'},
                 {
-                    targets: [3,4],
+                    targets: [4,5],
                     className: 'text-right',
                     render: $.fn.dataTable.render.number(',', '.', 0, '')
                 }
@@ -295,7 +299,7 @@
                 var api = this.api();
                 nb_cols = api.columns().nodes().length -1;
 //                nb_cols = 8;
-                var j = 3;
+                var j = 4;
                 while (j < nb_cols) {
                     var pageTotal = api
                         .column(j, {page: 'current'})
