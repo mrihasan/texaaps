@@ -482,8 +482,10 @@ class ReportController extends Controller
         $mindate_expense = DB::table('expenses')->MIN('expense_date');
         $mindate_salary = DB::table('employee_salaries')->MIN('created_at');
 
-        $before1day = new DateTime($start_date);
-        $before1day->sub(new DateInterval('P1D'));
+//        $before1day = new DateTime($start_date);
+//        $before1day->sub(new DateInterval('P1D'));
+        $before1day = date('Y-m-d H:i:s', strtotime($start_date . ' -1 second'));
+//        dd($end_of_day);
 
         //        expense b/d = brought down
         $bd_total_expense = DB::table('expenses')
@@ -497,7 +499,9 @@ class ReportController extends Controller
         $bd_salesamount = DB::table('invoices')
             ->where('transaction_type', 'Sales')
             ->whereBetween('transaction_date', [$mindate_invoice, $before1day])
+//            ->whereBetween('transaction_date', [$mindate_invoice, '2024-02-29 23:00:00'])
             ->sum('invoice_total');
+//        dd($bd_salesamount);
         $bd_salesamount_collect = DB::table('ledgers')
             ->where('transaction_type_id', 3) //3=Receipt
             ->whereBetween('transaction_date', [$mindate_ledger, $before1day])
@@ -553,6 +557,8 @@ class ReportController extends Controller
         $total_salesamount_collect = DB::table('ledgers')
             ->where('transaction_type_id', 3)
             ->whereBetween('transaction_date', [$start_date, $end_date])
+            ->where('reftbl', null )
+            ->orWhere('reftbl', 'ledgers')
             ->sum('amount');
         $total_purchaseamount = DB::table('invoices')
             ->where('transaction_type', 'Purchase')

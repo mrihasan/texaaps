@@ -136,20 +136,20 @@
                             <th>Line<br/> Total</th>
                         </tr>
                         </thead>
-                        <tfoot>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td style="text-align: right"></td>
-                            <td style="text-align: right"></td>
-                            <td style="text-align: right"></td>
-                            <td style="text-align: right"></td>
-                        </tr>
-                        </tfoot>
+                        {{--<tfoot>--}}
+                        {{--<tr>--}}
+                            {{--<td></td>--}}
+                            {{--<td></td>--}}
+                            {{--<td></td>--}}
+                            {{--<td></td>--}}
+                            {{--<td></td>--}}
+                            {{--<td></td>--}}
+                            {{--<td style="text-align: right"></td>--}}
+                            {{--<td style="text-align: right"></td>--}}
+                            {{--<td style="text-align: right"></td>--}}
+                            {{--<td style="text-align: right"></td>--}}
+                        {{--</tr>--}}
+                        {{--</tfoot>--}}
                         @foreach($product->inventory_details as $stu)
                             <tr>
                                 <td>
@@ -392,23 +392,23 @@
                     }
                 }
             ],
-            "footerCallback": function (row, data, start, end, display) {
-                var api = this.api();
-                nb_cols = api.columns().nodes().length ;
-//                nb_cols = 8;
-                var j = 7;
-                while (j < nb_cols) {
-                    var pageTotal = api
-                        .column(j, {page: 'current'})
-                        .data()
-                        .reduce(function (a, b) {
-                            return (Number(a) + Number(b)).toFixed(0);
-                        }, 0);
-                    // Update footer
-                    $(api.column(j).footer()).html(pageTotal);
-                    j++;
-                }
-            }
+//            "footerCallback": function (row, data, start, end, display) {
+//                var api = this.api();
+//                nb_cols = api.columns().nodes().length ;
+////                nb_cols = 8;
+//                var j = 7;
+//                while (j < nb_cols) {
+//                    var pageTotal = api
+//                        .column(j, {page: 'current'})
+//                        .data()
+//                        .reduce(function (a, b) {
+//                            return (Number(a) + Number(b)).toFixed(0);
+//                        }, 0);
+//                    // Update footer
+//                    $(api.column(j).footer()).html(pageTotal);
+//                    j++;
+//                }
+//            }
 
 
         });

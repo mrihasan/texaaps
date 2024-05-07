@@ -479,7 +479,8 @@ function ledger_account_all($start_date, $end_date)
 {
     $mindate_ledger = DB::table('bank_ledgers')->MIN('transaction_date');
     $before1day = new DateTime($start_date);
-    $before1day->sub(new DateInterval('P1D'));
+    $dateObject=$before1day->sub(new DateInterval('P1D'));
+    $before1day=$dateObject->format('Y-m-d'). ' 23:59:59';
 //    $before1day=($before1day_obj->sub(new DateInterval('P1D')))->format('Y-m-d'). ' 23:59:59';
     $bd_bank_credit = DB::table('bank_ledgers')
         ->whereIn('transaction_type_id', [1,3,5,8,10])
