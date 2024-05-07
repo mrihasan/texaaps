@@ -41,6 +41,7 @@ class InvoiceController extends Controller
 
         return DataTables::of($query)->make(true);
     }
+
     public function showDataTable()
     {
         return view('supply.datatable');
@@ -153,9 +154,9 @@ class InvoiceController extends Controller
             $end_date = date('Y-m-d', strtotime($request->end_date)) . ' 23:59:59';
         }
 //        dd($dataTable);
-        $title='';
+        $title = '';
         return $dataTable->with(['start_date' => $start_date, 'end_date' => $end_date])
-            ->render('supply.purchaseTransaction',compact('title'));
+            ->render('supply.purchaseTransaction', compact('title'));
     }
 
     public function returnTransaction()
@@ -189,7 +190,7 @@ class InvoiceController extends Controller
     {
 //        abort_if(Gate::denies('SupplyAccess'), redirect('error'));
         $invoice = Invoice::where('id', $id)->first();
-        if ((Auth::user()->user_type_id==3||Auth::user()->user_type_id==4)&& ($invoice->user_id != Auth::user()->id)){
+        if ((Auth::user()->user_type_id == 3 || Auth::user()->user_type_id == 4) && ($invoice->user_id != Auth::user()->id)) {
             \Session::flash('flash_error', 'You can not view this');
             return redirect('error');
         }
@@ -229,14 +230,14 @@ class InvoiceController extends Controller
         $before1day_invoice_datetime = $before1day_invoice . ' 23:59:59';
         if ($invoice->transaction_type == 'Purchase') {
             $ledger = $this->ledger($invoice->user_id, $mindate_ledger_datetime, $before1day_invoice_datetime, $invoice->transaction_date, 'Purchase', 4);
-            return view('supply.show_purchase', compact('invoice', 'transactionDetails', 'mindate_ledger', 'before1day_invoice', 'ledger','related_payment'));
+            return view('supply.show_purchase', compact('invoice', 'transactionDetails', 'mindate_ledger', 'before1day_invoice', 'ledger', 'related_payment'));
         } else if ($invoice->transaction_type == 'Sales') {
             if ($invoice->user_id == 6)
                 return view('supply.show_sales_walking', compact('invoice', 'settings', 'transactionDetails', 'related_customer'));
             else {
                 $ledger = $this->ledger($invoice->user_id, $mindate_ledger_datetime, $before1day_invoice_datetime, $invoice->transaction_date, 'Sales', 3);
                 return view('supply.show_sales', compact('invoice', 'transactionDetails', 'settings',
-                    'mindate_ledger', 'before1day_invoice', 'ledger', 'related_customer','related_payment'));
+                    'mindate_ledger', 'before1day_invoice', 'ledger', 'related_customer', 'related_payment'));
             }
         } else if ($invoice->transaction_type == 'Order') {
             $ledger = $this->ledger($invoice->user_id, $mindate_ledger_datetime, $before1day_invoice_datetime, $invoice->transaction_date, 'Sales', 3);
@@ -341,11 +342,11 @@ class InvoiceController extends Controller
             $branch = branch_list();
             $brands = brand_list();
             if ($invoice->transaction_type == 'Purchase')
-                return view('supply.purchaseEdit', compact('invoice', 'inventory', 'supplier', 'branch','brands'));
+                return view('supply.purchaseEdit', compact('invoice', 'inventory', 'supplier', 'branch', 'brands'));
             else if ($invoice->transaction_type == 'Sales') {
                 if ($invoice->user_id == 6) {
                     $related_customer = WalkingCustomer::where('type', 'Invoice')->where('invoice_id', $invoice->id)->first();
-                    return view('supply.salesEditWalking', compact('invoice', 'inventory', 'branch', 'customers', 'supplier', 'related_customer','brands'));
+                    return view('supply.salesEditWalking', compact('invoice', 'inventory', 'branch', 'customers', 'supplier', 'related_customer', 'brands'));
                 } else
                     return view('supply.salesEdit', compact('invoice', 'inventory', 'customers', 'supplier', 'branch', 'brands'));
             } elseif ($invoice->transaction_type == 'Return')
@@ -448,8 +449,7 @@ class InvoiceController extends Controller
 
             \Session::flash('flash_message', 'Successfully Updated');
             return redirect('invoice/' . $last_insert_id);
-        }
-        elseif ($request->transaction_type == 'Sales' && $request->customer_id == 6) { //Sales Walking customer
+        } elseif ($request->transaction_type == 'Sales' && $request->customer_id == 6) { //Sales Walking customer
             $this->validate($request, [
                 'customer_id' => 'required',
                 'total_amount' => 'required',
@@ -547,8 +547,7 @@ class InvoiceController extends Controller
 
             \Session::flash('flash_message', 'Successfully Updated');
             return redirect('invoice/' . $last_insert_id);
-        }
-        elseif ($request->transaction_type == 'Sales') { //Sales Walking customer
+        } elseif ($request->transaction_type == 'Sales') { //Sales Walking customer
 //            dd($request);
             $this->validate($request, [
                 'customer_id' => 'required',
@@ -832,5 +831,44 @@ class InvoiceController extends Controller
         return redirect()->back();
     }
 
+    public function invoice_due_report()
+    {
+        // Get all invoices
+        $invoices = Invoice::all();
 
+// Initialize an array to store invoices with due amounts and payment history
+        $invoicesWithDueAndPaymentHistory = [];
+
+// Loop through each invoice
+        foreach ($invoices as $invoice) {
+            // Calculate the total amount of the invoice
+            $totalInvoiceAmount = $invoice->invoice_total;
+
+            // Calculate the total amount paid for this invoice
+            $totalAmountPaid = Ledger::where('invoice_id', $invoice->id)->sum('amount');
+
+            // Calculate the due amount
+            $dueAmount = $totalInvoiceAmount - $totalAmountPaid;
+
+            // Fetch payment history for this invoice
+            $paymentHistory = Ledger::where('invoice_id', $invoice->id)
+                ->select('transaction_date', 'amount')
+                ->orderBy('transaction_date')
+                ->get();
+
+            // If the due amount is greater than 0, add the invoice to the list of invoices with due amounts
+            if ($dueAmount > 0) {
+                $invoicesWithDueAndPaymentHistory[] = [
+                    'invoice' => $invoice,
+                    'due_amount' => $dueAmount,
+                    'payment_history' => $paymentHistory
+                ];
+            }
+
+        }
+//        dd($invoicesWithDueAndPaymentHistory);
+        $title_date_range='Invoice wise due report';
+        return view('report.invoice_due_report', compact('invoicesWithDueAndPaymentHistory','title_date_range'));
+
+    }
 }

@@ -233,6 +233,12 @@
                                     <p>Manage Receipt</p>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="{{ url('invoice_due_report') }}" class="nav-link @yield('invoice_due_report')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Due Report</p>
+                                </a>
+                            </li>
                             {{--<li class="nav-item">--}}
                                 {{--<a href="{{ url('ledger') }}" class="nav-link @yield('manage_ledger')">--}}
                                     {{--<i class="far fa-circle nav-icon"></i>--}}

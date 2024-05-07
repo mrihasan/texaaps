@@ -1,20 +1,28 @@
 @extends('layouts.al305_main')
-@section('report_mo','menu-open')
-@section('report','active')
-@section('product_stock_report','active')
-@section('title',$header_title)
+@section('paymentmgt_mo','menu-open')
+@section('paymentmgt','active')
+@section('invoice_due_report','active')
+@section('title',$title_date_range)
 @section('breadcrumb')
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{url('product')}}" class="nav-link">{{ __('all_settings.Product') }}</a>
+        <a href="{{url('salesTransaction')}}" class="nav-link">{{ __('all_settings.Sales') }}</a>
     </li>
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">{{ __('Product Stock Report') }}</a>
+        <a href="#" class="nav-link">{{$title_date_range}}</a>
     </li>
 @endsection
 @push('css')
+<style>
+    .total{
+        font-weight: bolder;
+        text-align: right;
+    }
+</style>
+
 <link rel="stylesheet" href="{{ asset('supporting/dataTables/bs4/datatables.min.css') }}">
 <link rel="stylesheet" href="{{ asset('supporting/dataTables/fixedHeader.dataTables.min.css') }}">
-{{--<link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.1.5/css/fixedHeader.dataTables.min.css">--}}
+<link rel="stylesheet" href="{{ asset('supporting/bootstrap-daterangepicker/daterangepicker.min.css') }}">
+<link rel="stylesheet" href="{{ asset('alte305/plugins/select2/css/select2.min.css') }}">
 
 @endpush
 @section('maincontent')
@@ -24,7 +32,7 @@
                 <li class="nav-item">
                     <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill"
                        href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home"
-                       aria-selected="true">{{$header_title}} </a>
+                       aria-selected="true">{{ $title_date_range }} </a>
                 </li>
             </ul>
         </div>
@@ -35,61 +43,60 @@
                     <table class="table dataTables table-striped table-bordered table-hover">
                         <thead>
                         <tr>
-                            <th>
-                                S/N
-                            </th>
-                            <th>
-                                Title
-                            </th>
-                            <th>
-                                Type
-                            </th>
-                            <th>
-                                Low Stock Alert
-                            </th>
-                            <th>
-                                Purchase Qty
-                            </th>
-                            <th>
-                                Sales Qty
-                            </th>
-                            <th>
-                                Stock
-                            </th>
+                            <th class="col-md-1"> Date</th>
+                            <th> Sl No</th>
+                            <th >Customer<br/>Info</th>
+                            <th >Total<br/>amount</th>
+                            <th >Due<br/>amount</th>
+                            <th >Payment History</th>
                         </tr>
                         </thead>
+                        <tfoot>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        </tfoot>
                         <tbody>
-                        @foreach($products as $key=>$product)
+                        @foreach($invoicesWithDueAndPaymentHistory as $data)
                             <tr>
                                 <td>
-                                    {{ $key+1}}
+                                    {{--{{$data['invoice']}}--}}
+                                    {{ Carbon\Carbon::parse($data['invoice']->transaction_date)->format('d-M-Y') }}
                                 </td>
                                 <td>
-                                    <a href="{{ url('product/' . $product->id ) }}" class="btn btn-success btn-xs"
-                                       title="Show"><span class="far fa-eye" aria-hidden="true"></span></a> {{ $product->title }}
-
+                                    {{ $data['invoice']->sl_no }}
                                 </td>
                                 <td>
-                                    {{ $product->product_type->title ?? '' }}
+                                    <a href="{{ route('user.show',$data['invoice']->user->id) }}" class="btn btn-success btn-xs"
+                                       title="User Profile View"><span class="far fa-user-circle"
+                                                                       aria-hidden="true"></span></a>
+                                    {{$data['invoice']->user->name.', '.$data['invoice']->user->cell_phone}}
+                                </td>
+                                <td style="text-align:right">
+                                    {{ $data['invoice']->total_amount }}
                                 </td>
                                 <td>
-                                    {{ $product->low_stock ?? '' }}
+                                    {{ $data['due_amount'] }}
                                 </td>
                                 <td>
-                                    {{ $product->totalPurchase ?? '' }}
-                                </td>
-                                <td>
-                                    {{ $product->totalSales ?? '' }}
-                                </td>
-                                <td>
-                                    {{ $product->stock ?? '' }}
+                                    @foreach($data['payment_history'] as $ph)
+                                    {{ Carbon\Carbon::parse($ph->transaction_date)->format('d-M-Y').': '.$ph->amount }}<br/>
+                                        @endforeach
                                 </td>
                             </tr>
+
                         @endforeach
                         </tbody>
                     </table>
                 </div>
+
             </div>
+
         </div>
     </div>
 @endsection
@@ -97,8 +104,27 @@
 @push('js')
 <script src="{{ asset('supporting/dataTables/bs4/datatables.min.js')}}"></script>
 <script src="{{ asset('supporting/dataTables/dataTables.fixedHeader.min.js')}}"></script>
+<script src="{!! asset('alte305/plugins/moment/moment.min.js')!!}"></script>
+<script src="{{ asset('supporting/bootstrap-daterangepicker/daterangepicker.min.js')}}"></script>
+<script src="{{ asset('supporting/vfs_fonts.js')}}"></script>
+<script src="{!! asset('alte305/plugins/select2/js/select2.full.min.js')!!}"></script>
 
 <script>
+    pdfMake.fonts = {
+        Roboto: {
+            normal: 'Roboto-Regular.ttf',
+            bold: 'Roboto-Medium.ttf',
+            italics: 'Roboto-Italic.ttf',
+            bolditalics: 'Roboto-MediumItalic.ttf'
+        },
+        nikosh: {
+            normal: "NikoshBAN.ttf",
+            bold: "NikoshBAN.ttf",
+            italics: "NikoshBAN.ttf",
+            bolditalics: "NikoshBAN.ttf"
+        }
+    };
+
     $(document).ready(function () {
         $('.dataTables').DataTable({
             aaSorting: [],
@@ -115,8 +141,12 @@
 //                { targets: [ 0,1,2,3,4, 5, 6, 7, 8, 9 ], className: 'dt-head text-center'  },
 //                { targets: [0,1,2,3,4, 5,6,7 ], className: 'text-center' },
                 {targets: [0], className: 'text-center'},
-                {targets: [1, 2], className: 'text-left'},
-                {targets: [3,4,5,6], className: 'text-right',render: $.fn.dataTable.render.number(',', '.', 0, '')},
+//                {targets: [4], className: 'text-right'},
+                {
+                    targets: [3,4],
+                    className: 'text-right',
+                    render: $.fn.dataTable.render.number(',', '.', 0, '')
+                }
             ],
 
             buttons: [
@@ -124,7 +154,7 @@
                 {extend: 'csv'},
                 {
                     extend: 'excel', title: '{{ config('app.name', 'EIS') }}',
-                    messageTop: '{{$header_title}}'
+                    messageTop: '{{$title_date_range}}'
                 },
                     {{--{extend: 'pdf', title: 'DVL Transaction Data',--}}
                     {{--messageTop: 'Commission Report of {{entryBy($partner_id).' '. $title_date_range}} ',--}}
@@ -137,11 +167,11 @@
                     className: 'btn  btn-sm btn-table',
                     titleAttr: 'Export to Pdf',
                     text: '<span class="fa fa-file-pdf-o fa-lg"></span><i class="hidden-xs hidden-sm hidden-md"> Pdf</i>',
-                    filename: '{{$header_title}}',
+                    filename: '{{$title_date_range}}',
                     extension: '.pdf',
 //                    orientation : 'landscape',
                     orientation: 'portrait',
-                    title: "{{$header_title}}",
+                    title: "{{$title_date_range}}",
                     footer: true,
                     exportOptions: {
                         columns: ':visible:not(.not-export-col)',
@@ -162,12 +192,12 @@
                             doc.content[1].table.body[i][2].alignment = 'left';
                             doc.content[1].table.body[i][3].alignment = 'right';
                             doc.content[1].table.body[i][4].alignment = 'right';
-                            doc.content[1].table.body[i][5].alignment = 'right';
-                            doc.content[1].table.body[i][6].alignment = 'right';
+                            doc.content[1].table.body[i][5].alignment = 'left';
+//                            doc.content[1].table.body[i][6].alignment = 'center';
 //                            doc.content[1].table.body[i][7].alignment = 'left';
 //                            doc.content[1].table.body[i][8].alignment = 'left';
                         }
-                        doc.content[1].table.widths = ['5%', '40%', '15%','10%','10%','10%','10%'];
+                        doc.content[1].table.widths = ['10%', '15%', '25%', '15%', '15%', '20%'];
 //                        doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
                         doc.content.splice(0, 1);
                         var now = new Date();
@@ -187,18 +217,18 @@
                                     {
                                         alignment: 'left',
                                         italics: true,
-                                        text: '{{$header_title}}',
+                                        text: '{{$title_date_range}}',
                                         fontSize: 10,
                                         margin: [10, 0]
                                     },
-//                                    {
+                                    {
                                         //image: logo,
 //                                        alignment: 'center',
 //                                        width: 20,
 //                                        height: 20,
                                         {{--image: 'data:image/png;base64,{{$settings->logo_base64}}'--}}
 
-//                                    },
+                                    },
 
                                     {
                                         alignment: 'right',
@@ -250,7 +280,7 @@
                 {
                     extend: 'print',
                     footer: true,
-                    messageTop: '{{$header_title}}',
+                    messageTop: '{{$title_date_range}}',
                     messageBottom: '{{'Printed On: '.\Carbon\Carbon::now()->format(' D, d-M-Y, h:ia')}}',
                     customize: function (win) {
                         $(win.document.body).addClass('white-bg');
@@ -260,7 +290,24 @@
                             .css('font-size', 'inherit');
                     }
                 }
-            ]
+            ],
+            "footerCallback": function (row, data, start, end, display) {
+                var api = this.api();
+                nb_cols = api.columns().nodes().length -1;
+//                nb_cols = 8;
+                var j = 3;
+                while (j < nb_cols) {
+                    var pageTotal = api
+                        .column(j, {page: 'current'})
+                        .data()
+                        .reduce(function (a, b) {
+                            return (Number(a) + Number(b)).toFixed(2);
+                        }, 0);
+                    // Update footer
+                    $(api.column(j).footer()).html(pageTotal);
+                    j++;
+                }
+            }
 
         });
     });
