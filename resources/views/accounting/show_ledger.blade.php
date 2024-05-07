@@ -1,6 +1,6 @@
 @extends('layouts.al305_main')
-@section('accounting_mo','menu-open')
-@section('accounting','active')
+@section('paymentmgt_mo','menu-open')
+@section('paymentmgt','active')
 @section($transaction_type,'active')
 @section('title','Show Account Ledger')
 @section('breadcrumb')

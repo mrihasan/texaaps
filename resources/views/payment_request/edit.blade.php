@@ -1,6 +1,6 @@
 @extends('layouts.al305_main')0
-@section('accounting_mo','menu-open')
-@section('accounting','active')
+@section('paymentmgt_mo','menu-open')
+@section('paymentmgt','active')
 @section('manage_payment_request','active')
 @section('title','Manage Payment Request')
 @section('breadcrumb')

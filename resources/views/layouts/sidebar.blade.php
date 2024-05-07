@@ -185,14 +185,13 @@
 
                     </ul>
                 </li>
-                @can('AccountMgtAccess')
-                    <li class="nav-item has-treeview @yield('accounting_mo')">
-                        <a href="#" class="nav-link @yield('accounting')">
-                            {{--<i class="nav-icon fas fa-file-import"></i>--}}
-                            <i class="nav-icon fas fa-calculator"></i>
+                @can('PaymentMgtAccess')
+                    <li class="nav-item has-treeview @yield('paymentmgt_mo')">
+                        <a href="#" class="nav-link @yield('paymentmgt')">
+                            <i class="nav-icon fas fa-money-bill"></i>
 
                             <p>
-                                Accounting
+                                Payment Management
                                 <i class="fas fa-angle-left right"></i>
                                 {{--<span class="badge badge-info right">6</span>--}}
                             </p>
@@ -240,7 +239,22 @@
                                     <p>Manage User's Ledger</p>
                                 </a>
                             </li>
-                            <div class="dropdown-divider"></div>
+                        </ul>
+                    </li>
+                @endcan
+                @can('AccountMgtAccess')
+                    <li class="nav-item has-treeview @yield('accounting_mo')">
+                        <a href="#" class="nav-link @yield('accounting')">
+                            {{--<i class="nav-icon fas fa-file-import"></i>--}}
+                            <i class="nav-icon fas fa-calculator"></i>
+
+                            <p>
+                                Accounting
+                                <i class="fas fa-angle-left right"></i>
+                                {{--<span class="badge badge-info right">6</span>--}}
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
                             <li class="nav-item">
                                 <a href="{{ url('bank_account') }}" class="nav-link @yield('manage_account')">
                                     <i class="far fa-circle nav-icon"></i>
