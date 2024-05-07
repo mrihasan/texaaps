@@ -2,7 +2,7 @@
 @section('product_mo','menu-open')
 @section('product','active')
 @section('manage_product','active')
-@section('title','Product ')
+@section('title',$product->title)
 @section('breadcrumb')
     <li class="nav-item d-none d-sm-inline-block">
         <a href="{{url('product')}}" class="nav-link">{{ __('all_settings.Product') }}</a>
@@ -123,19 +123,23 @@
                     <table class="table dataTables table-striped table-bordered table-hover tab_4_table">
                         <thead>
                         <tr>
-                            <th>{{ __('all_settings.Transaction') }}<br/>Code</th>
-                            <th>{{ __('all_settings.Transaction') }}<br/>Date</th>
-                            <th>{{ __('all_settings.Transaction') }}<br/>Type</th>
+                            <th>{{ __('all_settings.Transaction') }}<br/> Code</th>
+                            <th>{{ __('all_settings.Transaction') }}<br/> Date</th>
+                            <th>{{ __('all_settings.Transaction') }}<br/> Type</th>
                             <th>Product</th>
-                            <th>qty</th>
+                            <th>Brand</th>
+                            <th>Model</th>
                             <th>Unit</th>
-                            <th>MRP<br/>Unit</th>
+                            <th>qty</th>
+                            <th>MRP<br/> Unit</th>
                             {{--<th>Discount<br/>Total</th>--}}
-                            <th>Line<br/>Total</th>
+                            <th>Line<br/> Total</th>
                         </tr>
                         </thead>
                         <tfoot>
                         <tr>
+                            <td></td>
+                            <td></td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -148,17 +152,19 @@
                         </tfoot>
                         @foreach($product->inventory_details as $stu)
                             <tr>
-                                <td>{{$stu->invoice->transaction_code}}
+                                <td>
                                     <a href="{{ url('invoice/' . $stu->invoice->id ) }}" class="btn btn-success btn-xs"
-                                       title="Show"><span class="far fa-eye" aria-hidden="true"></span></a>
+                                       title="Show"><span class="far fa-eye" aria-hidden="true"></span></a> {{$stu->invoice->sl_no}}
                                 </td>
                                 <td>{{Carbon\Carbon::parse($stu->transaction_date)->format('d-M-Y')}}</td>
                                 <td>{{$stu->transaction_type}}</td>
-                                <td>{{$stu->product->title}}</td>
-                                <td style="text-align: right">{{$stu->qty}}</td>
-                                <td style="text-align: right">{{$stu->unit_name}}</td>
+                                <td>{{$stu->product->title??''}}</td>
+                                <td>{{$stu->brand->title??''}}</td>
+                                <td>{{$stu->model??''}}</td>
+                                <td style="text-align: right">{{$stu->unit_name??''}}</td>
+                                <td style="text-align: right">{{$stu->qty??''}}</td>
                                 <td style="text-align: right">{{($stu->transaction_type=='Sales')?$stu->usell_price:$stu->ubuy_price}}</td>
-                                <td style="text-align: right">{{$stu->line_total}}</td>
+                                <td style="text-align: right">{{$stu->line_total??''}}</td>
                             </tr>
                         @endforeach
                     </table>
@@ -250,7 +256,7 @@
                 {extend: 'csv'},
                 {
                     extend: 'excel', title: '{{ config('app.name', 'EIS') }}',
-                    messageTop: ' Product Type   '
+                    messageTop: '{{$product->title}} '
                 },
                     {{--{extend: 'pdf', title: 'DVL Transaction Data',--}}
                     {{--messageTop: 'Commission Report of {{entryBy($partner_id).' '. $title_date_range}} ',--}}
@@ -263,11 +269,11 @@
                     className: 'btn  btn-sm btn-table',
                     titleAttr: 'Export to Pdf',
                     text: '<span class="fa fa-file-pdf-o fa-lg"></span><i class="hidden-xs hidden-sm hidden-md"> Pdf</i>',
-                    filename: 'Product Type ',
+                    filename: '{{$product->title}}',
                     extension: '.pdf',
-//                    orientation : 'landscape',
-                    orientation: 'portrait',
-                    title: "Product Type ",
+                    orientation : 'landscape',
+//                    orientation: 'portrait',
+                    title: "{{$product->title}}",
                     footer: true,
                     exportOptions: {
                         columns: ':visible:not(.not-export-col)',
@@ -286,14 +292,15 @@
                             doc.content[1].table.body[i][0].alignment = 'center';
                             doc.content[1].table.body[i][1].alignment = 'left';
                             doc.content[1].table.body[i][2].alignment = 'left';
-//                            doc.content[1].table.body[i][3].alignment = 'left';
-//                            doc.content[1].table.body[i][4].alignment = 'right';
-//                            doc.content[1].table.body[i][5].alignment = 'right';
-//                            doc.content[1].table.body[i][6].alignment = 'right';
-//                            doc.content[1].table.body[i][7].alignment = 'left';
-//                            doc.content[1].table.body[i][8].alignment = 'left';
+                            doc.content[1].table.body[i][3].alignment = 'left';
+                            doc.content[1].table.body[i][4].alignment = 'left';
+                            doc.content[1].table.body[i][5].alignment = 'left';
+                            doc.content[1].table.body[i][6].alignment = 'right';
+                            doc.content[1].table.body[i][7].alignment = 'right';
+                            doc.content[1].table.body[i][8].alignment = 'right';
+                            doc.content[1].table.body[i][9].alignment = 'right';
                         }
-                        doc.content[1].table.widths = ['10%', '50%', '40%'];
+                        doc.content[1].table.widths = ['10%', '10%', '7%','18%', '10%', '15%','5%', '5%', '10%', '10%'];
 //                        doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
                         doc.content.splice(0, 1);
                         var now = new Date();
@@ -313,18 +320,17 @@
                                     {
                                         alignment: 'left',
                                         italics: true,
-                                        text: 'Product Type ',
+                                        text: '{{$product->title}}',
                                         fontSize: 10,
                                         margin: [10, 0]
                                     },
-                                    {
+//                                    {
                                         //image: logo,
-                                        alignment: 'center',
-                                        width: 20,
-                                        height: 20,
+//                                        alignment: 'center',
+//                                        width: 20,
+//                                        height: 20,
                                         {{--image: 'data:image/png;base64,{{$settings->logo_base64}}'--}}
-
-                                    },
+//                                    },
 
                                     {
                                         alignment: 'right',
@@ -376,7 +382,7 @@
                 {
                     extend: 'print',
                     footer: true,
-                    messageTop: 'Product Type  ',
+                    messageTop: '{{$product->title}}',
                     messageBottom: '{{'Printed On: '.\Carbon\Carbon::now()->format(' D, d-M-Y, h:ia')}}',
                     customize: function (win) {
                         $(win.document.body).addClass('white-bg');
@@ -386,7 +392,25 @@
                             .css('font-size', 'inherit');
                     }
                 }
-            ]
+            ],
+            "footerCallback": function (row, data, start, end, display) {
+                var api = this.api();
+                nb_cols = api.columns().nodes().length ;
+//                nb_cols = 8;
+                var j = 7;
+                while (j < nb_cols) {
+                    var pageTotal = api
+                        .column(j, {page: 'current'})
+                        .data()
+                        .reduce(function (a, b) {
+                            return (Number(a) + Number(b)).toFixed(0);
+                        }, 0);
+                    // Update footer
+                    $(api.column(j).footer()).html(pageTotal);
+                    j++;
+                }
+            }
+
 
         });
     });

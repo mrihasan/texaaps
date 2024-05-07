@@ -192,16 +192,16 @@
                              alert(‘Il valore inserito è numerico’);
                              }*/
                             doc.content[1].table.body[i][0].alignment = 'center';
-                            doc.content[1].table.body[i][1].alignment = 'left';
+                            doc.content[1].table.body[i][1].alignment = 'right';
                             doc.content[1].table.body[i][2].alignment = 'left';
-                            doc.content[1].table.body[i][3].alignment = 'right';
+                            doc.content[1].table.body[i][3].alignment = 'left';
                             doc.content[1].table.body[i][4].alignment = 'right';
-                            doc.content[1].table.body[i][5].alignment = 'left';
-//                            doc.content[1].table.body[i][6].alignment = 'center';
+                            doc.content[1].table.body[i][5].alignment = 'right';
+                            doc.content[1].table.body[i][6].alignment = 'left';
 //                            doc.content[1].table.body[i][7].alignment = 'left';
 //                            doc.content[1].table.body[i][8].alignment = 'left';
                         }
-                        doc.content[1].table.widths = ['10%', '15%', '25%', '15%', '15%', '20%'];
+                        doc.content[1].table.widths = ['10%','5%', '15%', '20%', '15%', '15%', '20%'];
 //                        doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
                         doc.content.splice(0, 1);
                         var now = new Date();

@@ -12,6 +12,10 @@ class InvoiceDetail extends Model
     {
         return $this->belongsTo(Product::class);
     }
+    public function brand()
+    {
+        return $this->belongsTo(Brand::class);
+    }
     public function invoice()
     {
         return $this->belongsTo(Invoice::class);
