@@ -347,6 +347,9 @@
                                         @if($payment_request->user->employee && ($payment_request->user->imageprofile->sign!='default_sign'||$payment_request->user->imageprofile->sign!=null))
                                             <img src="{!! asset( 'storage/sign/'. $payment_request->user->imageprofile->sign. '?'. 'time='. time()) !!}"
                                                  class="img-fluid" alt="Sign Image">
+                                        @else
+                                            <img src="{!! asset( 'storage/sign/blank_sign.png'. '?'. 'time='. time()) !!}"
+                                                 class="img-fluid" alt="Sign Image">
                                         @endif
 
                                         <address>
@@ -363,6 +366,9 @@
                                         @if($payment_request->user->employee && $payment_request->checked_by!=null && ($payment_request->checkedBy->employee->user->imageprofile->sign!='default_sign'||$payment_request->checkedBy->employee->user->imageprofile->sign!=null))
                                             <img src="{!! asset( 'storage/sign/'. $payment_request->checkedBy->employee->user->imageprofile->sign. '?'. 'time='. time()) !!}"
                                                  class="img-fluid" alt="Sign Image">
+                                            @else
+                                            <img src="{!! asset( 'storage/sign/blank_sign.png'. '?'. 'time='. time()) !!}"
+                                                 class="img-fluid" alt="Sign Image">
                                         @endif
                                         <address>
                                             ______________________<br/>
@@ -377,6 +383,9 @@
                                         Approved By<br/><br/>
                                         @if($payment_request->user->employee && $payment_request->approved_by!=null && ($payment_request->approvedBy->employee->user->imageprofile->sign!='default_sign'||$payment_request->approvedBy->employee->user->imageprofile->sign!=null))
                                             <img src="{!! asset( 'storage/sign/'. $payment_request->approvedBy->employee->user->imageprofile->sign. '?'. 'time='. time()) !!}"
+                                                 class="img-fluid" alt="Sign Image">
+                                        @else
+                                            <img src="{!! asset( 'storage/sign/blank_sign.png'. '?'. 'time='. time()) !!}"
                                                  class="img-fluid" alt="Sign Image">
                                         @endif
 

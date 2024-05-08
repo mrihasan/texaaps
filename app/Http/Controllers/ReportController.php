@@ -483,9 +483,10 @@ class ReportController extends Controller
         $mindate_salary = DB::table('employee_salaries')->MIN('created_at');
 
 //        $before1day = new DateTime($start_date);
-//        $before1day->sub(new DateInterval('P1D'));
+//        $dateObject=$before1day->sub(new DateInterval('P1D'));
+//        $before1day=$dateObject->format('Y-m-d'). ' 23:59:59';
         $before1day = date('Y-m-d H:i:s', strtotime($start_date . ' -1 second'));
-//        dd($end_of_day);
+//        dd($before1day);
 
         //        expense b/d = brought down
         $bd_total_expense = DB::table('expenses')

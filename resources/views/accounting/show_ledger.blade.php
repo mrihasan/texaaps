@@ -15,6 +15,58 @@
 <link rel="stylesheet" href="{{ asset('supporting/dataTables/bs4/datatables.min.css') }}">
 <link rel="stylesheet" href="{{ asset('supporting/dataTables/fixedHeader.dataTables.min.css') }}">
 <link rel="stylesheet" href="{{ asset('supporting/sweetalert/sweetalert2.css') }}">
+<style>
+    @media print {
+        .pagebreak {
+            page-break-before: always;
+        }
+
+        body {
+            background: none;
+            -ms-zoom: 1.665;
+        }
+
+        div.portrait, div.landscape {
+            margin: 0;
+            padding: 0;
+            border: none;
+            background: none;
+        }
+
+        div.landscape {
+            transform: rotate(270deg) translate(-276mm, 0);
+            transform-origin: 0 0;
+        }
+
+    }
+
+    table {
+        border-collapse: collapse;
+    }
+
+    table, th, td {
+        border: 1px solid gray;
+        padding: 4px;
+    }
+
+    table.center {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    @media print {
+        body {
+            margin: 0;
+            padding: 0;
+            size: A4 portrait;
+        }
+
+        /* Adjust margins to fit content within A4 size */
+        @page {
+            margin: 20mm; /* Adjust as needed */
+        }
+    }
+</style>
 
 @endpush
 @section('maincontent')
@@ -33,8 +85,27 @@
 
             <div class="tab-content">
                 <div class="active tab-pane" id="custom-tabs-one-home">
-                    <table class="table table-bordered table-striped" id="print_this0">
+                    <table class="table table-striped" id="print_this0" width="90%" style="border: none">
                         <tbody>
+                        <tr style="border: none">
+                            <td style="border: none" colspan="3"><img
+                                        src="{!! asset( 'storage/images/pad_top.png'. '?'. 'time='. time()) !!}"
+                                        width="25%"
+                                        class="" style="border: none"></td>
+                        </tr>
+                        <tr style="border: none">
+                            <td style="border: none" colspan="3">
+                                <h3 style="text-align: center">
+                                @if($ledger->transaction_type_id==4)
+                                    Payment Voucher
+                                    @elseif($ledger->transaction_type_id==3)
+                                    Receipt Voucher
+                                    @else
+                                @endif
+                                </h3>
+                            </td>
+                        </tr>
+
                         <tr>
                             <th>
                                 ID
@@ -187,10 +258,13 @@
                             </td>
                         </tr>
                         <tr style="border: none">
-                            <td style="text-align:left; border: none" width="35%">
+                            <td style="text-align:left; border: none" width="35%" >
                                 Prepared by<br/><br/>
                                 @if($ledger->entryby->employee && ($ledger->entryby->imageprofile->sign!='default_sign'||$ledger->entryby->imageprofile->sign!=null))
                                     <img src="{!! asset( 'storage/sign/'. $ledger->entryby->imageprofile->sign. '?'. 'time='. time()) !!}"
+                                         class="img-fluid" alt="Sign Image">
+                                @else
+                                    <img src="{!! asset( 'storage/sign/blank_sign.png'. '?'. 'time='. time()) !!}"
                                          class="img-fluid" alt="Sign Image">
                                 @endif
 
@@ -208,6 +282,9 @@
                                 @if( $ledger->checked_by!=null && $ledger->checkedBy->employee && ($ledger->checkedBy->imageprofile->sign!='default_sign'||$ledger->checkedBy->imageprofile->sign!=null))
                                     <img src="{!! asset( 'storage/sign/'. $ledger->checkedBy->employee->user->imageprofile->sign. '?'. 'time='. time()) !!}"
                                          class="img-fluid" alt="Sign Image">
+                                @else
+                                    <img src="{!! asset( 'storage/sign/blank_sign.png'. '?'. 'time='. time()) !!}"
+                                         class="img-fluid" alt="Sign Image">
                                 @endif
                                 <address>
                                     ______________________<br/>
@@ -222,6 +299,9 @@
                                 Approved By<br/><br/>
                                 @if($ledger->approved_by!=null && $ledger->approvedBy->employee && ($ledger->approvedBy->imageprofile->sign!='default_sign'||$ledger->approvedBy->imageprofile->sign!=null))
                                     <img src="{!! asset( 'storage/sign/'. $ledger->approvedBy->imageprofile->sign. '?'. 'time='. time()) !!}"
+                                         class="img-fluid" alt="Sign Image">
+                                @else
+                                    <img src="{!! asset( 'storage/sign/blank_sign.png'. '?'. 'time='. time()) !!}"
                                          class="img-fluid" alt="Sign Image">
                                 @endif
 
