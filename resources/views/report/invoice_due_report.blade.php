@@ -73,6 +73,9 @@
                                     {{ Carbon\Carbon::parse($data['invoice']->transaction_date)->diffInDays(); }}
                                 </td>
                                 <td>
+                                    <a href="{{ route('invoice.show',$data['invoice']->id) }}" class="btn btn-success btn-xs"
+                                       title="Invoice View"><span class="far fa-eye"
+                                                                       aria-hidden="true"></span></a>
                                     {{ $data['invoice']->sl_no }}
                                 </td>
                                 <td>

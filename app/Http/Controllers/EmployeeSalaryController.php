@@ -16,6 +16,7 @@ use DB;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Gate;
+use DateTime;
 
 class EmployeeSalaryController extends Controller
 {
@@ -55,7 +56,7 @@ class EmployeeSalaryController extends Controller
         $account = branch_list();
         $transaction_methods = transaction_method();
         $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
-        return view('employee_salary.create_bonus', compact('user', 'current_month', 'account','transaction_methods','to_accounts'));
+        return view('employee_salary.create_bonus', compact('user', 'current_month', 'account', 'transaction_methods', 'to_accounts'));
 
     }
 
@@ -83,6 +84,7 @@ class EmployeeSalaryController extends Controller
             'branch' => 'required',
             'bank_account' => 'required',
             'transaction_method' => 'required',
+            'create_date' => 'required',
         ]);
 
         if ($request->salary_type == 'Salary') {
@@ -126,6 +128,10 @@ class EmployeeSalaryController extends Controller
 
         try {
             DB::transaction(function () use ($request) {
+                $create_date = date('Y-m-d', strtotime($request->create_date)) . date(' H:i:s');
+                $td = new DateTime($create_date);
+                $sl_no = createSl('TA-ESP-', 'employee_salaries', 'created_at', $td);
+
                 $transaction_code = autoTimeStampCode('ESP');
 
                 $items = new EmployeeSalary();
@@ -133,6 +139,7 @@ class EmployeeSalaryController extends Controller
                 $items->user_id = $request->user_id;
                 $items->branch_id = $request->branch;
                 $items->transaction_code = $transaction_code;
+                $items->sl_no = $sl_no;
                 $items->salary_month = $request->salary_month;
                 $items->year = $request->year;
                 $items->holiday_weekend = $request->holiday_weekend;
@@ -151,6 +158,7 @@ class EmployeeSalaryController extends Controller
                 $ledger->transaction_method_id = $request->transaction_method;
                 $ledger->transaction_date = date('Y-m-d H:i:s', strtotime($request->create_date));
                 $ledger->transaction_code = $transaction_code;
+                $ledger->sl_no = $sl_no;
                 $ledger->amount = $request->paidsalary_amount;
                 $ledger->comments = $request->salary_type . ' of ' . entryBy($request->user_id) . ' for ' . date("F", mktime(0, 0, 0, $request->salary_month, 10)) . ' - ' . $request->year;
                 $ledger->entry_by = Auth::user()->id;
@@ -161,6 +169,7 @@ class EmployeeSalaryController extends Controller
                 $ledger_branch->branch_id = $request->branch;
                 $ledger_branch->transaction_date = date('Y-m-d H:i:s', strtotime($request->create_date));
                 $ledger_branch->transaction_code = $transaction_code;
+                $ledger_branch->sl_no = $sl_no;
                 $ledger_branch->amount = $request->paidsalary_amount;
                 $ledger_branch->transaction_type_id = 4; //4=payzment
                 $ledger_branch->transaction_method_id = $request->transaction_method;
@@ -175,6 +184,7 @@ class EmployeeSalaryController extends Controller
                 $ledger_banking->branch_id = $request->branch;
                 $ledger_banking->bank_account_id = $request->bank_account;
                 $ledger_banking->transaction_code = $transaction_code;
+                $ledger_banking->sl_no = $sl_no;
                 $ledger_banking->transaction_date = date('Y-m-d', strtotime($request->create_date)) . date(' H:i:s');
                 $ledger_banking->transaction_method_id = $request->transaction_method;
                 $ledger_banking->transaction_type_id = 4; //4=payzment
@@ -235,11 +245,16 @@ class EmployeeSalaryController extends Controller
             } else
                 $employees = Employee::where('religion', $request->religion)->where('last_working_day', null)->get();
         } else {
-
+            $employees = '';
+            \Session::flash('flash_error', 'Error');
+            return Redirect::back();
         }
 //        dd($employees->count());
         if ($employees->count() > 0) {
             for ($i = 0; $i < $employees->count(); $i++) {
+                $td = new DateTime();
+                $sl_no = createSl('TA-ESP-', 'employee_salaries', 'created_at', $td);
+
                 $transaction_code = autoTimeStampCode('ESP');
 //dd($transaction_code);
                 $items = new EmployeeSalary();
@@ -250,6 +265,7 @@ class EmployeeSalaryController extends Controller
                 $items->year = $request->year;
                 $items->salary_amount = ($request->type == 'Bonus Payslip') ? ($employees[$i]->salary_amount * $employees[$i]->bonus_amount) / 100 : $employees[$i]->salary_amount;
                 $items->transaction_code = $transaction_code;
+                $items->Sl_no = $sl_no;
                 $items->entry_by = Auth::user()->id;
                 $items->save();
 
@@ -260,6 +276,7 @@ class EmployeeSalaryController extends Controller
                 $ledger->transaction_method_id = 5;
                 $ledger->transaction_date = date('Y-m-d H:i:s');
                 $ledger->transaction_code = $transaction_code;
+                $ledger->sl_no = $sl_no;
                 $ledger->amount = ($request->type == 'Bonus Payslip') ? ($employees[$i]->salary_amount * $employees[$i]->bonus_amount) / 100 : $employees[$i]->salary_amount;
                 $ledger->comments = $request->type . ' of ' . date("F", mktime(0, 0, 0, $request->salary_month, 10)) . ' - ' . $request->year;
                 $ledger->entry_by = Auth::user()->id;
@@ -306,6 +323,8 @@ class EmployeeSalaryController extends Controller
                 return Redirect::back();
             }
         }
+        $td = new DateTime();
+        $sl_no = createSl('TA-ESP-', 'employee_salaries', 'created_at', $td);
 
         $transaction_code = autoTimeStampCode('ESP');
         $employees = Employee::where('user_id', $request->user_id)->first();
@@ -318,6 +337,7 @@ class EmployeeSalaryController extends Controller
         $items->year = $request->year;
         $items->salary_amount = ($request->type == 'Bonus Payslip') ? ($employees->salary_amount * $employees->bonus_amount) / 100 : $employees->salary_amount;
         $items->transaction_code = $transaction_code;
+        $items->sl_no = $sl_no;
         $items->entry_by = Auth::user()->id;
         $items->save();
 
@@ -328,6 +348,7 @@ class EmployeeSalaryController extends Controller
         $ledger->transaction_method_id = 5;
         $ledger->transaction_date = date('Y-m-d H:i:s');
         $ledger->transaction_code = $transaction_code;
+        $ledger->sl_no = $sl_no;
         $ledger->amount = ($request->type == 'Bonus Payslip') ? ($employees->salary_amount * $employees->bonus_amount) / 100 : $employees->salary_amount;
         $ledger->comments = $request->type . ' of ' . date("F", mktime(0, 0, 0, $request->salary_month, 10)) . ' - ' . $request->year;
         $ledger->entry_by = Auth::user()->id;
@@ -349,7 +370,7 @@ class EmployeeSalaryController extends Controller
     {
 //        dd($employee_salary);
 //        abort_if(Gate::denies('employee-salary'), redirect('error'));
-        if ($employee_salary->type == 'Salary Payslip' ||$employee_salary->type == 'Bonus Payslip') {
+        if ($employee_salary->type == 'Salary Payslip' || $employee_salary->type == 'Bonus Payslip') {
             return view('employee_salary.edit_payslip', compact('employee_salary'));
         } else {
 
@@ -365,7 +386,7 @@ class EmployeeSalaryController extends Controller
     public function update(Request $request, $id)
     {
 //        abort_if(Gate::denies('employee-salary'), redirect('error'));
-        if ($request->salary_type == 'Salary Payment'||$request->salary_type == 'Bonus Payment') {
+        if ($request->salary_type == 'Salary Payment' || $request->salary_type == 'Bonus Payment') {
             $this->validate($request, [
                 'salary_month' => 'required',
                 'year' => 'required',
@@ -386,9 +407,9 @@ class EmployeeSalaryController extends Controller
                     $salary_payment = EmployeeSalary::where('type', 'Salary Payment')->where('user_id', $items->user_id)
                         ->where('salary_month', (int)$request->salary_month)->where('year', (int)$request->year)
                         ->sum('paidsalary_amount');
-                    $rest_salary = ($salary_payslip->salary_amount) - ($salary_payment-$items->paidsalary_amount);
+                    $rest_salary = ($salary_payslip->salary_amount) - ($salary_payment - $items->paidsalary_amount);
                     if ($request->paidsalary_amount > $rest_salary) {
-                        \Session::flash('flash_error', 'You can not pay more then the Payslip amount of '.$salary_payslip->salary_amount);
+                        \Session::flash('flash_error', 'You can not pay more then the Payslip amount of ' . $salary_payslip->salary_amount);
                         return Redirect::back();
                     }
                 }
@@ -404,11 +425,31 @@ class EmployeeSalaryController extends Controller
                     $salary_payment = EmployeeSalary::where('type', 'Bonus Payment')->where('user_id', $items->user_id)
                         ->where('salary_month', (int)$request->salary_month)->where('year', (int)$request->year)
                         ->sum('paidsalary_amount');
-                    $rest_salary = ($salary_payslip->salary_amount) - ($salary_payment-$items->paidsalary_amount);
+                    $rest_salary = ($salary_payslip->salary_amount) - ($salary_payment - $items->paidsalary_amount);
                     if ($request->paidsalary_amount > $rest_salary) {
-                        \Session::flash('flash_error', 'You can not pay more then the Payslip amount of '.$salary_payslip->salary_amount);
+                        \Session::flash('flash_error', 'You can not pay more then the Payslip amount of ' . $salary_payslip->salary_amount);
                         return Redirect::back();
                     }
+                }
+            }
+
+            $inputDate = $request->create_date;
+            $givenDate = $items->create_date;
+            $sl_no = null;
+            if ($inputDate) {
+                // Create DateTime objects for comparison
+                $inputDateTime = new DateTime($inputDate);
+                $givenDateTime = new DateTime($givenDate);
+                // Extract month and year components
+                $inputMonthYear = $inputDateTime->format('Y-m');
+                $givenMonthYear = $givenDateTime->format('Y-m');
+                $ledger_date = date('Y-m-d', strtotime($request->create_date)) . date(' H:i:s');
+                $td = new DateTime($ledger_date);
+                // Compare the month and year
+                if (($inputMonthYear != $givenMonthYear) || $items->sl_no == null) {
+                    $sl_no = createSl('TA-ESP-', 'employee_salaries', 'created_at', $td);
+                } else {
+                    $sl_no = $items->sl_no;
                 }
             }
 
@@ -421,8 +462,9 @@ class EmployeeSalaryController extends Controller
             $items->working_day = $request->working_day;
             $items->absent_day = $request->absent_day;
             $items->paidsalary_amount = $request->paidsalary_amount;
-            $items->created_at = date('Y-m-d H:i:s', strtotime($request->create_date));
+            $items->created_at = date('Y-m-d', strtotime($request->create_date)) . date(' H:i:s');
             $items->updated_by = Auth::user()->id;
+            $items->sl_no = $sl_no;
             $items->save();
 
 
@@ -432,8 +474,9 @@ class EmployeeSalaryController extends Controller
             $ledger->branch_id = $request->branch;
             $ledger->transaction_type_id = 4; //4=payment
             $ledger->transaction_method_id = $request->transaction_method;
-            $ledger->transaction_date = date('Y-m-d H:i:s', strtotime($request->create_date));
+            $ledger->transaction_date = date('Y-m-d', strtotime($request->create_date)) . date(' H:i:s');
             $ledger->transaction_code = $items->transaction_code;
+            $ledger->sl_no = $items->sl_no;
             $ledger->amount = $request->paidsalary_amount;
             $ledger->comments = $request->salary_type . ' of ' . entryBy($request->user_id) . ' for ' . date("F", mktime(0, 0, 0, $request->salary_month, 10)) . ' - ' . $request->year;
             $ledger->entry_by = $items->entry_by;
@@ -446,8 +489,9 @@ class EmployeeSalaryController extends Controller
             $del_bl = DB::table('branch_ledgers')->where('transaction_code', $items->transaction_code)->delete();
             $ledger_branch = new BranchLedger();
             $ledger_branch->branch_id = $request->branch;
-            $ledger_branch->transaction_date = date('Y-m-d H:i:s', strtotime($request->create_date));
+            $ledger_branch->transaction_date = date('Y-m-d', strtotime($request->create_date)) . date(' H:i:s');
             $ledger_branch->transaction_code = $items->transaction_code;
+            $ledger_branch->sl_no = $items->sl_no;
             $ledger_branch->amount = $request->paidsalary_amount;
             $ledger_branch->transaction_type_id = 4; //4=payzment
             $ledger_branch->transaction_method_id = $request->transaction_method;
@@ -465,6 +509,7 @@ class EmployeeSalaryController extends Controller
             $ledger_banking->branch_id = $request->branch;
             $ledger_banking->bank_account_id = $request->bank_account;
             $ledger_banking->transaction_code = $items->transaction_code;
+            $ledger_banking->sl_no = $items->sl_no;
             $ledger_banking->transaction_date = date('Y-m-d', strtotime($request->create_date)) . date(' H:i:s');
             $ledger_banking->transaction_method_id = $request->transaction_method;
             $ledger_banking->transaction_type_id = 4; //4=payzment
@@ -477,19 +522,42 @@ class EmployeeSalaryController extends Controller
             $ledger_banking->reftbl = 'employee_salaries';
             $ledger_banking->reftbl_id = $items->id;
             $ledger_banking->save();
-        } elseif ($request->salary_type == 'Salary Payslip'||$request->salary_type == 'Bonus Payslip') {
+        } elseif ($request->salary_type == 'Salary Payslip' || $request->salary_type == 'Bonus Payslip') {
             $this->validate($request, [
                 'salary_month' => 'required',
                 'year' => 'required',
                 'salary_amount' => 'required|numeric|between:0,99999999.99',
             ]);
 
+
             $items = EmployeeSalary::find($id);
+
+            $inputDate = $request->create_date;
+            $givenDate = $items->create_date;
+            $sl_no = null;
+            if ($inputDate) {
+                // Create DateTime objects for comparison
+                $inputDateTime = new DateTime($inputDate);
+                $givenDateTime = new DateTime($givenDate);
+                // Extract month and year components
+                $inputMonthYear = $inputDateTime->format('Y-m');
+                $givenMonthYear = $givenDateTime->format('Y-m');
+                $ledger_date = date('Y-m-d', strtotime($request->create_date)) . date(' H:i:s');
+                $td = new DateTime($ledger_date);
+                // Compare the month and year
+                if (($inputMonthYear != $givenMonthYear) || $items->sl_no == null) {
+                    $sl_no = createSl('TA-ESP-', 'employee_salaries', 'created_at', $td);
+                } else {
+                    $sl_no = $items->sl_no;
+                }
+            }
+
             $items->salary_month = $request->salary_month;
             $items->year = $request->year;
             $items->salary_amount = $request->salary_amount;
-            $items->created_at = date('Y-m-d H:i:s', strtotime($request->create_date));
+            $items->created_at = date('Y-m-d', strtotime($request->create_date)) . date(' H:i:s');
             $items->updated_by = Auth::user()->id;
+            $items->sl_no = $sl_no;
             $items->save();
 
             $del_l = DB::table('ledgers')->where('transaction_code', $items->transaction_code)->delete();
@@ -498,8 +566,9 @@ class EmployeeSalaryController extends Controller
             $ledger->branch_id = $items->branch_id;
             $ledger->transaction_type_id = 7; //7=payslip
             $ledger->transaction_method_id = 5;
-            $ledger->transaction_date = date('Y-m-d H:i:s', strtotime($request->create_date));
+            $ledger->transaction_date = date('Y-m-d', strtotime($request->create_date)) . date(' H:i:s');
             $ledger->transaction_code = $items->transaction_code;
+            $ledger->sl_no = $items->sl_no;
             $ledger->amount = $request->salary_amount;
             $ledger->comments = $request->salary_type . ' of ' . entryBy($items->user_id) . ' for ' . date("F", mktime(0, 0, 0, $request->salary_month, 10)) . ' - ' . $request->year;
             $ledger->entry_by = $items->entry_by;

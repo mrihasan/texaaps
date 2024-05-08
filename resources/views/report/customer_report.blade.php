@@ -30,7 +30,7 @@
                     <th width="5%">Last Transaction<br/> Date</th>
                     <th width="5%">Last Transaction<br/> Type</th>
                     <th width="5%">Last Transaction<br/> Amount</th>
-                    <th width="5%">Balance<br/>Amount</th>
+                    <th width="5%">Balance<br/> Amount</th>
                     {{--<th width="5%">Action</th>--}}
                 </tr>
                 </thead>
@@ -44,7 +44,7 @@
                     <th style="text-align:right"></th>
                     <th style="text-align:right"></th>
                     <th style="text-align:right"></th>
-                    {{--<th style="text-align:right"></th>--}}
+                    <th style="text-align:right"></th>
                 </tr>
                 </tfoot>
 
@@ -84,6 +84,16 @@
             fixedHeader: true,
 //            dom: '<"html5buttons"B>lTfgtip',
             'dom': "<'row'<'col-sm-12 col-md-4'l><'col-sm-12 col-md-4'B><'col-sm-12 col-md-4'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+            columnDefs: [
+//                { targets: [ 0,1,2,3,4, 5, 6, 7, 8, 9 ], className: 'dt-head text-center'  },
+//                { targets: [0,1,2,3,4, 5,6,7 ], className: 'text-center' },
+                {targets: [0], className: 'text-center'},
+//                {targets: [4], className: 'text-right'},
+                {
+                    targets: [6,7],
+                    render: $.fn.dataTable.render.number(',', '.', 0, '')
+                }
+            ],
 
             buttons: [
                 {extend: 'copy'},
@@ -105,8 +115,8 @@
                     text: '<span class="fa fa-file-pdf-o fa-lg"></span><i class="hidden-xs hidden-sm hidden-md"> Pdf</i>',
                     filename: '{{$header_title}}',
                     extension: '.pdf',
-                    orientation: 'landscape',
-//                    orientation: 'portrait',
+//                    orientation: 'landscape',
+                    orientation: 'portrait',
                     title: "{{$header_title}}",
                     footer: true,
                     exportOptions: {
@@ -131,13 +141,13 @@
                             doc.content[1].table.body[i][5].alignment = 'right';
                             doc.content[1].table.body[i][6].alignment = 'right';
                             doc.content[1].table.body[i][7].alignment = 'right';
-                            doc.content[1].table.body[i][8].alignment = 'right';
-                            doc.content[1].table.body[i][9].alignment = 'right';
+//                            doc.content[1].table.body[i][8].alignment = 'right';
+//                            doc.content[1].table.body[i][9].alignment = 'right';
 //                            doc.content[1].table.body[i][10].alignment = 'right';
 //                            doc.content[1].table.body[i][11].alignment = 'center';
 //                            doc.content[1].table.body[i][12].alignment = 'center';
                         }
-                        doc.content[1].table.widths = ['5%', '10%', '10%', '15%', '10%', '10%', '10%', '10%', '10%', '10%'];
+                        doc.content[1].table.widths = ['5%', '20%', '10%', '25%', '10%', '10%', '10%', '10%'];
 //                        doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
                         doc.content.splice(0, 1);
                         var now = new Date();
@@ -236,15 +246,15 @@
             ],
             "footerCallback": function (row, data, start, end, display) {
                 var api = this.api();
-//                nb_cols = api.columns().nodes().length;
-                nb_cols = 10;
+                nb_cols = api.columns().nodes().length;
+//                nb_cols = 10;
                 var j = 6;
                 while (j < nb_cols) {
                     var pageTotal = api
                         .column(j, {page: 'current'})
                         .data()
                         .reduce(function (a, b) {
-                            return (Number(a) + Number(b)).toFixed(2);
+                            return (Number(a) + Number(b)).toFixed(0);
                         }, 0);
                     // Update footer
                     $(api.column(j).footer()).html(pageTotal);
