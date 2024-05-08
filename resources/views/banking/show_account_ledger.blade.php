@@ -35,6 +35,13 @@
                 <div class="active tab-pane" id="custom-tabs-one-home">
                     <table class="table table-bordered table-striped" id="print_this0">
                         <tbody>
+                        <tr style="border: none">
+                            <td style="border: none" colspan="3"><img
+                                        src="{!! asset( 'storage/images/pad_top.png'. '?'. 'time='. time()) !!}"
+                                        width="25%"
+                                        class="" style="border: none"></td>
+                        </tr>
+
                         <tr>
                             <th>
                                 ID
@@ -177,6 +184,9 @@
                                 @if($bank_ledger->entryby->employee && ($bank_ledger->entryby->imageprofile->sign!='default_sign'||$bank_ledger->entryby->imageprofile->sign!=null))
                                     <img src="{!! asset( 'storage/sign/'. $bank_ledger->entryby->imageprofile->sign. '?'. 'time='. time()) !!}"
                                          class="img-fluid" alt="Sign Image">
+                                @else
+                                    <img src="{!! asset( 'storage/sign/blank_sign.png'. '?'. 'time='. time()) !!}"
+                                         class="img-fluid" alt="Sign Image">
                                 @endif
 
                                 <address>
@@ -193,6 +203,9 @@
                                 @if( $bank_ledger->checked_by!=null && $bank_ledger->checkedBy->employee && ($bank_ledger->checkedBy->imageprofile->sign!='default_sign'||$bank_ledger->checkedBy->imageprofile->sign!=null))
                                     <img src="{!! asset( 'storage/sign/'. $bank_ledger->checkedBy->employee->user->imageprofile->sign. '?'. 'time='. time()) !!}"
                                          class="img-fluid" alt="Sign Image">
+                                @else
+                                    <img src="{!! asset( 'storage/sign/blank_sign.png'. '?'. 'time='. time()) !!}"
+                                         class="img-fluid" alt="Sign Image">
                                 @endif
                                 <address>
                                     ______________________<br/>
@@ -207,6 +220,9 @@
                                 Approved By<br/><br/>
                                 @if($bank_ledger->approved_by!=null && $bank_ledger->approvedBy->employee && ($bank_ledger->approvedBy->imageprofile->sign!='default_sign'||$bank_ledger->approvedBy->imageprofile->sign!=null))
                                     <img src="{!! asset( 'storage/sign/'. $bank_ledger->approvedBy->imageprofile->sign. '?'. 'time='. time()) !!}"
+                                         class="img-fluid" alt="Sign Image">
+                                @else
+                                    <img src="{!! asset( 'storage/sign/blank_sign.png'. '?'. 'time='. time()) !!}"
                                          class="img-fluid" alt="Sign Image">
                                 @endif
 

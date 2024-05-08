@@ -35,6 +35,19 @@
                 <div class="active tab-pane" id="custom-tabs-one-home">
                     <table class="table table-bordered table-striped" id="print_this0">
                         <tbody>
+                        <tr style="border: none">
+                            <td style="border: none" colspan="3"><img
+                                        src="{!! asset( 'storage/images/pad_top.png'. '?'. 'time='. time()) !!}"
+                                        width="25%"
+                                        class="" style="border: none"></td>
+                        </tr>
+                        <tr style="border: none">
+                            <td style="border: none" colspan="3">
+                                <h3 style="text-align: center">Expense
+                                </h3>
+                            </td>
+                        </tr>
+
                         <tr>
                             <th>
                                 ID
@@ -232,6 +245,9 @@
                                 @if($expense->user->employee && ($expense->user->imageprofile->sign!='default_sign'||$expense->user->imageprofile->sign!=null))
                                     <img src="{!! asset( 'storage/sign/'. $expense->user->imageprofile->sign. '?'. 'time='. time()) !!}"
                                          class="img-fluid" alt="Sign Image">
+                                @else
+                                    <img src="{!! asset( 'storage/sign/blank_sign.png'. '?'. 'time='. time()) !!}"
+                                         class="img-fluid" alt="Sign Image">
                                 @endif
 
                                 <address>
@@ -248,6 +264,9 @@
                                 @if($expense->user->employee && $expense->checked_by!=null && ($expense->checkedBy->employee->user->imageprofile->sign!='default_sign'||$expense->checkedBy->employee->user->imageprofile->sign!=null))
                                     <img src="{!! asset( 'storage/sign/'. $expense->checkedBy->employee->user->imageprofile->sign. '?'. 'time='. time()) !!}"
                                          class="img-fluid" alt="Sign Image">
+                                @else
+                                    <img src="{!! asset( 'storage/sign/blank_sign.png'. '?'. 'time='. time()) !!}"
+                                         class="img-fluid" alt="Sign Image">
                                 @endif
                                 <address>
                                     ______________________<br/>
@@ -262,6 +281,9 @@
                                 Approved By<br/><br/>
                                 @if($expense->user->employee && $expense->approved_by!=null && ($expense->approvedBy->employee->user->imageprofile->sign!='default_sign'||$expense->approvedBy->employee->user->imageprofile->sign!=null))
                                     <img src="{!! asset( 'storage/sign/'. $expense->approvedBy->employee->user->imageprofile->sign. '?'. 'time='. time()) !!}"
+                                         class="img-fluid" alt="Sign Image">
+                                @else
+                                    <img src="{!! asset( 'storage/sign/blank_sign.png'. '?'. 'time='. time()) !!}"
                                          class="img-fluid" alt="Sign Image">
                                 @endif
 
