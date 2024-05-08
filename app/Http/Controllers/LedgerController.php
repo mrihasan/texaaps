@@ -323,6 +323,8 @@ class LedgerController extends Controller
     public function show(Ledger $ledger)
     {
 //        dd($ledger);
+
+        $bank_ledger = BankLedger::where('transaction_code', $ledger->transaction_code)->first();
         $transaction_type1 = $ledger->transaction_type->title;
         if ($transaction_type1 == 'Payment')
             $transaction_type = 'manage_payment';
@@ -330,8 +332,8 @@ class LedgerController extends Controller
             $transaction_type = 'manage_receipt';
         else
             $transaction_type = 'manage_ledger';
-
-        return view('accounting.show_ledger', compact('ledger', 'transaction_type'));
+//dd($bank_ledger->bank_account);
+        return view('accounting.show_ledger', compact('ledger', 'transaction_type','bank_ledger'));
     }
 
     public function destroy(Ledger $ledger)

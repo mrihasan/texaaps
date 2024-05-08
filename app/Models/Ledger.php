@@ -50,6 +50,7 @@ class Ledger extends Model
     {
         return $this->belongsTo('App\Models\Branch');
     }
+
     public function invoice()
     {
         return $this->belongsTo('App\Models\Invoice');

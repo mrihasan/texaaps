@@ -171,10 +171,70 @@
                         </tr>
                         <tr>
                             <th>
+
+                                @if($ledger->transaction_type_id==4)
+                                    Supplier
+                                @elseif($ledger->transaction_type_id==3)
+                                    Customer
+                                @else
+                                @endif
+
+                            </th>
+                            <td colspan="2">
+                                @if($ledger->user->profile->company_name_id!=null)
+                                    <strong>{{$ledger->user->profile->company_name->title}}</strong>
+                                    <br/>
+                                    {{$ledger->user->profile->company_name->contact_no ?? ''}}<br/>
+                                    {{$ledger->user->profile->company_name->address ?? ''}}<br/>
+                                    {{$ledger->user->profile->company_name->address2 ?? ''}}<br/>
+                                @else
+                                    <strong>{{$ledger->user->name}}</strong>
+                                    <br/>
+                                    {{$ledger->user->profile->mobile}}
+                                    <br/>{{$ledger->user->profile->address}}
+                                    <br/>{{$ledger->user->profile->address2}}<br/>
+                                @endif
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
                                 Branch
                             </th>
                             <td colspan="2">
                                 {{ $ledger->branch->title }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Account
+                            </th>
+                            <td colspan="2">
+                                {{ $bank_ledger->bank_account->account_name}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Transaction Method
+                            </th>
+                            <td colspan="2">
+                                {{ $bank_ledger->transaction_method->title}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Ref No
+                            </th>
+                            <td colspan="2">
+                                {{ $bank_ledger->ref_no}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Ref Date
+                            </th>
+                            <td colspan="2">
+                                {{ Carbon\Carbon::parse($bank_ledger->ref_date)->format('d-M-Y')}}
                             </td>
                         </tr>
                         <tr>
