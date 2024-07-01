@@ -174,7 +174,7 @@ class PriceQuotationController extends Controller
             ->join('products', 'products.id', '=', 'pq_details.product_id')
             ->join('brands', 'brands.id', '=', 'pq_details.brand_id')
             ->join('product_types', 'product_types.id', '=', 'products.product_type_id')
-            ->groupBy(DB::raw('product_id'))
+            // ->groupBy(DB::raw('product_id'))
             ->where('pq_details.price_quotation_id', $price_quotation->id)
             ->get();
         $settings = DB::table('settings')->first();

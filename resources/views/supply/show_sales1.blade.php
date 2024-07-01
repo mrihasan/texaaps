@@ -321,16 +321,16 @@
                                 {{--<td colspan="4" style="border: none"></td>--}}
                             </tr>
 
-                            <tr style="border:none">
+                            <!-- <tr style="border:none">
                                 <td colspan="10" style="border:none"><img src="{!! asset( 'storage/images/pad_bottom.jpg'. '?'. 'time='. time()) !!}" class="img-fluid" style="border: none"></td>
-                            </tr>
-                            <tr style="border: none">
+                            </tr> -->
+                            <!-- <tr style="border: none">
                                 <td colspan="5" style="text-align:left; border:none">
                                     <small>Software By : www.eidyict.com 01716-383038</small>
                                 </td>
                                 <td colspan="5" style="text-align:right; border: none">
                                     <small>Print Time:{{\Carbon\Carbon::now()->format(' D, d-M-Y, h:ia')}}</small>
-                                </td>
+                                </td> -->
                             </tr>
                         </table>
                     </div>

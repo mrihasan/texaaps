@@ -109,6 +109,11 @@
                             <table class="center" width="95%" style="border: none">
 
                                 <tbody>
+                                <tr style="border: none">
+                                    <td style="border: none"><img
+                                                src="{!! asset( 'storage/images/pad_top.png'. '?'. 'time='. time()) !!}"
+                                                class="img-fluid" style="border: none"></td>
+                                </tr>
 
                                 <tr style="border: none">
                                     <td style="text-align:left; border: none" width="35% ">
@@ -260,14 +265,37 @@
                             </tbody>
                         </table>
                         <table class="table-hover center" width="95%" style="table-layout: fixed; border: none">
-                            <tr style="border: none">
+                            <!-- <tr style="border: none">
                                 <td colspan="5" style="text-align:left; border:none">
                                     <small>Software By : www.eidyict.com 01716-383038</small>
                                 </td>
                                 <td colspan="5" style="text-align:right; border: none">
                                     <small>Print Time:{{\Carbon\Carbon::now()->format(' D, d-M-Y, h:ia')}}</small>
                                 </td>
-                            </tr>
+                            </tr> -->
+                            <tr style="border: none">
+                                    <td colspan="6" style="border: none">
+                                        <div class="pad_footer">
+                                            <div class="row">
+                                                <p>
+                                                <img src="{!! asset( 'storage/images/pad_bottom.jpg'. '?'. 'time='. time()) !!}"
+                                                      style="border: none" width="75%"></p>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+
+                                                    <small>Software By : www.eidyict.com 01716-383038</small>
+
+                                                </div>
+                                                <div class="col-md-6" style="text-align: right">
+                                                    <small style="padding-right: 50px">Print
+                                                        Time:{{\Carbon\Carbon::now()->format(' D, d-M-Y, h:ia')}}</small>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </td>
+                                </tr>
                         </table>
                     </div>
                     <div class="card-footer">

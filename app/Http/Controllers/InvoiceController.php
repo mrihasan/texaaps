@@ -200,18 +200,20 @@ class InvoiceController extends Controller
         } else
             $related_customer = null;
         $transactionDetails = DB::table('invoice_details')
-            ->select('invoice_details.id', 'invoice_details.qty', 'invoice_details.unit_name', 'invoice_details.usell_price',
+            ->select('invoice_details.id', 'invoice_details.product_id','invoice_details.qty', 'invoice_details.unit_name', 'invoice_details.usell_price',
                 'invoice_details.ubuy_price', 'invoice_details.status', 'invoice_details.line_total', 'brands.title as brand_title',
-                'products.title as product_title', 'invoice_details.product_id', 'invoice_details.model'
+                'products.title as product_title', 'invoice_details.product_id', 'invoice_details.model',
 //            ,'product_types.title as product_type_title'
+                // 'pq_details.product_details'
             )
             ->join('products', 'products.id', '=', 'invoice_details.product_id')
             ->join('brands', 'brands.id', '=', 'invoice_details.brand_id')
+            // ->join('pq_details', 'product.id', '=', 'invoice_details.product_id')
 //            ->join('product_types', 'product_types.id', '=', 'products.product_type_id')
             ->where('invoice_details.invoice_id', $invoice->id)
-            ->groupBy(DB::raw('product_id'))
+            // ->groupBy(DB::raw('product_id'))
             ->get();
-//        dd($transactionDetails);
+    //    dd($transactionDetails);
         $mindate_ledger1 = DB::table('ledgers')->where('user_id', $invoice->user_id)->MIN('transaction_date');
         $mindate_ledger = date('Y-m-d', strtotime($mindate_ledger1));
         $mindate_ledger_datetime = $mindate_ledger . ' 00:00:00';

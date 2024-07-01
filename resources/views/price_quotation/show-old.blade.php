@@ -13,6 +13,7 @@
 @endsection
 @push('css')
 <style>
+     
     @media print {
         .pagebreak {
             page-break-before: always;
@@ -41,18 +42,20 @@
 
         .pad_footer {
             display: block; /* Show header and footer when printing */
-            position: fixed;
+            position: relative;
+            
             width: 100%;
             text-align: left;
             padding: 0;
+            margin-top: 20px;
         }
 
         .pad_footer {
-            bottom: 0;
+            bottom: -2px;
         }
 
         .pad_content {
-            margin-top: 120px; /* Adjust according to your header and footer heights */            
+            margin-top: 100px; /* Adjust according to your header and footer heights */
         }
     }
 
@@ -198,7 +201,7 @@
                                 
                                 @foreach($transactionDetails as $key=>$details)
                                 
-                                    <tr style="border-bottom-style: hidden; margin: bottom 20%;">
+                                    <tr style="border-bottom-style: hidden">
                                         <td>{{ $key+1 }}</td>
 
                                         <td>
@@ -225,9 +228,10 @@
                                         {{numberToWord($price_quotation->invoice_total).' Taka Only'}}
                                     </td>
                                 </tr>
-
                                 </tbody>
+<br>
                             </table>
+                            <br><br>
                             <table class="center" width="90%" style="table-layout: fixed; border: none">
                                 <tr style="border: none">
                                     {{--<td style="border: none"></td>--}}
@@ -249,24 +253,31 @@
                                     </td>
                                     {{--<td colspan="4" style="border: none"></td>--}}
                                 </tr>
-                                <tr style="border: none; margin-top: 10%">
+                                <tr style="border: none">
                                     <td colspan="6" style="border: none">
                                         <div class="pad_footer">
-                                            <div class="row">
+                                            <!-- <div class="row">
                                                 <p>
                                                 <img src="{!! asset( 'storage/images/pad_bottom.jpg'. '?'. 'time='. time()) !!}"
-                                                      style="border: none" width="75%"></p>
-                                            </div>
+                                                      style="border: none" width="75%">
+                                                    </p>
+                                            </div> -->
+                                            <hr>
                                             <div class="row">
-                                                <div class="col-md-6">
-
-                                                    <small>Software By : www.eidyict.com 01716-383038</small>
+                                                <div class="col-md-12">
+                                                        <strong>texaaps</strong><br>
+                                                        Rangs Naharz, H-14 (5<sup>th</sup> floor), Shahjalal Avenue, Sector-04, Uttara, Dhaka-1230, Bangladesh <br>
+                                                        <a href="mailto:patwary@texaaps.com">patwary@texaaps.com</a> |  <a href="http://www.texaaps.com/" target="_blank">www.texaaps.com</a>
+                                                        <br>
+                                                    <small><strong>Software By: </strong> <a href="http://www.eidyict.com/" target="_blank">www.eidyict.com</a>, <a href="tel:+8801716383038"> 01716-383038</a> &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;  
+                                                    <strong>Print
+                                                        Time: </strong>{{\Carbon\Carbon::now()->format(' D, d-M-Y, h:ia')}}</small>
 
                                                 </div>
-                                                <div class="col-md-6" style="text-align: right">
+                                                <!-- <div class="col-md-6" style="text-align: right">
                                                     <small style="padding-right: 50px">Print
                                                         Time:{{\Carbon\Carbon::now()->format(' D, d-M-Y, h:ia')}}</small>
-                                                </div>
+                                                </div> -->
                                             </div>
                                         </div>
 
@@ -308,6 +319,7 @@
             </div>
 
         </div>
+
 
     </div>
 @endsection

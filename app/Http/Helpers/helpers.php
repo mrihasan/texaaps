@@ -14,6 +14,16 @@ function entryBy($entry_by)
     else
         return $user->name;
 }
+
+function pqDetails($product_id)
+{
+    $product = \App\Models\PqDetails::where('product_id', $product_id)->first();
+    // dd($product);
+    if ($product_id == null)
+        return 'N/A';
+    else
+        return ($product) ? $product->product_details : ' N/A ';
+}
 function entryByInfo($entry_by)
 {
     $user = \App\Models\User::where('id', $entry_by)->first();

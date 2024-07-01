@@ -304,9 +304,9 @@
                                 <tr style="border: none">
                                     <td colspan="6" style="border: none">
                                         <div class="pad_footer">
-                                            <p>
+                                            <!-- <p>
                                                 <img src="{!! asset( 'storage/images/pad_bottom.jpg'. '?'. 'time='. time()) !!}"
-                                                     class="img-fluid" style="border: none" width="75%"></p>
+                                                     class="img-fluid" style="border: none" width="75%"></p> -->
                                             <div class="row">
                                                 <p class="col-md-6">
                                                     <small>Software By : www.eidyict.com 01716-383038</small>

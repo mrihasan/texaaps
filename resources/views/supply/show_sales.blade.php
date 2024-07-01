@@ -53,7 +53,7 @@
 
         .pad_footer {
             display: block; /* Show header and footer when printing */
-            position: fixed;
+            position: relative;
             width: 100%;
             background-color: #f0f0f0; /* Change background color as needed */
             text-align: left;
@@ -229,6 +229,7 @@
                                             <strong>Product : </strong>{{ $details->product_title }}<br/>
                                             <strong>Brand : </strong>{{ $details->brand_title }}<br/>
                                             <strong>Model : </strong>{{ $details->model }}<br/>
+                                            <strong>Details : </strong>{{ pqDetails($details->product_id) }}
                                         </td>
                                         <td style="text-align:center">{{ $details->qty}} </td>
                                         <td style="text-align:center">{{ $details->unit_name}}</td>
@@ -400,7 +401,7 @@
                                     <td style="border: none; text-align: right" class="company-name">
                                         <strong>{{' Date: '.Carbon\Carbon::parse($invoice->transaction_date)->format('d-M-Y').','}}</strong><br/>
                                         <strong>
-                                            {{'Bill No: '.$invoice->sl_no}}
+                                            {{'Challan No: '.$invoice->sl_no}}
                                             <br/>
                                             {{' By: '.($invoice->entryBy->name)}}
                                             <br/>
@@ -515,10 +516,10 @@
                                 <tr style="border: none">
                                     <td colspan="6" style="border: none">
                                         <div class="pad_footer">
-                                            <p>
+                                            <!-- <p>
                                                 <img src="{!! asset( 'storage/images/pad_bottom.jpg'. '?'. 'time='. time()) !!}"
-                                                     class="img-fluid" style="border: none" width="75%"></p>
-                                            <div class="row">
+                                                     class="img-fluid" style="border: none" width="75%"></p> -->
+                                            <!-- <div class="row">
                                                 <p class="col-md-6">
                                                     <small>Software By : www.eidyict.com 01716-383038</small>
                                                 </p>
@@ -526,6 +527,23 @@
                                                     <small>Print
                                                         Time:{{\Carbon\Carbon::now()->format(' D, d-M-Y, h:ia')}}</small>
                                                 </p>
+                                            </div> -->
+
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                        <strong>texaaps</strong><br>
+                                                        Rangs Naharz, H-14 (5<sup>th</sup> floor), Shahjalal Avenue, Sector-04, Uttara, Dhaka-1230, Bangladesh <br>
+                                                        <a href="mailto:patwary@texaaps.com">patwary@texaaps.com</a> |  <a href="http://www.texaaps.com/" target="_blank">www.texaaps.com</a>
+                                                        <br>
+                                                    <small><strong>Software By: </strong> <a href="http://www.eidyict.com/" target="_blank">www.eidyict.com</a>, <a href="tel:+8801716383038"> 01716-383038</a> &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;  
+                                                    <strong>Print
+                                                        Time: </strong>{{\Carbon\Carbon::now()->format(' D, d-M-Y, h:ia')}}</small>
+
+                                                </div>
+                                                <!-- <div class="col-md-6" style="text-align: right">
+                                                    <small style="padding-right: 50px">Print
+                                                        Time:{{\Carbon\Carbon::now()->format(' D, d-M-Y, h:ia')}}</small>
+                                                </div> -->
                                             </div>
 
                                         </div>
