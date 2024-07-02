@@ -309,6 +309,7 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
+//        dd($user->ledgers()->count());
         abort_if(Gate::denies('UserDelete'), redirect('error'));
         if ($user->id == 1 && Auth::user()->id != 1) {
             Session::flash('flash-error', 'You cannot delete Super admin ');
@@ -320,8 +321,8 @@ class UserController extends Controller
             } elseif ($user->employee_salary->count()) {
                 \Session::flash('flash_error', 'Can\'t Delete this, ' . $user->employee_salary->count() . ' nos used in employee Salary');
                 return redirect()->back();
-            } elseif ($user->ledgers()->count()) {
-                \Session::flash('flash_error', 'Can\'t Delete this, ' . $user->ledger->count() . ' nos used in Ledger');
+            } elseif ($user->ledgers()->count()>1) {
+                \Session::flash('flash_error', 'Can\'t Delete this, ' . $user->ledgers->count() . ' nos used in Ledger');
                 return redirect()->back();
             } else {
                 $user->delete();
