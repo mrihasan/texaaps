@@ -325,9 +325,19 @@ class UserController extends Controller
                 \Session::flash('flash_error', 'Can\'t Delete this, ' . $user->ledgers->count() . ' nos used in Ledger');
                 return redirect()->back();
             } else {
+                $user_type=$user->user_type->id;
+//                dd($user_type);
                 $user->delete();
                 \Session::flash('flash_message', 'Successfully Deleted');
-                return redirect('user');
+//                return redirect('user');
+                if ($user_type == 1)
+                    return redirect('user');
+                elseif ($user_type == 2)
+                    return redirect('employee');
+                elseif ($user_type == 3)
+                    return redirect('manageClient');
+                elseif ($user_type == 4)
+                    return redirect('manageSupplier');
             }
         }
     }
