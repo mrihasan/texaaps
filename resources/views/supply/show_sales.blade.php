@@ -227,9 +227,9 @@
 
                                         <td>
                                             <strong>Product : </strong>{{ $details->product_title }}<br/>
-                                            <strong>Brand : </strong>{{ $details->brand_title }}<br/>
-                                            <strong>Model : </strong>{{ $details->model }}<br/>
-                                            <strong>Details : </strong>{{ pqDetails($details->product_id) }}
+                                            <strong>Brand : </strong>{{ $details->brand_title??'N/A' }}<br/>
+                                            <strong>Model : </strong>{{ $details->model??'N/A' }}<br/>
+                                            <strong>Details : </strong>{{ $details->product_details??'N/A' }}
                                         </td>
                                         <td style="text-align:center">{{ $details->qty}} </td>
                                         <td style="text-align:center">{{ $details->unit_name}}</td>

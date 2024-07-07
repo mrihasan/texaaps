@@ -176,8 +176,9 @@
                             <th style="text-align:center;background-color: #7adeee"><input id="check_all" class="formcontrol" type="checkbox"/></th>
                             <th style="text-align:center; width: 25%;background-color: #7adeee">Title</th>
                             <th class="d-none">id</th>
-                            <th style="text-align:center; width:15%;background-color: #7adeee">Brand</th>
-                            <th style="text-align:center; width:15%;background-color: #7adeee">Model</th>
+                            <th style="text-align:center; width:10%;background-color: #7adeee">Brand</th>
+                            <th style="text-align:center; width:10%;background-color: #7adeee">Model</th>
+                            <th style="text-align:center; width:10%;background-color: #7adeee">Details</th>
                             <th style="text-align:center; width:7%;background-color: #7adeee">Qty</th>
                             <th style="text-align:center; width:6%;background-color: #7adeee">Unit</th>
                             <th style="text-align:center; width:7%;background-color: #7adeee">In Stock</th>
@@ -204,6 +205,10 @@
                                        id="model_<?php echo $stu->id ?>" style="text-align:left"
                                        value="<?php echo $stu->model ?>" class="form-control"
                                        autocomplete="off"></td>
+
+                            <td>
+                                <textarea name="product_details[]" id="product_details_<?php echo $stu->id ?>" class="form-control" style="text-align:left" autocomplete="off"><?php echo htmlspecialchars($stu->product_details); ?></textarea>
+                            </td>
 
                             <td><input type="number" name="quantity[]" id="quantity_<?php echo $stu->id ?>"
                                        class="form-control changesNo "

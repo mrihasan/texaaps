@@ -28,6 +28,7 @@ return new class extends Migration
             $table->integer('branch_id')->unsigned();
             $table->enum('transaction_type', ['Sales', 'Purchase','Order','Return','Put Back']);
             $table->integer('qty');
+            $table->text('product_details')->nullable();
             $table->string('unit_name');
             $table->float('ubuy_price',12,1)->nullable();
             $table->float('usell_price',12,1)->nullable();

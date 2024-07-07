@@ -15,6 +15,7 @@ function addNewRow() {
     }
     html += '</select></td>';
     html += '<td><input type="text" name="model[]" id="model_' + i + '" class="form-control" autocomplete="off" ondrop="return false;" style="text-align:left;"></td>';
+    html += '<td><textarea type="text" name="product_details[]" id="product_details_' + i + '" rows="1" class="form-control" autocomplete="off" ondrop="return false;" style="text-align:left; height: 40px"></textarea></td>';
     html += '<td><input type="number" name="quantity[]" id="quantity_' + i + '" step="any" class="form-control changesNo qtynumber" autocomplete="off"  onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" style="text-align:right;"></td>';
     html += '<td><input type="text" name="unit_name[]" id="unit_name_' + i + '" class="form-control " autocomplete="off" ondrop="return false;" style="text-align:center;" readonly></td>';
     html += '<td><input type="text" name="stock[]" id="stock_' + i + '" class="form-control in_stock"  disabled="disabled"></td>';

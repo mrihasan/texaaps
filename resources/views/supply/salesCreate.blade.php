@@ -230,8 +230,9 @@
                                                                                            type="checkbox"/></th>
                             <th style="text-align:center; width: 25%;background-color: #7adeee">Title</th>
                             <th class="d-none">id</th>
-                            <th style="text-align:center; width:15%;background-color: #7adeee">Brand</th>
-                            <th style="text-align:center; width:15%;background-color: #7adeee">Model</th>
+                            <th style="text-align:center; width:10%;background-color: #7adeee">Brand</th>
+                            <th style="text-align:center; width:10%;background-color: #7adeee">Model</th>
+                            <th style="text-align:center; width:10%;background-color: #7adeee">Details</th>
                             <th style="text-align:center; width:7%;background-color: #7adeee">Qty</th>
                             <th style="text-align:center; width:6%;background-color: #7adeee">Unit</th>
                             <th style="text-align:center; width:7%;background-color: #7adeee">In Stock</th>
@@ -258,6 +259,11 @@
                                        id="model_1" style="text-align:left"
                                        class="form-control"
                                        autocomplete="off"></td>
+                            <td><textarea type="text" name="product_details[]"
+                                       id="product_details_1" style="text-align:left; height: 40px" rows="1"
+                                       class="form-control"
+                                       autocomplete="off"></textarea></td>
+
                             <td><input type="number" name="quantity[]" id="quantity_1"
                                        class="form-control changesNo "
                                        autocomplete="off" step="any"

@@ -237,7 +237,7 @@ class InvoiceDetailController extends Controller
             $ProductID_a = [];
             $BrandID_a = [];
             $Model_a = [];
-//            $unitBuyPrice_a = [];
+            $Details_a = [];
             $unitSellPrice_a = [];
             $Qty_a = [];
             $unit_name_a = [];
@@ -255,6 +255,11 @@ class InvoiceDetailController extends Controller
                 $Model_a[] = $Model_;
             }
             $Model_e = $Model_a;
+            foreach ($request['product_details'] as $Details_) {
+                $Details_a[] = $Details_;
+            }
+            $Details_e = $Details_a;
+
             foreach ($request['unitSellPrice'] as $unitSellPrice_) {
                 $unitSellPrice_a[] = $unitSellPrice_;
             }
@@ -310,6 +315,7 @@ class InvoiceDetailController extends Controller
                 $inventory_transaction->model = $Model_e[$i];
 //                $inventory_transaction->ubuy_price = $unitBuyPrice_e[$i];
                 $inventory_transaction->usell_price = $unitSellPrice_e[$i];
+                $inventory_transaction->product_details = $Details_e[$i];
                 $inventory_transaction->qty = $Qty_e[$i];
                 $inventory_transaction->unit_name = $unit_name_e[$i];
                 $inventory_transaction->line_total = $mrpTotal_e[$i];

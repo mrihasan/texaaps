@@ -202,7 +202,7 @@ class InvoiceController extends Controller
         $transactionDetails = DB::table('invoice_details')
             ->select('invoice_details.id', 'invoice_details.product_id','invoice_details.qty', 'invoice_details.unit_name', 'invoice_details.usell_price',
                 'invoice_details.ubuy_price', 'invoice_details.status', 'invoice_details.line_total', 'brands.title as brand_title',
-                'products.title as product_title', 'invoice_details.product_id', 'invoice_details.model',
+                'products.title as product_title', 'invoice_details.product_id', 'invoice_details.model', 'invoice_details.product_details'
 //            ,'product_types.title as product_type_title'
                 // 'pq_details.product_details'
             )
@@ -560,6 +560,7 @@ class InvoiceController extends Controller
             $ProductID_a = [];
             $BrandID_a = [];
             $Model_a = [];
+            $Details_a = [];
             $unitSellPrice_a = [];
             $Qty_a = [];
             $unit_name_a = [];
@@ -580,6 +581,11 @@ class InvoiceController extends Controller
                 $Model_a[] = $Model_;
             }
             $Model_e = $Model_a;
+            foreach ($request['product_details'] as $Details_) {
+                $Details_a[] = $Details_;
+            }
+            $Details_e = $Details_a;
+
             $unitSellPrice_e = $unitSellPrice_a;
             foreach ($request['quantity'] as $Qty_) {
                 $Qty_a[] = $Qty_;
@@ -622,6 +628,7 @@ class InvoiceController extends Controller
                 $inventory_transaction->product_id = $ProductID_e[$i];
                 $inventory_transaction->brand_id = $BrandID_e[$i];
                 $inventory_transaction->model = $Model_e[$i];
+                $inventory_transaction->product_details = $Details_e[$i];
                 $inventory_transaction->usell_price = $unitSellPrice_e[$i];
                 $inventory_transaction->qty = $Qty_e[$i];
                 $inventory_transaction->unit_name = $unit_name_e[$i];
