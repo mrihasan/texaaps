@@ -134,21 +134,21 @@
                                             <strong>To</strong></h6>
                                         @if($related_customer!=null)
                                             <strong>{{$related_customer->name}}</strong><br/>
-                                            {{$related_customer->mobile}}<br/>
                                             {{$related_customer->address}}<br/>
+                                            {{$related_customer->mobile}}<br/>
                                         @elseif($price_quotation->user->profile->company_name_id!=null)
                                             <strong>{{$price_quotation->user->profile->company_name->title}}</strong>
                                             <br/>
-                                            {{$price_quotation->user->profile->company_name->contact_no ?? ''}}<br/>
 {{--                                            {{$price_quotation->user->profile->company_name->contact_no2 ?? ''}}<br/>--}}
                                             {{$price_quotation->user->profile->company_name->address ?? ''}}<br/>
                                             {{$price_quotation->user->profile->company_name->address2 ?? ''}}<br/>
+                                            {{$price_quotation->user->profile->company_name->contact_no ?? ''}}<br/>
                                         @else
                                             <strong>{{$price_quotation->user->name}}</strong>
                                             <br/>
-                                            {{$price_quotation->user->profile->mobile}}
                                             <br/>{{$price_quotation->user->profile->address}}
                                             <br/>{{$price_quotation->user->profile->address2}}<br/>
+                                            {{$price_quotation->user->profile->mobile}}
                                         @endif
                                     </td>
 

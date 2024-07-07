@@ -185,8 +185,8 @@ class PriceQuotationController extends Controller
 //        dd($id);
 //        abort_if(Gate::denies('SupplyAccess'), redirect('error'));
         $price_quotation = PriceQuotation::where('id', $id)->first();
-        if ((Auth::user()->user_type_id == 3 || Auth::user()->user_type_id == 4) && ($price_quotation->user_id != Auth::user()->id)) {
-            \Session::flash('flash_error', 'You can not view this');
+        if ((Auth::user()->user_type_id == 3 || Auth::user()->user_type_id == 4)) {
+            \Session::flash('flash_error', 'You can not do this');
             return redirect('error');
         }
         if ($price_quotation->user_id == 6) {
