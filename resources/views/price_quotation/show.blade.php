@@ -301,6 +301,10 @@
                                class="btn btn-info btn-xs fa-pull-right" title="Edit" style="margin-right: 10px"><span
                                         class="far fa-edit"
                                         aria-hidden="true"></span></a>
+                            <a href="{{ url('pq2bill/' . $price_quotation->id) }}"
+                               class="btn btn-success btn-xs fa-pull-right" title="PQ2Bill" style="margin-right: 10px"><span
+                                        class=" fa fa-file "
+                                        aria-hidden="true">PQ2Bill</span></a>
                         @endcan
                     </div>
                 </div>

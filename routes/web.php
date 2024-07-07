@@ -132,6 +132,7 @@ Route::put('payment_request_approved/{id}', '\App\Http\Controllers\PaymentReques
 Route::put('payment_request_checked/{id}', '\App\Http\Controllers\PaymentRequestController@payment_request_checked')->name('payment_request_checked');
 Route::resource('payment_request', '\App\Http\Controllers\PaymentRequestController');
 
+Route::get('/pq2bill/{id}', '\App\Http\Controllers\PriceQuotationController@pq2bill')->name('pq2bill');
 Route::get('/pqCreate', '\App\Http\Controllers\PriceQuotationController@pqCreate')->name('pqCreate');
 Route::resource('price_quotation', '\App\Http\Controllers\PriceQuotationController');
 

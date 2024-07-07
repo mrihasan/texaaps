@@ -180,6 +180,41 @@ class PriceQuotationController extends Controller
         $settings = DB::table('settings')->first();
         return view('price_quotation.show', compact('price_quotation', 'settings', 'transactionDetails', 'related_customer'));
     }
+    public function pq2bill($id)
+    {
+//        dd($id);
+//        abort_if(Gate::denies('SupplyAccess'), redirect('error'));
+        $price_quotation = PriceQuotation::where('id', $id)->first();
+        if ((Auth::user()->user_type_id == 3 || Auth::user()->user_type_id == 4) && ($price_quotation->user_id != Auth::user()->id)) {
+            \Session::flash('flash_error', 'You can not view this');
+            return redirect('error');
+        }
+        if ($price_quotation->user_id == 6) {
+            $related_customer = WalkingCustomer::where('type', 'PQ')->where('invoice_id', $price_quotation->id)->first();
+        } else
+            $related_customer = null;
+        $inventory = DB::table('pq_details')
+            ->select('pq_details.id', 'pq_details.qty', 'pq_details.unit_name', 'pq_details.unit_price', 'pq_details.product_details',
+                'pq_details.line_total', 'brands.title as brand_title',
+                'products.title as product_title', 'product_types.title as product_type_title', 'pq_details.product_id','pq_details.brand_id', 'pq_details.model')
+            ->join('products', 'products.id', '=', 'pq_details.product_id')
+            ->join('brands', 'brands.id', '=', 'pq_details.brand_id')
+            ->join('product_types', 'product_types.id', '=', 'products.product_type_id')
+            // ->groupBy(DB::raw('product_id'))
+            ->where('pq_details.price_quotation_id', $price_quotation->id)
+            ->get();
+//        dd($inventory);
+        $inventory1 = PqDetails::where('price_quotation_id', $price_quotation->id)->orderBy('id','desc')->get();
+        $settings = DB::table('settings')->first();
+
+        $customers = customer_list();
+        $transaction_methods = transaction_method();
+        $branch = branch_list();
+        $brands = brand_list();
+
+        return view('price_quotation.pq2bill', compact('price_quotation','inventory', 'settings', 'related_customer',
+            'customers','transaction_methods','brands','branch'));
+    }
 
     public function edit(PriceQuotation $price_quotation)
     {
