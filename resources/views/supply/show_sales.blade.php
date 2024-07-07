@@ -157,21 +157,21 @@
                                             <strong>To</strong></h6>
                                         @if($related_customer!=null)
                                             <strong>{{$related_customer->name}}</strong><br/>
-                                            {{$related_customer->mobile}}<br/>
                                             {{$related_customer->address}}<br/>
+                                            {{$related_customer->mobile}}<br/>
                                         @elseif($invoice->user->profile->company_name_id!=null)
                                             <strong>{{$invoice->user->profile->company_name->title}}</strong>
                                             <br/>
-                                            {{$invoice->user->profile->company_name->contact_no ?? ''}}<br/>
 {{--                                            {{$invoice->user->profile->company_name->contact_no2 ?? ''}}<br/>--}}
                                             {{$invoice->user->profile->company_name->address ?? ''}}<br/>
                                             {{$invoice->user->profile->company_name->address2 ?? ''}}<br/>
+                                            {{$invoice->user->profile->company_name->contact_no ?? ''}}<br/>
                                         @else
                                             <strong>{{$invoice->user->name}}</strong>
                                             <br/>
-                                            {{$invoice->user->profile->mobile}}
                                             <br/>{{$invoice->user->profile->address}}
                                             <br/>{{$invoice->user->profile->address2}}<br/>
+                                            {{$invoice->user->profile->mobile}}
                                         @endif
                                     </td>
 
