@@ -846,10 +846,20 @@ class InvoiceController extends Controller
         return redirect()->back();
     }
 
-    public function invoice_due_report()
+    public function invoice_due_report($type)
     {
+//        dd($type);
+        if ($type=='c') {
+            $transaction_type = 'Sales';
+            $user_type = 'Customer';
+        }
+        elseif ($type=='s') {
+            $transaction_type = 'Purchase';
+            $user_type = 'Supplier';
+        }
+//        dd($transaction_type);
         // Get all invoices
-        $invoices = Invoice::all();
+        $invoices = Invoice::where('transaction_type',$transaction_type)->get();
 
 // Initialize an array to store invoices with due amounts and payment history
         $invoicesWithDueAndPaymentHistory = [];
@@ -882,8 +892,8 @@ class InvoiceController extends Controller
 
         }
 //        dd($invoicesWithDueAndPaymentHistory);
-        $title_date_range='Invoice wise due report';
-        return view('report.invoice_due_report', compact('invoicesWithDueAndPaymentHistory','title_date_range'));
+        $title_date_range='Invoice wise '.$user_type.' due report';
+        return view('report.invoice_due_report', compact('invoicesWithDueAndPaymentHistory','title_date_range','user_type'));
 
     }
 }

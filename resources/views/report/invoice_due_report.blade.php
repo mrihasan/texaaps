@@ -1,7 +1,7 @@
 @extends('layouts.al305_main')
 @section('paymentmgt_mo','menu-open')
 @section('paymentmgt','active')
-@section('invoice_due_report','active')
+@section($user_type.'_due_report','active')
 @section('title',$title_date_range)
 @section('breadcrumb')
     <li class="nav-item d-none d-sm-inline-block">
@@ -46,7 +46,7 @@
                             <th class="col-md-1"> Date</th>
                             <th> Due Days</th>
                             <th> Sl No</th>
-                            <th >Customer<br/>Info</th>
+                            <th >{{$user_type}}<br/>Info</th>
                             <th >Total<br/>amount</th>
                             <th >Due<br/>amount</th>
                             <th >Payment History</th>
@@ -85,7 +85,7 @@
                                     {{$data['invoice']->user->name.', '.$data['invoice']->user->cell_phone}}
                                 </td>
                                 <td style="text-align:right">
-                                    {{ $data['invoice']->total_amount }}
+                                    {{ $data['invoice']->invoice_total}}
                                 </td>
                                 <td>
                                     {{ $data['due_amount'] }}

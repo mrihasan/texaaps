@@ -234,9 +234,13 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ url('invoice_due_report') }}" class="nav-link @yield('invoice_due_report')">
+                                <a href="{{ url('invoice_due_report/'.'c') }}" class="nav-link @yield('Customer_due_report')">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>Due Report</p>
+                                    <p>Customer Due Report</p>
+                                </a>
+                                <a href="{{ url('invoice_due_report/'.'s') }}" class="nav-link @yield('Supplier_due_report')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Supplier Due Report</p>
                                 </a>
                             </li>
                             {{--<li class="nav-item">--}}
