@@ -11,6 +11,7 @@ use DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Carbon\Carbon;
+use DateTime;
 
 class BankAccountController extends Controller
 {
@@ -52,7 +53,10 @@ class BankAccountController extends Controller
         $banking->save();
 
         $transaction_code = autoTimeStampCode('BL');
-        $sl_no=createSl('TA-BL-','bank_ledgers','transaction_date',date('Y-m-d H:i:s'));
+        $transaction_date = date('Y-m-d H:i:s');
+        $td = new DateTime($transaction_date);
+//        $sl_no=createSl('TA-BL-','bank_ledgers','transaction_date',date('Y-m-d H:i:s'));
+        $sl_no = createSl('TA-BL-', 'bank_ledgers', 'transaction_date', $td);
 
         $ledger_banking = new BankLedger();
         $ledger_banking->branch_id = $request->branch;
@@ -61,10 +65,10 @@ class BankAccountController extends Controller
         $ledger_banking->transaction_code = $transaction_code;
         $ledger_banking->sl_no = $sl_no;
         $ledger_banking->amount = $request->opening_balance;
-        $ledger_banking->transaction_type_id = 8;
+        $ledger_banking->transaction_type_id = ($request->account_type=='Loan Account')? 5 : 8; //if Account type is Loan Account then transaction_type_id=5 otherwise transaction_type_id=8
         $ledger_banking->transaction_method_id = 1;
         $ledger_banking->ref_date = null;
-        $ledger_banking->particulars = 'Opening';
+        $ledger_banking->particulars = ($request->account_type=='Loan Account')?'Loan Account Opening':'Opening';
         $ledger_banking->approve_status = 'Submitted';
         $ledger_banking->entry_by = Auth::user()->id;
         $ledger_banking->save();
@@ -75,9 +79,9 @@ class BankAccountController extends Controller
         $ledger_branch->transaction_code = $transaction_code;
         $ledger_branch->sl_no = $sl_no;
         $ledger_branch->amount = $request->opening_balance;
-        $ledger_branch->transaction_type_id = 8;
+        $ledger_branch->transaction_type_id = ($request->account_type=='Loan Account')? 5 : 8; //if Account type is Loan Account then transaction_type_id=5 otherwise transaction_type_id=8
         $ledger_branch->transaction_method_id = 1;
-        $ledger_branch->comments = 'Bank Account Opening';
+        $ledger_branch->comments = ($request->account_type=='Loan Account')?'Loan Account Opening':'Bank Account Opening';
         $ledger_branch->entry_by = Auth::user()->id;
         $ledger_branch->approve_status = 'Submitted';
         $ledger_branch->reftbl = 'bank_ledgers';

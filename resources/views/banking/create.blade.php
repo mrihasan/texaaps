@@ -75,7 +75,7 @@
                             <option value="Bank Account" {{ (isset($banking) && $banking->account_type == 'Bank Account') ? ' selected' : '' }}>Bank Account</option>
                             <option value="Mobile Banking" {{ (isset($banking) && $banking->account_type == 'Mobile Banking') ? ' selected' : '' }}>Mobile Banking</option>
                             <option value="Petty Cash" {{ (isset($banking) && $banking->account_type == 'Petty Cash') ? ' selected' : '' }}>Petty Cash</option>
-{{--                            <option value="Others" {{ (isset($banking) && $banking->account_type == 'Others') ? ' selected' : '' }}>Others</option>--}}
+                            <option value="Loan Account" {{ (isset($banking) && $banking->account_type == 'Loan Account') ? ' selected' : '' }}>Loan Account</option>
                         </select>
                     </div>
                 </div>
