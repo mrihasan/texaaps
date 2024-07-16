@@ -69,8 +69,8 @@ Route::resource('bank_account', \App\Http\Controllers\BankAccountController::cla
 Route::put('checked_acledger/{id}','\App\Http\Controllers\BankLedgerController@checked_acledger')->name('checked_acledger');
 Route::put('approve_acledger/{id}','\App\Http\Controllers\BankLedgerController@approve_acledger')->name('approve_acledger');
 Route::get('/account_transfer', '\App\Http\Controllers\BankLedgerController@account_transfer')->name('account_transfer');
-Route::get('/deposit', '\App\Http\Controllers\BankLedgerController@deposit')->name('deposit');
-Route::get('/withdraw', '\App\Http\Controllers\BankLedgerController@withdraw')->name('withdraw');
+Route::get('/deposit/{t_type}', '\App\Http\Controllers\BankLedgerController@deposit')->name('deposit');
+Route::get('/withdraw/{t_type}', '\App\Http\Controllers\BankLedgerController@withdraw')->name('withdraw');
 Route::get('/account_statement', '\App\Http\Controllers\BankLedgerController@account_statement')->name('account_statement');
 Route::get('/manage_account_ledger', '\App\Http\Controllers\BankLedgerController@manage_account_ledger')->name('manage_account_ledger');
 Route::resource('bank_ledger', \App\Http\Controllers\BankLedgerController::class);

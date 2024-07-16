@@ -264,6 +264,7 @@
                                 {{--<span class="badge badge-info right">6</span>--}}
                             </p>
                         </a>
+
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
                                 <a href="{{ url('bank_account') }}" class="nav-link @yield('manage_account')">
@@ -272,21 +273,22 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ url('account_transfer') }}" class="nav-link @yield('account_transfer')">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Transfer (AC to AC)</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ url('deposit') }}" class="nav-link @yield('deposit')">
+                                <a href="{{ url('deposit/'.'Deposit') }}" class="nav-link @yield('deposit')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Deposit (Account)</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ url('withdraw') }}" class="nav-link @yield('withdraw')">
+                                <a href="{{ url('withdraw/'.'Withdraw') }}" class="nav-link @yield('withdraw')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Withdraw (Account)</p>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="{{ url('account_transfer') }}" class="nav-link @yield('account_transfer')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Transfer (AC to AC)</p>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -313,6 +315,44 @@
                                     <p>Branch Ledger</p>
                                 </a>
                             </li>
+                            <li class="nav-item @yield('loan_mo')">
+                                <a href="#" class="nav-link @yield('loan_ma')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>
+                                        Loan & Investment
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+
+                                    <li class="nav-item">
+                                        <a href="{{ url('deposit/'.'Loan') }}" class="nav-link @yield('loan')">
+                                            <i class="far fa-dot-circle nav-icon"></i>
+                                            <p>Loan</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('withdraw/'.'Loan Payment') }}" class="nav-link @yield('loan_payment')">
+                                            <i class="far fa-dot-circle nav-icon"></i>
+                                            <p>Loan/Interest Payment</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('deposit/'.'Investment') }}" class="nav-link @yield('investment')">
+                                            <i class="far fa-dot-circle nav-icon"></i>
+                                            <p>Investment</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('withdraw/'.'Profit Share') }}" class="nav-link @yield('profit_share')">
+                                            <i class="far fa-dot-circle nav-icon"></i>
+                                            <p>Profit Share</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+
+
                         </ul>
                     </li>
                 @endcan

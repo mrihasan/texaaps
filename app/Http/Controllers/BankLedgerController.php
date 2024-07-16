@@ -75,32 +75,70 @@ class BankLedgerController extends Controller
         return view('banking.account_statement', compact('ledger', 'header_title', 'to_accounts'));
     }
 
-    public function deposit()
+    public function deposit($t_type)
     {
+//        dd($t_type);
         abort_if(Gate::denies('AccountMgtAccess'), redirect('error'));
         $branches = branch_list();
-        $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
         $transaction_methods = TransactionMethod::orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Method', '')->toArray();
-        $transaction_types = TransactionType::whereIn('id', [5, 10])->orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Type', '')->toArray();
-        return view('banking.deposit', compact('branches', 'transaction_methods', 'to_accounts', 'transaction_types'));
+
+        if ($t_type=='Deposit') {
+            $tr_type='Deposit';
+            $tr_id=8;
+            $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->where('account_type','!=', 'Loan Account')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
+            $transaction_types = TransactionType::whereIn('id', [$tr_id])->orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Type', '')->toArray();
+//            return view('banking.deposit', compact('branches', 'transaction_methods', 'to_accounts', 'transaction_types','tr_type','tr_id'));
+        }
+        elseif ($t_type=='Loan') {
+            $tr_type='Loan';
+            $tr_id=5;
+            $to_accounts = DB::table('bank_accounts')->where('account_type', 'Loan Account')->where('status', 'Active')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
+            $transaction_types = TransactionType::whereIn('id', [$tr_id])->orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Type', '')->toArray();
+//            return view('banking.loan', compact('branches', 'transaction_methods', 'to_accounts', 'transaction_types','tr_type','tr_id'));
+        }
+        elseif ($t_type=='Investment') {
+            $tr_type='Investment';
+            $tr_id=10;
+            $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->where('account_type','!=', 'Loan Account')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
+            $transaction_types = TransactionType::whereIn('id', [$tr_id])->orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Type', '')->toArray();
+//            return view('banking.deposit', compact('branches', 'transaction_methods', 'to_accounts', 'transaction_types','tr_type','tr_id'));
+        }
+        return view('banking.deposit', compact('branches', 'transaction_methods', 'to_accounts', 'transaction_types','tr_type','tr_id'));
+
     }
 
-    public function withdraw()
+    public function withdraw($t_type)
     {
         abort_if(Gate::denies('AccountMgtAccess'), redirect('error'));
         $branches = branch_list();
-        $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
         $transaction_methods = TransactionMethod::orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Method', '')->toArray();
-        $transaction_types = TransactionType::whereIn('id', [6, 11])->orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Type', '')->toArray();
-        return view('banking.withdraw', compact('branches', 'transaction_methods', 'to_accounts', 'transaction_types'));
-    }
+        if ($t_type=='Withdraw') {
+            $tr_type='Withdraw';
+            $tr_id=9;
+            $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->where('account_type','!=', 'Loan Account')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
+            $transaction_types = TransactionType::whereIn('id', [$tr_id])->orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Type', '')->toArray();
+        }
+        elseif ($t_type=='Loan Payment') {
+            $tr_type='Loan Payment';
+            $tr_id=6;
+            $to_accounts = DB::table('bank_accounts')->where('account_type', 'Loan Account')->where('status', 'Active')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
+            $transaction_types = TransactionType::whereIn('id', [$tr_id])->orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Type', '')->toArray();
+        }
+        elseif ($t_type=='Profit Share') {
+            $tr_type='Profit Share';
+            $tr_id=11;
+            $to_accounts = DB::table('bank_accounts')->where('account_type','!=', 'Loan Account')->where('status', 'Active')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
+            $transaction_types = TransactionType::whereIn('id', [$tr_id])->orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Type', '')->toArray();
+        }
+        return view('banking.withdraw', compact('branches', 'transaction_methods', 'to_accounts', 'transaction_types','tr_type','tr_id'));
+        }
 
     public function account_transfer()
     {
         abort_if(Gate::denies('AccountMgtAccess'), redirect('error'));
         $branches = branch_list();
-        $from_accounts = DB::table('bank_accounts')->where('status', 'Active')->pluck('account_name', 'id')->prepend('From Account', '')->toArray();
-        $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->pluck('account_name', 'id')->prepend('To Account', '')->toArray();
+        $from_accounts = DB::table('bank_accounts')->where('status', 'Active')->where('account_type','!=', 'Loan Account')->pluck('account_name', 'id')->prepend('From Account', '')->toArray();
+        $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->where('account_type','!=', 'Loan Account')->pluck('account_name', 'id')->prepend('To Account', '')->toArray();
         $transaction_methods = TransactionMethod::orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Method', '')->toArray();
         return view('banking.account_transfer', compact('branches', 'transaction_methods', 'to_accounts', 'from_accounts'));
     }

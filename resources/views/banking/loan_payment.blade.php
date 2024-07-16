@@ -1,26 +1,16 @@
 @extends('layouts.al305_main')
 @section('accounting_mo','menu-open')
 @section('accounting','active')
-    @if($tr_type=='Loan')
-        @section('loan_mo','menu-open')
+@section('loan_mo','menu-open')
 @section('loan_ma','active')
-@section('loan','active')
-    @elseif($tr_type=='Investment')
-        @section('loan_mo','menu-open')
-@section('loan_ma','active')
-@section('investment','active')
-    @else
-        @section('deposit','active')
-@endif
-
-
-@section('title',$tr_type)
+@section('loan_payment','active')
+@section('title','withdraw')
 @section('breadcrumb')
     <li class="nav-item d-none d-sm-inline-block">
         <a href="#" class="nav-link">Accounting</a>
     </li>
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">{{$tr_type}}</a>
+        <a href="#" class="nav-link">Receipt</a>
     </li>
 @endsection
 @push('css')
@@ -37,12 +27,12 @@
     <div class="row justify-content-center">
         <div class="card card-info col-md-8">
             <div class="card-header">
-                <h3 class="card-title">{{$tr_type}}</h3>
+                <h3 class="card-title">Loan Payment</h3>
             </div>
             {!! Form::open(array('route' => 'bank_ledger.store','method'=>'POST','class'=>'form-horizontal','id'=>'saveForm')) !!}
             {{ csrf_field() }}
-            {{--{!! Form::hidden('transaction_type_id', 8 )!!} --}}
-            {{--Deposite--}}
+            {{--{!! Form::hidden('transaction_type_id', 9 )!!} --}}
+            {{--Withdraw--}}
 
             <div class="card-body">
                 <div class="form-group row{{ $errors->has('branch') ? 'has-error' : '' }}">
@@ -63,7 +53,7 @@
                     @endif
                 </div>
                 <div class="form-group row{{ $errors->has('bank_account') ? 'has-error' : '' }}">
-                    <label for="roles" class="col-md-4 control-label text-right">Deposit To Account :<span
+                    <label for="roles" class="col-md-4 control-label text-right">Loan Account :<span
                                 class="required"> * </span></label>
                     <div class="col-md-6">
                         <select name="bank_account" class="form-control select2" style="width: 100%;" id="bank_account">
@@ -82,7 +72,7 @@
                     <label class="col-sm-4 control-label text-md-right">Transaction Type : <span
                                 class="required"> * </span></label>
                     <div class="col-sm-6">
-                        {{ Form::select('transaction_type', $transaction_types, $tr_id,['class'=>'form-control select2'] ) }}
+                        {{ Form::select('transaction_type', $transaction_types, 6,['class'=>'form-control select2'] ) }}
                         @if ($errors->has('transaction_type'))
                             <span class="help-block">
                                         <strong>{{ $errors->first('transaction_type') }}</strong>
@@ -99,7 +89,6 @@
                         <input type="text" class="form-control datetimepicker-input"
                                name="transaction_date"
                                value="{{ old('transaction_date') }}" data-target="#transaction_date"/>
-                        {{--                                  {!! Form::input('text', 'transaction_date', \Carbon\Carbon::now()->format('d-M-Y'),['class'=>'form-control']) !!}--}}
                         <div class="input-group-append" data-target="#transaction_date"
                              data-toggle="datetimepicker">
                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('bank_name')->nullable();
             $table->string('account_no')->nullable();
             $table->text('details')->nullable();
-            $table->enum('account_type', ['Bank Account','Mobile Banking','Petty Cash'])->default('Petty Cash');
+            $table->enum('account_type', ['Bank Account','Mobile Banking','Petty Cash','Loan Account'])->default('Petty Cash');
             $table->enum('status',['Active','Inactive'])->default('Active');
             $table->timestamps();
         });
