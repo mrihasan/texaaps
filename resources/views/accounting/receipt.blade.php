@@ -238,26 +238,68 @@
 
     })
 </script>
+{{--<script>--}}
+    {{--$("select[name='user']").change(function () {--}}
+        {{--var user_id = $(this).val();--}}
+        {{--var token = $("input[name='_token']").val();--}}
+        {{--$.ajax({--}}
+            {{--url: "user_balance",--}}
+            {{--method: 'POST',--}}
+            {{--data: {user_id: user_id, _token: token},--}}
+            {{--success: function (data) {--}}
+                {{--console.log(data);--}}
+                {{--jQuery('#balanceAmount').text('Name: ' + data.user_info.name + ' , Cell Phone: ' + data.user_info.cell_phone + ' , Last Transaction Amount: ' + data.last_transaction_amount + ' & type was: ' + data.last_transaction_type + ' Dated:' + data.last_transaction_date + ' , Current Balance is: ' + data.balance);--}}
+            {{--},--}}
+            {{--error: function () {--}}
+                {{--jQuery('#balanceAmount').text('Sorry, an error occurred.');--}}
+            {{--}--}}
+        {{--});--}}
+    {{--});--}}
+{{--</script>--}}
+
 <script>
     $("select[name='user']").change(function () {
         var user_id = $(this).val();
-//        console.log(user_id);
         var token = $("input[name='_token']").val();
+
+        // Fetch user balance
         $.ajax({
             url: "user_balance",
             method: 'POST',
             data: {user_id: user_id, _token: token},
             success: function (data) {
-                console.log(data);
+//                console.log(data);
                 jQuery('#balanceAmount').text('Name: ' + data.user_info.name + ' , Cell Phone: ' + data.user_info.cell_phone + ' , Last Transaction Amount: ' + data.last_transaction_amount + ' & type was: ' + data.last_transaction_type + ' Dated:' + data.last_transaction_date + ' , Current Balance is: ' + data.balance);
             },
             error: function () {
                 jQuery('#balanceAmount').text('Sorry, an error occurred.');
             }
+        });
 
+        // Fetch user invoices
+        $.ajax({
+            url: "user_invoices",
+            method: 'POST',
+            data: {user_id: user_id, _token: token},
+            success: function (data) {
+//                console.log(data);  // Log the received data for debugging
+                var $invoiceSelect = $("select[name='invoice']");
+                $invoiceSelect.empty();
+                if (data.invoices.length === 0) {
+                    $invoiceSelect.append('<option>No due invoice found</option>');
+                } else {
+                    $.each(data.invoices, function (index, invoice) {
+                        $invoiceSelect.append('<option value="' + invoice.id + '">' + invoice.invoice_number + ' - Due: ' + invoice.due_amount.toFixed(0) + '</option>');
+                    });
+                }
+            },
+            error: function () {
+                jQuery('#balanceAmount').text('Sorry, an error occurred while fetching invoices.');
+            }
         });
     });
 </script>
+
 
 
 @endpush
