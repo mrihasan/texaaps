@@ -1,8 +1,17 @@
 @extends('layouts.al305_main')
 @section('accounting_mo','menu-open')
 @section('accounting','active')
-@section('manage_account','active')
-@section('title','Manage Account')
+@if($tr_type=='Loan Account')
+    @section('loan_mo','menu-open')
+@section('loan_ma','active')
+@section('loan_account','active')
+@elseif($tr_type=='Bank Account')
+    @section('manage_account','active')
+@else
+    @section('manage_account','active')
+@endif
+@section('title',$tr_type)
+
 @section('breadcrumb')
     <li class="nav-item d-none d-sm-inline-block">
         <a href="#" class="nav-link">Accounting</a>

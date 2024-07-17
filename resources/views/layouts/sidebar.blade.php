@@ -349,6 +349,12 @@
                                             <p>Profit Share</p>
                                         </a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url('bankac/'.'Loan Account') }}" class="nav-link @yield('loan_account')">
+                                            <i class="far fa-dot-circle nav-icon"></i>
+                                            <p>Loan Account</p>
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
 

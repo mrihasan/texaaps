@@ -12,8 +12,6 @@
     @else
         @section('deposit','active')
 @endif
-
-
 @section('title',$tr_type)
 @section('breadcrumb')
     <li class="nav-item d-none d-sm-inline-block">

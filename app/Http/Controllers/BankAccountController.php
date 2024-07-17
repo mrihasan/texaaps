@@ -20,11 +20,27 @@ class BankAccountController extends Controller
         $this->middleware('auth');
     }
 
+    public function bankac($tr_type)
+    {
+        abort_if(Gate::denies('AccountMgtAccess'), redirect('error'));
+        if ($tr_type=='Bank Account'){
+            $banking = BankAccount::where('account_type','!=','Loan Account')->latest()->get();
+        }
+        elseif ($tr_type=='Loan Account'){
+            $banking = BankAccount::where('account_type','Loan Account')->latest()->get();
+        }
+        else
+        {
+            $banking = BankAccount::latest()->get();
+        }
+        return view('banking.index', compact('banking','tr_type'));
+    }
     public function index()
     {
         abort_if(Gate::denies('AccountMgtAccess'), redirect('error'));
         $banking = BankAccount::latest()->get();
-        return view('banking.index', compact('banking'));
+        $tr_type='All';
+        return view('banking.index', compact('banking','tr_type'));
     }
 
     public function create()

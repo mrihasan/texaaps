@@ -1,8 +1,16 @@
 @extends('layouts.al305_main')
 @section('accounting_mo','menu-open')
 @section('accounting','active')
-@section('manage_account','active')
-@section('title','Manage Account')
+@if($bank_account->account_type=='Loan Account')
+    @section('loan_mo','menu-open')
+@section('loan_ma','active')
+@section('loan_account','active')
+@elseif($bank_account->account_type=='Bank Account')
+    @section('manage_account','active')
+@else
+    @section('manage_account','active')
+@endif
+@section('title','Update '.$bank_account->account_type)
 @section('breadcrumb')
     <li class="nav-item d-none d-sm-inline-block">
         <a href="#" class="nav-link">Accounting</a>
@@ -18,7 +26,7 @@
     <div class="row justify-content-center">
         <div class="card card-info col-md-8">
             <div class="card-header">
-                <h3 class="card-title">Update Account</h3>
+                <h3 class="card-title">Update {{$bank_account->account_type}}</h3>
             </div>
             {!! Form::model($bank_account,['method'=>'PATCH', 'route'=>['bank_account.update',$bank_account->id],'class'=>'form-horizontal','id'=>'saveForm']) !!}
             {{ csrf_field() }}
