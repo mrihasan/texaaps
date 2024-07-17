@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CompanyName;
+use App\Models\Invoice;
 use App\Models\Ledger;
 use App\Models\Setting;
 use App\Models\UserType;
@@ -12,6 +13,7 @@ use App\Models\Profile;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 use DB;
 use Illuminate\Support\Facades\Auth;
@@ -409,9 +411,52 @@ class UserController extends Controller
     {
         if ($request->ajax()) {
             $user_balance = ledgerBalance($request->user_id);
-//            dd($user_balance);
             return response()->json($user_balance);
         }
     }
+
+    public function user_invoices(Request $request)
+    {
+        if ($request->ajax()) {
+            $user_id = $request->user_id;
+            $invoices = Invoice::where('user_id', $user_id)->get();
+
+            // Initialize an array to store invoices with due amounts and payment history
+            $invoicesWithDueAndPaymentHistory = [];
+
+            // Loop through each invoice
+            foreach ($invoices as $invoice) {
+                // Calculate the total amount of the invoice
+                $totalInvoiceAmount = $invoice->invoice_total;
+
+                // Calculate the total amount paid for this invoice
+                $totalAmountPaid = Ledger::where('invoice_id', $invoice->id)->sum('amount');
+
+                // Calculate the due amount
+                $dueAmount = $totalInvoiceAmount - $totalAmountPaid;
+
+//                // Log the invoice details and calculated amounts for debugging
+//                Log::info('Invoice ID: ' . $invoice->id);
+//                Log::info('Total Invoice Amount: ' . $totalInvoiceAmount);
+//                Log::info('Total Amount Paid: ' . $totalAmountPaid);
+//                Log::info('Due Amount: ' . $dueAmount);
+
+                // Add the invoice to the list of invoices with due amounts (including those with 0 due)
+                if ($dueAmount > 0) {
+                $invoicesWithDueAndPaymentHistory[] = [
+                    'id' => $invoice->id,
+                    'invoice_number' => $invoice->sl_no,
+                    'due_amount' => $dueAmount
+                ];
+            }
+            }
+            // Log the final array for debugging
+//            Log::info($invoicesWithDueAndPaymentHistory);
+
+            return response()->json(['invoices' => $invoicesWithDueAndPaymentHistory]);
+        }
+    }
+
+
 
 }

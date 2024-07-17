@@ -44,6 +44,7 @@ Route::post('/select_user_action', [\App\Http\Controllers\UserController::class,
 Route::patch('/user/Auth::user()', [\App\Http\Controllers\UserController::class, 'password_update'])->name('password_update');
 Route::get('/myprofile', [\App\Http\Controllers\UserController::class, 'myprofile'])->name('myprofile');
 Route::post('user_balance', '\App\Http\Controllers\UserController@user_balance')->name('user_balance');
+Route::post('user_invoices', '\App\Http\Controllers\UserController@user_invoices')->name('user_invoices');
 Route::get('addSupplier', [\App\Http\Controllers\UserController::class, 'addSupplier'])->name('addSupplier');
 Route::get('manageSupplier', [\App\Http\Controllers\UserController::class, 'manageSupplier'])->name('manageSupplier');
 Route::get('addClient', [\App\Http\Controllers\UserController::class, 'addClient'])->name('addClient');
