@@ -73,6 +73,7 @@ Route::put('approve_acledger/{id}','\App\Http\Controllers\BankLedgerController@a
 Route::get('/account_transfer', '\App\Http\Controllers\BankLedgerController@account_transfer')->name('account_transfer');
 Route::get('/deposit/{t_type}', '\App\Http\Controllers\BankLedgerController@deposit')->name('deposit');
 Route::get('/withdraw/{t_type}', '\App\Http\Controllers\BankLedgerController@withdraw')->name('withdraw');
+Route::get('/investment_statement', '\App\Http\Controllers\BankLedgerController@investment_statement')->name('investment_statement');
 Route::get('/account_statement', '\App\Http\Controllers\BankLedgerController@account_statement')->name('account_statement');
 Route::get('/manage_account_ledger', '\App\Http\Controllers\BankLedgerController@manage_account_ledger')->name('manage_account_ledger');
 Route::resource('bank_ledger', \App\Http\Controllers\BankLedgerController::class);

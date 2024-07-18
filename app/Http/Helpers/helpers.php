@@ -591,6 +591,107 @@ function ledger_account_all($start_date, $end_date)
     return $ledger;
 }
 
+function investment_statement($start_date, $end_date, $tr_type)
+{
+//    dd($tr_type);
+    $mindate_ledger = DB::table('bank_ledgers')->MIN('transaction_date');
+    $before1day1 = new DateTime($start_date);
+    $dateObject=$before1day1->sub(new DateInterval('P1D'));
+    $before1day=$dateObject->format('Y-m-d'). ' 23:59:59';
+    $bd_bank_credit = DB::table('bank_ledgers')
+        ->whereIn('transaction_type_id', $tr_type)
+        ->whereBetween('transaction_date', [$mindate_ledger, $before1day])
+        ->sum('amount');
+    $bd_bank_debit = DB::table('bank_ledgers')
+        ->whereIn('transaction_type_id', $tr_type)
+        ->whereBetween('transaction_date', [$mindate_ledger, $before1day])
+        ->sum('amount');
+    $balance_brought_down=$bd_bank_credit-$bd_bank_debit;
+// Create a new ledger entry for balance brought down
+    $balance_brought_down_entry = (object) [
+        'transaction_date' => $before1day,
+        'transaction_code' => null,
+        'sl_no' => null,
+        'amount' => $balance_brought_down,
+        'transaction_type' => 'Credited',
+        'reference' => 'Balance Brought Down',
+        'ref_date' => null,
+        'ref_no' => null,
+        'created_at' => null,
+    ];
+
+    $ledger = DB::table('bank_ledgers')->select('bank_ledgers.transaction_date', 'bank_ledgers.transaction_code', 'bank_ledgers.amount',
+        'transaction_types.title as transaction_type', 'bank_ledgers.particulars as reference', 'bank_ledgers.sl_no',
+        'bank_ledgers.ref_date', 'bank_ledgers.ref_no', 'bank_ledgers.created_at')
+        ->join('transaction_types', 'transaction_types.id', '=', 'bank_ledgers.transaction_type_id')
+        ->whereBetween('bank_ledgers.transaction_date', [$start_date, $end_date])
+        ->whereIn('transaction_type_id', $tr_type)
+        ->orderBy('bank_ledgers.transaction_date')->get();
+    $ledger->prepend($balance_brought_down_entry);
+    $merged_ledger = $ledger;
+    $sort_array = [];
+    foreach ($merged_ledger as $key => $data)
+        $sort_array[] = $data;
+
+    $ledger_balance['transaction_type'] = [];
+    $ledger_balance['transaction_date'] = [];
+    $ledger_balance['transaction_code'] = [];
+    $ledger_balance['sl_no'] = [];
+    $ledger_balance['reference'] = [];
+    $ledger_balance['ref_date'] = [];
+    $ledger_balance['ref_no'] = [];
+    $ledger_balance['transaction_amount'] = [];
+    $ledger_balance['balance'] = [];
+    $ledger = [];
+    $runningSum = 0;
+    for ($i = 0; $i < count($sort_array); $i++) {
+        if ($sort_array[$i]->transaction_type == 'Credited') {
+            $runningSum += $sort_array[$i]->amount;
+        }
+        if ($sort_array[$i]->transaction_type == 'Debited') {
+            $runningSum -= $sort_array[$i]->amount;
+        }
+        if ($sort_array[$i]->transaction_type == 'Receipt') {
+            $runningSum += $sort_array[$i]->amount;
+        }
+        if ($sort_array[$i]->transaction_type == 'Payment') {
+            $runningSum -= $sort_array[$i]->amount;
+        }
+        if ($sort_array[$i]->transaction_type == 'Deposit') {
+            $runningSum += $sort_array[$i]->amount;
+        }
+        if ($sort_array[$i]->transaction_type == 'Withdraw') {
+            $runningSum -= $sort_array[$i]->amount;
+        }
+        if ($sort_array[$i]->transaction_type == 'Loan') {
+            $runningSum += $sort_array[$i]->amount;
+        }
+        if ($sort_array[$i]->transaction_type == 'Loan Payment') {
+            $runningSum -= $sort_array[$i]->amount;
+        }
+        if ($sort_array[$i]->transaction_type == 'Investment') {
+            $runningSum += $sort_array[$i]->amount;
+        }
+        if ($sort_array[$i]->transaction_type == 'Profit Share') {
+            $runningSum -= $sort_array[$i]->amount;
+        }
+
+        $ledger_balance['transaction_type'][] = $sort_array[$i]->transaction_type;
+        $ledger_balance['transaction_date'][] = $sort_array[$i]->transaction_date;
+        $ledger_balance['transaction_code'][] = $sort_array[$i]->transaction_code;
+        $ledger_balance['sl_no'][] = $sort_array[$i]->sl_no;
+        $ledger_balance['reference'][] = $sort_array[$i]->reference;
+        $ledger_balance['ref_no'][] = $sort_array[$i]->ref_no;
+        $ledger_balance['ref_date'][] = $sort_array[$i]->ref_date;
+        $ledger_balance['transaction_amount'][] = $sort_array[$i]->amount;
+        $ledger_balance['balance'][] = $runningSum;
+        $ledger[] = $ledger_balance;
+    }
+
+    return $ledger;
+}
+
+
 //_________________PaymentRequest
 if (!function_exists('prSl')) {
     function prSl($initial, $req_date)

@@ -338,6 +338,12 @@
                                         </a>
                                     </li>
                                     <li class="nav-item">
+                                        <a href="{{ url('bankac/'.'Loan Account') }}" class="nav-link @yield('loan_account')">
+                                            <i class="far fa-dot-circle nav-icon"></i>
+                                            <p>Manage Loan Account</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
                                         <a href="{{ url('deposit/'.'Investment') }}" class="nav-link @yield('investment')">
                                             <i class="far fa-dot-circle nav-icon"></i>
                                             <p>Investment</p>
@@ -350,9 +356,9 @@
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ url('bankac/'.'Loan Account') }}" class="nav-link @yield('loan_account')">
+                                        <a href="{{ url('investment_statement') }}" class="nav-link @yield('investment_statement')">
                                             <i class="far fa-dot-circle nav-icon"></i>
-                                            <p>Loan Account</p>
+                                            <p>Statement</p>
                                         </a>
                                     </li>
                                 </ul>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BankAccount;
 use App\Models\BankLedger;
 use App\Models\BranchLedger;
+use App\Models\Role;
 use App\Models\TransactionMethod;
 use App\Models\TransactionType;
 use Illuminate\Http\Request;
@@ -73,6 +74,25 @@ class BankLedgerController extends Controller
         $header_title = 'Account Statement of ' . $bank_account->account_name . ' (' . $bank_account->account_no . ') From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
 
         return view('banking.account_statement', compact('ledger', 'header_title', 'to_accounts'));
+    }
+    public function investment_statement(Request $request)
+    {
+//        dd($request->trtypes);
+//        abort_if(Gate::denies('payment-access'), redirect('error'));
+        if ($request->start_date == null) {
+            $start_date = Carbon::now()->subDays(90)->format('Y-m-d') . ' 00:00:00';
+            $end_date = date('Y-m-d') . ' 23:59:59';
+            $tr_type = [5,6,10,11];
+        } else {
+            $start_date = date('Y-m-d', strtotime($request->start_date)) . ' 00:00:00';
+            $end_date = date('Y-m-d', strtotime($request->end_date)) . ' 23:59:59';
+            $tr_type = $request->trtypes;
+        }
+        $ledger = investment_statement($start_date, $end_date, $tr_type);
+        $transactionTypes = TransactionType::whereIn('id', [5,6,10,11])->pluck('title', 'id');
+        $header_title = 'Statement From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
+
+        return view('banking.investment_statement', compact('ledger', 'header_title','transactionTypes'));
     }
 
     public function deposit($t_type)
