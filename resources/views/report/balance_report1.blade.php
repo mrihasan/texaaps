@@ -21,156 +21,111 @@
 
 @endpush
 @section('maincontent')
-    <div class="card card-success card-tabs">
-        <div class="card-header p-0 pt-1">
-            <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill"
-                       href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home"
-                       aria-selected="true">{{$title_date_range}}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="custom-tabs-one-sales-tab" data-toggle="pill"
-                       href="#custom-tabs-one-sales" role="tab" aria-controls="custom-tabs-one-sales"
-                       aria-selected="false">Sales</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="custom-tabs-one-purchase-tab" data-toggle="pill"
-                       href="#custom-tabs-one-purchase" role="tab" aria-controls="custom-tabs-one-purchase"
-                       aria-selected="false">Purchase</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="custom-tabs-one-receipt-tab" data-toggle="pill"
-                       href="#custom-tabs-one-receipt" role="tab" aria-controls="custom-tabs-one-receipt"
-                       aria-selected="false">Receipt</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="custom-tabs-one-payment-tab" data-toggle="pill"
-                       href="#custom-tabs-one-payment" role="tab" aria-controls="custom-tabs-one-payment"
-                       aria-selected="false">Payment</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="custom-tabs-one-expense-tab" data-toggle="pill"
-                       href="#custom-tabs-one-expense" role="tab" aria-controls="custom-tabs-one-expense"
-                       aria-selected="false">Expense</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="custom-tabs-one-salary-tab" data-toggle="pill"
-                       href="#custom-tabs-one-salary" role="tab" aria-controls="custom-tabs-one-salary"
-                       aria-selected="false">Salary</a>
-                </li>
-            </ul>
-        </div>
-        <div class="card-body">
-            <div class="tab-content" id="custom-tabs-one-tabContent">
-                <div class="tab-pane fade show active" id="custom-tabs-one-home" role="tabpanel"
-                     aria-labelledby="custom-tabs-one-home-tab">
-                    {!! Form::open(array('method' => 'get', 'url' => 'balance_report','class'=>'form-horizontal')) !!}
-                    {{ csrf_field() }}
+    <div class="row justify-content-center">
+        <div class="card card-info col-md-12">
+            <div class="card-header">
+                <h3 class="card-title">{{$title_date_range}}</h3>
+            </div>
+            <div class="card-body">
+                {!! Form::open(array('method' => 'get', 'url' => 'balance_report','class'=>'form-horizontal')) !!}
+                {{ csrf_field() }}
 
-                    <div class="form-group ">
-                        {!! Form::hidden('start_date', null,['class'=>'StartDate','id'=>'StartDate'] )!!}
-                        {!! Form::hidden('end_date', null,['class'=>'EndDate','id'=>'EndDate'] )!!}
-                        <label class="control-label col-md-4 text-md-right">{{ __('all_settings.Select Date Ranges') }} :</label>
-                        <div class="col-md-7 input-group " style="display: inline-block">
-                            <button type="button" class="btn btn-default " id="reportrange">
-                                <i class="far fa-calendar-alt"></i>
-                                <span> </span>
-                                <i class="fas fa-caret-down"></i>
-                            </button>
-                        </div>
+                <div class="form-group ">
+                    {!! Form::hidden('start_date', null,['class'=>'StartDate','id'=>'StartDate'] )!!}
+                    {!! Form::hidden('end_date', null,['class'=>'EndDate','id'=>'EndDate'] )!!}
+                    <label class="control-label col-md-4 text-md-right">{{ __('all_settings.Select Date Ranges') }} :</label>
+                    <div class="col-md-7 input-group " style="display: inline-block">
+                        <button type="button" class="btn btn-default " id="reportrange">
+                            <i class="far fa-calendar-alt"></i>
+                            <span> </span>
+                            <i class="fas fa-caret-down"></i>
+                        </button>
                     </div>
-
-                    <div class="table-scrollable">
-                        <table class="table table-bordered table-striped table-hover">
-                            <thead>
-                            <tr>
-                                <th colspan="2" style="text-align:center">Balance Summary of Billed</th>
-                                {{--<th style="text-align:center">Billed </th>--}}
-                                <th colspan="4" style="text-align:center">Balance Summary of Ledger</th>
-                                {{--<th style="text-align:center">Collected/Paid</th>--}}
-                            </tr>
-                            </thead>
-                            <tfoot>
-                            <tr>
-                                <th class="col-md-4" style="text-align:right">Balance:&nbsp;&nbsp;</th>
-                                <th class="col-md-2" style="text-align:right">{{$balance}}</th>
-                                <th class="col-md-4" style="text-align:right">Balance:&nbsp;&nbsp;</th>
-                                <th class="col-md-2" style="text-align:right">{{$balance_collect}}</th>
-                            </tr>
-                            </tfoot>
-                            <tbody>
-                            <tr>
-                                <td class="col-md-4" style="text-align:right">Balance b/d (brought down): &nbsp;&nbsp;
-                                </td>
-                                <td class="col-md-2" style="text-align:right"> {{$balance_bd}}</td>
-                                <td class="col-md-4" style="text-align:right">Balance b/d (brought down): &nbsp;&nbsp;
-                                </td>
-                                <td class="col-md-2" style="text-align:right">{{$balance_bd_collect}}</td>
-                            </tr>
-                            <tr>
-                                <td class="col-md-4" style="text-align:right">
-                                    ({{Carbon\Carbon::parse($start_date)->format('d-M-Y').' to '.Carbon\Carbon::parse($end_date)->format('d-M-Y')}}
-                                    )
-                                    <strong> Total Sales : &nbsp;&nbsp;</strong></td>
-                                <td class="col-md-2" style="text-align:right"> {{$total_salesamount}}</td>
-                                <td class="col-md-4" style="text-align:right">
-                                    ({{Carbon\Carbon::parse($start_date)->format('d-M-Y').' to '.Carbon\Carbon::parse($end_date)->format('d-M-Y')}}
-                                    )
-                                    <strong> Total Receipt : &nbsp;&nbsp;</strong></td>
-                                <td class="col-md-2"
-                                    style="text-align:right; color: green">{{$total_salesamount_collect}}</td>
-                            </tr>
-                            <tr>
-                                <td class="col-md-4" style="text-align:right">
-                                    ({{Carbon\Carbon::parse($start_date)->format('d-M-Y').' to '.Carbon\Carbon::parse($end_date)->format('d-M-Y')}}
-                                    )
-                                    <strong> Total Purchase : &nbsp;&nbsp;</strong></td>
-                                <td class="col-md-2" style="text-align:right"> {{$total_purchaseamount}}</td>
-                                <td class="col-md-4" style="text-align:right">
-                                    ({{Carbon\Carbon::parse($start_date)->format('d-M-Y').' to '.Carbon\Carbon::parse($end_date)->format('d-M-Y')}}
-                                    )
-                                    <strong> Total Payment : &nbsp;&nbsp;</strong></td>
-                                <td class="col-md-2"
-                                    style="text-align:right; color: red">{{$total_purchaseamount_paid}}</td>
-                            </tr>
-                            <tr>
-                                <td class="col-md-4" style="text-align:right">
-                                    ({{Carbon\Carbon::parse($start_date)->format('d-M-Y').' to '.Carbon\Carbon::parse($end_date)->format('d-M-Y')}}
-                                    )
-                                    <strong>Total Expense :&nbsp;&nbsp;</strong></td>
-                                <td class="col-md-2" style="text-align:right">{{$total_expense}}</td>
-                                <td class="col-md-4" style="text-align:right">
-                                    ({{Carbon\Carbon::parse($start_date)->format('d-M-Y').' to '.Carbon\Carbon::parse($end_date)->format('d-M-Y')}}
-                                    )
-                                    <strong>Total Expense :&nbsp;&nbsp;</strong></td>
-                                <td class="col-md-2" style="text-align:right; color: red">{{$total_expense}}</td>
-                            </tr>
-                            <tr>
-                                <td class="col-md-4" style="text-align:right">
-                                    ({{Carbon\Carbon::parse($start_date)->format('d-M-Y').' to '.Carbon\Carbon::parse($end_date)->format('d-M-Y')}}
-                                    )
-                                    <strong>Total Employee Salary :&nbsp;&nbsp;</strong></td>
-                                <td class="col-md-2" style="text-align:right">{{$total_salary}}</td>
-                                <td class="col-md-4" style="text-align:right">
-                                    ({{Carbon\Carbon::parse($start_date)->format('d-M-Y').' to '.Carbon\Carbon::parse($end_date)->format('d-M-Y')}}
-                                    )
-                                    <strong>Total Employee Salary :&nbsp;&nbsp;</strong></td>
-                                <td class="col-md-2" style="text-align:right; color: red">{{$total_salary}}</td>
-                            </tr>
-
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="card-footer">
-                        {{--<button type="submit" class="btn btn-default">{{ __('all_settings.Back') }}</button>--}}
-                        <button type="submit" class="btn btn-info float-right">{{ __('all_settings.Search') }}</button>
-                    </div>
-                    <!-- /.card-footer -->
-                    {!! Form::close() !!}
                 </div>
-                <div class="tab-pane fade" id="custom-tabs-one-sales" role="tabpanel"
-                     aria-labelledby="custom-tabs-one-sales-tab">
+
+                <div class="table-scrollable">
+                    <table class="table table-bordered table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th colspan="2" style="text-align:center">Balance Summary of Billed</th>
+                            {{--<th style="text-align:center">Billed </th>--}}
+                            <th colspan="4" style="text-align:center">Balance Summary of Ledger</th>
+                            {{--<th style="text-align:center">Collected/Paid</th>--}}
+                        </tr>
+                        </thead>
+                        <tfoot>
+                        <tr>
+                            <th class="col-md-4" style="text-align:right">Balance:&nbsp;&nbsp;</th>
+                            <th class="col-md-2" style="text-align:right">{{$balance}}</th>
+                            <th class="col-md-4" style="text-align:right">Balance:&nbsp;&nbsp;</th>
+                            <th class="col-md-2" style="text-align:right">{{$balance_collect}}</th>
+                        </tr>
+                        </tfoot>
+                        <tbody>
+                        <tr>
+                            <td class="col-md-4" style="text-align:right">Balance b/d (brought down): &nbsp;&nbsp;
+                            </td>
+                            <td class="col-md-2" style="text-align:right"> {{$balance_bd}}</td>
+                            <td class="col-md-4" style="text-align:right">Balance b/d (brought down): &nbsp;&nbsp;
+                            </td>
+                            <td class="col-md-2" style="text-align:right">{{$balance_bd_collect}}</td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4" style="text-align:right">
+                                ({{Carbon\Carbon::parse($start_date)->format('d-M-Y').' to '.Carbon\Carbon::parse($end_date)->format('d-M-Y')}}
+                                )
+                                <strong> Total Sales : &nbsp;&nbsp;</strong></td>
+                            <td class="col-md-2" style="text-align:right"> {{$total_salesamount}}</td>
+                            <td class="col-md-4" style="text-align:right">
+                                ({{Carbon\Carbon::parse($start_date)->format('d-M-Y').' to '.Carbon\Carbon::parse($end_date)->format('d-M-Y')}}
+                                )
+                                <strong> Total Receipt : &nbsp;&nbsp;</strong></td>
+                            <td class="col-md-2"
+                                style="text-align:right; color: green">{{$total_salesamount_collect}}</td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4" style="text-align:right">
+                                ({{Carbon\Carbon::parse($start_date)->format('d-M-Y').' to '.Carbon\Carbon::parse($end_date)->format('d-M-Y')}}
+                                )
+                                <strong> Total Purchase : &nbsp;&nbsp;</strong></td>
+                            <td class="col-md-2" style="text-align:right"> {{$total_purchaseamount}}</td>
+                            <td class="col-md-4" style="text-align:right">
+                                ({{Carbon\Carbon::parse($start_date)->format('d-M-Y').' to '.Carbon\Carbon::parse($end_date)->format('d-M-Y')}}
+                                )
+                                <strong> Total Payment : &nbsp;&nbsp;</strong></td>
+                            <td class="col-md-2"
+                                style="text-align:right; color: red">{{$total_purchaseamount_paid}}</td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4" style="text-align:right">
+                                ({{Carbon\Carbon::parse($start_date)->format('d-M-Y').' to '.Carbon\Carbon::parse($end_date)->format('d-M-Y')}}
+                                )
+                                <strong>Total Expense :&nbsp;&nbsp;</strong></td>
+                            <td class="col-md-2" style="text-align:right">{{$total_expense}}</td>
+                            <td class="col-md-4" style="text-align:right">
+                                ({{Carbon\Carbon::parse($start_date)->format('d-M-Y').' to '.Carbon\Carbon::parse($end_date)->format('d-M-Y')}}
+                                )
+                                <strong>Total Expense :&nbsp;&nbsp;</strong></td>
+                            <td class="col-md-2" style="text-align:right; color: red">{{$total_expense}}</td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4" style="text-align:right">
+                                ({{Carbon\Carbon::parse($start_date)->format('d-M-Y').' to '.Carbon\Carbon::parse($end_date)->format('d-M-Y')}}
+                                )
+                                <strong>Total Employee Salary :&nbsp;&nbsp;</strong></td>
+                            <td class="col-md-2" style="text-align:right">{{$total_salary}}</td>
+                            <td class="col-md-4" style="text-align:right">
+                                ({{Carbon\Carbon::parse($start_date)->format('d-M-Y').' to '.Carbon\Carbon::parse($end_date)->format('d-M-Y')}}
+                                )
+                                <strong>Total Employee Salary :&nbsp;&nbsp;</strong></td>
+                            <td class="col-md-2" style="text-align:right; color: red">{{$total_salary}}</td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-scrollable">
                     <table class="table dataTables table-bordered table-striped table-hover">
                         <thead>
                         <tr>
@@ -200,8 +155,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="tab-pane fade" id="custom-tabs-one-purchase" role="tabpanel"
-                     aria-labelledby="custom-tabs-one-purchase-tab">
+                <div class="table-scrollable">
                     <table class="table dataTables table-bordered table-striped table-hover">
                         <thead>
                         <tr>
@@ -231,8 +185,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="tab-pane fade" id="custom-tabs-one-receipt" role="tabpanel"
-                     aria-labelledby="custom-tabs-one-receipt-tab">
+                <div class="table-scrollable">
                     <table class="table dataTables table-bordered table-striped table-hover">
                         <thead>
                         <tr>
@@ -263,8 +216,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="tab-pane fade" id="custom-tabs-one-payment" role="tabpanel"
-                     aria-labelledby="custom-tabs-one-payment-tab">
+                <div class="table-scrollable">
                     <table class="table dataTables table-bordered table-striped table-hover">
                         <thead>
                         <tr>
@@ -294,8 +246,8 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="tab-pane fade" id="custom-tabs-one-expense" role="tabpanel"
-                     aria-labelledby="custom-tabs-one-expense-tab">
+
+                <div class="table-scrollable">
                     <table class="table dataTables table-bordered table-striped table-hover">
                         <thead>
                         <tr>
@@ -324,8 +276,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="tab-pane fade" id="custom-tabs-one-salary" role="tabpanel"
-                     aria-labelledby="custom-tabs-one-salary-tab">
+                <div class="table-scrollable">
                     <table class="table dataTables table-bordered table-striped table-hover">
                         <thead>
                         <tr>
@@ -353,10 +304,21 @@
                         @endforeach
                         </tbody>
                     </table>
+
                 </div>
 
+
             </div>
+
+            <!-- /.card-body -->
+            <div class="card-footer">
+                {{--<button type="submit" class="btn btn-default">{{ __('all_settings.Back') }}</button>--}}
+                <button type="submit" class="btn btn-info float-right">{{ __('all_settings.Search') }}</button>
+            </div>
+            <!-- /.card-footer -->
+            {!! Form::close() !!}
         </div>
+
     </div>
 
 @endsection

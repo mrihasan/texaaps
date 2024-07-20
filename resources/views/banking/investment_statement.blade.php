@@ -81,7 +81,7 @@
                                 <td>{{Carbon\Carbon::parse($data['transaction_date'][$key])->format('d-M-Y, h:ia') }}</td>
                                 <td>{{$data['reference'][$key]}}</td>
                                 <td>{{$data['ref_no'][$key]}}</td>
-                                <td>{{$data['ref_date'][$key]}}</td>
+                                <td>{{Carbon\Carbon::parse($data['ref_date'][$key])->format('d-M-Y') }}</td>
                                 <td>{{$data['transaction_type'][$key] }}</td>
                                 <td>{{$data['sl_no'][$key]}}</td>
                                 {{--<td style="text-align: right">{{($data['transaction_type'][$key]=='Credited'||$data['transaction_type'][$key]=='Receipt'||$data['transaction_type'][$key]=='Deposit')?$data['transaction_amount'][$key]:''}}</td>--}}
