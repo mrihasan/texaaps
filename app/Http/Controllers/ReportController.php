@@ -445,29 +445,30 @@ class ReportController extends Controller
     {
         abort_if(Gate::denies('ReportAccess'), redirect('error'));
         $users = User::where('user_type_id', 3)
-            ->orderBy('name','desc')->get();
-        $trt=[];
-        for ($i = 0; $i < count($users); $i++){
-            if (ledgerBalance($users[$i]->id)['balance']<0)
-                $trt[]=(ledgerBalance($users[$i]->id));
+            ->orderBy('name', 'desc')->get();
+        $trt = [];
+        for ($i = 0; $i < count($users); $i++) {
+            if (ledgerBalance($users[$i]->id)['balance'] < 0)
+                $trt[] = (ledgerBalance($users[$i]->id));
         }
 //        dd($trt);
-        $header_title='Customer Report';
-        return view('report.customer_report',compact('trt','header_title'));
+        $header_title = 'Customer Report';
+        return view('report.customer_report', compact('trt', 'header_title'));
     }
+
     public function supplier_report()
     {
         abort_if(Gate::denies('ReportAccess'), redirect('error'));
         $users = User::where('user_type_id', 4)
-            ->orderBy('name','desc')->get();
-        $trt=[];
-        for ($i = 0; $i < count($users); $i++){
-            if (ledgerBalance($users[$i]->id)['balance']<0)
-                $trt[]=(ledgerBalance($users[$i]->id));
+            ->orderBy('name', 'desc')->get();
+        $trt = [];
+        for ($i = 0; $i < count($users); $i++) {
+            if (ledgerBalance($users[$i]->id)['balance'] < 0)
+                $trt[] = (ledgerBalance($users[$i]->id));
         }
 //        dd($trt);
-        $header_title='Supplier Report';
-        return view('report.supplier_report',compact('trt','header_title'));
+        $header_title = 'Supplier Report';
+        return view('report.supplier_report', compact('trt', 'header_title'));
     }
 
     public function balance_report(Request $request)
@@ -477,118 +478,246 @@ class ReportController extends Controller
         $start_date = date('Y-m-d', strtotime($request->start_date)) . ' 00:00:00';
         $end_date = date('Y-m-d', strtotime($request->end_date)) . ' 23:59:59';
 
-        $mindate_ledger = DB::table('ledgers')->MIN('transaction_date');
-        $mindate_invoice = DB::table('invoices')->MIN('transaction_date');
-        $mindate_expense = DB::table('expenses')->MIN('expense_date');
-        $mindate_salary = DB::table('employee_salaries')->MIN('created_at');
+        if (session()->get('branch') != 'all') {
+
+            $mindate_ledger = DB::table('ledgers')->where('branch_id', session()->get('branch'))->MIN('transaction_date');
+            $mindate_invoice = DB::table('invoices')->where('branch_id', session()->get('branch'))->MIN('transaction_date');
+            $mindate_expense = DB::table('expenses')->where('branch_id', session()->get('branch'))->MIN('expense_date');
+            $mindate_salary = DB::table('employee_salaries')->where('branch_id', session()->get('branch'))->MIN('created_at');
 
 //        $before1day = new DateTime($start_date);
 //        $dateObject=$before1day->sub(new DateInterval('P1D'));
 //        $before1day=$dateObject->format('Y-m-d'). ' 23:59:59';
-        $before1day = date('Y-m-d H:i:s', strtotime($start_date . ' -1 second'));
+            $before1day = date('Y-m-d H:i:s', strtotime($start_date . ' -1 second'));
 //        dd($before1day);
 
-        //        expense b/d = brought down
-        $bd_total_expense = DB::table('expenses')
-            ->whereBetween('expense_date', [$mindate_expense, $before1day])
-            ->sum('expense_amount');
+            //        expense b/d = brought down
+            $bd_total_expense = DB::table('expenses')
+                ->where('branch_id', session()->get('branch'))
+                ->whereBetween('expense_date', [$mindate_expense, $before1day])
+                ->sum('expense_amount');
 //        dd($bd_total_expense);
-        $bd_total_salary = DB::table('employee_salaries')
-            ->whereBetween('created_at', [$mindate_salary, $before1day])
-            ->sum('paidsalary_amount');
-        //        income b/d = brought down
-        $bd_salesamount = DB::table('invoices')
-            ->where('transaction_type', 'Sales')
-            ->whereBetween('transaction_date', [$mindate_invoice, $before1day])
-//            ->whereBetween('transaction_date', [$mindate_invoice, '2024-02-29 23:00:00'])
-            ->sum('invoice_total');
-//        dd($bd_salesamount);
-        $bd_salesamount_collect = DB::table('ledgers')
-            ->where('transaction_type_id', 3) //3=Receipt
-            ->whereBetween('transaction_date', [$mindate_ledger, $before1day])
-            ->where('reftbl', null )
-            ->orWhere('reftbl', 'ledgers')
-            ->sum('amount');
-        $bd_purchaseamount = DB::table('invoices')
-            ->where('transaction_type', 'Purchase')
-            ->whereBetween('transaction_date', [$mindate_invoice, $before1day])
-            ->sum('invoice_total');
-        $bd_purchaseamount_paid = DB::table('ledgers')
-            ->where('transaction_type_id', 4)//4=payment
-            ->whereBetween('transaction_date', [$mindate_ledger, $before1day])
-            ->where('reftbl', null )
-            ->orWhere('reftbl', 'ledgers')
-            ->sum('amount');
-        $balance_bd = $bd_salesamount - $bd_purchaseamount - $bd_total_expense - $bd_total_salary;
-        $balance_bd_collect = $bd_salesamount_collect - $bd_purchaseamount_paid - $bd_total_expense - $bd_total_salary;
-        //        balance b/d = brought down
+            $bd_total_salary = DB::table('employee_salaries')
+                ->where('branch_id', session()->get('branch'))
+                ->whereBetween('created_at', [$mindate_salary, $before1day])
+                ->sum('paidsalary_amount');
+            //        income b/d = brought down
+            $bd_salesamount = DB::table('invoices')
+                ->where('transaction_type', 'Sales')
+                ->where('branch_id', session()->get('branch'))
+                ->whereBetween('transaction_date', [$mindate_invoice, $before1day])
+                ->sum('invoice_total');
+            $bd_salesamount_collect = DB::table('ledgers')
+                ->where('branch_id', session()->get('branch'))
+                ->where('transaction_type_id', 3)//3=Receipt
+                ->whereBetween('transaction_date', [$mindate_ledger, $before1day])
+                ->where('reftbl', null)
+                ->orWhere('reftbl', 'ledgers')
+                ->sum('amount');
+            $bd_purchaseamount = DB::table('invoices')
+                ->where('branch_id', session()->get('branch'))
+                ->where('transaction_type', 'Purchase')
+                ->whereBetween('transaction_date', [$mindate_invoice, $before1day])
+                ->sum('invoice_total');
+            $bd_purchaseamount_paid = DB::table('ledgers')
+                ->where('branch_id', session()->get('branch'))
+                ->where('transaction_type_id', 4)//4=payment
+                ->whereBetween('transaction_date', [$mindate_ledger, $before1day])
+                ->where('reftbl', null)
+                ->orWhere('reftbl', 'ledgers')
+                ->sum('amount');
+            $balance_bd = $bd_salesamount - $bd_purchaseamount - $bd_total_expense - $bd_total_salary;
+            $balance_bd_collect = $bd_salesamount_collect - $bd_purchaseamount_paid - $bd_total_expense - $bd_total_salary;
+            //        balance b/d = brought down
 
-        //        Income in given date range
-        $sales = Invoice::with('user.profile')->orderBy('transaction_date', 'desc')
-            ->whereBetween('transaction_date', [$start_date, $end_date])
-            ->where('invoice_total', '>', 0)
-            ->where('transaction_type', 'Sales')
-            ->get();
+            //        Income in given date range
+            $sales = Invoice::with('user.profile')->orderBy('transaction_date', 'desc')
+                ->where('branch_id', session()->get('branch'))
+                ->whereBetween('transaction_date', [$start_date, $end_date])
+                ->where('invoice_total', '>', 0)
+                ->where('transaction_type', 'Sales')
+                ->get();
 //        dd($sales);
-        $purchase = Invoice::orderBy('transaction_date', 'desc')
-            ->whereBetween('transaction_date', [$start_date, $end_date])
-            ->where('invoice_total', '>', 0)
-            ->where('transaction_type', 'Purchase')
-            ->get();
+            $purchase = Invoice::orderBy('transaction_date', 'desc')
+                ->where('branch_id', session()->get('branch'))
+                ->whereBetween('transaction_date', [$start_date, $end_date])
+                ->where('invoice_total', '>', 0)
+                ->where('transaction_type', 'Purchase')
+                ->get();
 //        dd($purchase);
-        $receipt = Ledger::orderBy('transaction_date', 'desc')
-            ->whereBetween('transaction_date', [$start_date, $end_date])
-            ->where('amount', '>', 0)
-            ->where('transaction_type_id', 3)
-            ->where('reftbl', null )
-            ->orWhere('reftbl', 'ledgers')
-            ->get();
-        $payment = Ledger::orderBy('transaction_date', 'desc')
-            ->whereBetween('transaction_date', [$start_date, $end_date])
-            ->where('amount', '>', 0)
-            ->where('transaction_type_id', 4)
-            ->where('reftbl', null )
-            ->orWhere('reftbl', 'ledgers')
-            ->get();
+            $receipt = Ledger::orderBy('transaction_date', 'desc')
+                ->where('branch_id', session()->get('branch'))
+                ->whereBetween('transaction_date', [$start_date, $end_date])
+                ->where('amount', '>', 0)
+                ->where('transaction_type_id', 3)
+                ->where('reftbl', null)
+                ->orWhere('reftbl', 'ledgers')
+                ->get();
+            $payment = Ledger::orderBy('transaction_date', 'desc')
+                ->where('branch_id', session()->get('branch'))
+                ->whereBetween('transaction_date', [$start_date, $end_date])
+                ->where('amount', '>', 0)
+                ->where('transaction_type_id', 4)
+                ->where('reftbl', null)
+                ->orWhere('reftbl', 'ledgers')
+                ->get();
 //        dd($sales);
-        $total_salesamount = DB::table('invoices')
-            ->where('transaction_type', 'Sales')
-            ->whereBetween('transaction_date', [$start_date, $end_date])
-            ->sum('invoice_total');
-        $total_salesamount_collect = DB::table('ledgers')
-            ->where('transaction_type_id', 3)
-            ->whereBetween('transaction_date', [$start_date, $end_date])
-            ->where('reftbl', null )
-            ->orWhere('reftbl', 'ledgers')
-            ->sum('amount');
-        $total_purchaseamount = DB::table('invoices')
-            ->where('transaction_type', 'Purchase')
-            ->whereBetween('transaction_date', [$start_date, $end_date])
-            ->sum('invoice_total');
-        $total_purchaseamount_paid = DB::table('ledgers')
-            ->where('transaction_type_id', 4)
-            ->whereBetween('transaction_date', [$start_date, $end_date])
-            ->where('reftbl', null )
-            ->orWhere('reftbl', 'ledgers')
-            ->sum('amount');
-        $total_income = $total_salesamount_collect - $total_purchaseamount_paid;
-        //        Expense in given date range
-        $expense = Expense::with('expense_type')
-            ->orderBy('expense_date', 'desc')
-            ->whereBetween('expense_date', [$start_date, $end_date])
-            ->get();
-        $total_expense = DB::table('expenses')
-            ->whereBetween('expense_date', [$start_date, $end_date])
-            ->sum('expense_amount');
+            $total_salesamount = DB::table('invoices')
+                ->where('branch_id', session()->get('branch'))
+                ->where('transaction_type', 'Sales')
+                ->whereBetween('transaction_date', [$start_date, $end_date])
+                ->sum('invoice_total');
+            $total_salesamount_collect = DB::table('ledgers')
+                ->where('branch_id', session()->get('branch'))
+                ->where('transaction_type_id', 3)
+                ->whereBetween('transaction_date', [$start_date, $end_date])
+                ->where('reftbl', null)
+                ->orWhere('reftbl', 'ledgers')
+                ->sum('amount');
+            $total_purchaseamount = DB::table('invoices')
+                ->where('branch_id', session()->get('branch'))
+                ->where('transaction_type', 'Purchase')
+                ->whereBetween('transaction_date', [$start_date, $end_date])
+                ->sum('invoice_total');
+            $total_purchaseamount_paid = DB::table('ledgers')
+                ->where('branch_id', session()->get('branch'))
+                ->where('transaction_type_id', 4)
+                ->whereBetween('transaction_date', [$start_date, $end_date])
+                ->where('reftbl', null)
+                ->orWhere('reftbl', 'ledgers')
+                ->sum('amount');
+            $total_income = $total_salesamount_collect - $total_purchaseamount_paid;
+            //        Expense in given date range
+            $expense = Expense::with('expense_type')
+                ->orderBy('expense_date', 'desc')
+                ->where('branch_id', session()->get('branch'))
+                ->whereBetween('expense_date', [$start_date, $end_date])
+                ->get();
+            $total_expense = DB::table('expenses')
+                ->where('branch_id', session()->get('branch'))
+                ->whereBetween('expense_date', [$start_date, $end_date])
+                ->sum('expense_amount');
 
-        $salary = EmployeeSalary::with('user.profile')->orderBy('created_at', 'desc')
-            ->whereBetween('created_at', [$start_date, $end_date])
-            ->where('paidsalary_amount','>',0)
-            ->get();
-        $total_salary = DB::table('employee_salaries')
-            ->whereBetween('created_at', [$start_date, $end_date])
-            ->sum('paidsalary_amount');
+            $salary = EmployeeSalary::with('user.profile')->orderBy('created_at', 'desc')
+                ->where('branch_id', session()->get('branch'))
+                ->whereBetween('created_at', [$start_date, $end_date])
+                ->where('paidsalary_amount', '>', 0)
+                ->get();
+            $total_salary = DB::table('employee_salaries')
+                ->where('branch_id', session()->get('branch'))
+                ->whereBetween('created_at', [$start_date, $end_date])
+                ->sum('paidsalary_amount');
+        } else {
+            $mindate_ledger = DB::table('ledgers')->MIN('transaction_date');
+            $mindate_invoice = DB::table('invoices')->MIN('transaction_date');
+            $mindate_expense = DB::table('expenses')->MIN('expense_date');
+            $mindate_salary = DB::table('employee_salaries')->MIN('created_at');
 
+//        $before1day = new DateTime($start_date);
+//        $dateObject=$before1day->sub(new DateInterval('P1D'));
+//        $before1day=$dateObject->format('Y-m-d'). ' 23:59:59';
+            $before1day = date('Y-m-d H:i:s', strtotime($start_date . ' -1 second'));
+//        dd($before1day);
+
+            //        expense b/d = brought down
+            $bd_total_expense = DB::table('expenses')
+                ->whereBetween('expense_date', [$mindate_expense, $before1day])
+                ->sum('expense_amount');
+//        dd($bd_total_expense);
+            $bd_total_salary = DB::table('employee_salaries')
+                ->whereBetween('created_at', [$mindate_salary, $before1day])
+                ->sum('paidsalary_amount');
+            //        income b/d = brought down
+            $bd_salesamount = DB::table('invoices')
+                ->where('transaction_type', 'Sales')
+                ->whereBetween('transaction_date', [$mindate_invoice, $before1day])
+                ->sum('invoice_total');
+            $bd_salesamount_collect = DB::table('ledgers')
+                ->where('transaction_type_id', 3)//3=Receipt
+                ->whereBetween('transaction_date', [$mindate_ledger, $before1day])
+                ->where('reftbl', null)
+                ->orWhere('reftbl', 'ledgers')
+                ->sum('amount');
+            $bd_purchaseamount = DB::table('invoices')
+                ->where('transaction_type', 'Purchase')
+                ->whereBetween('transaction_date', [$mindate_invoice, $before1day])
+                ->sum('invoice_total');
+            $bd_purchaseamount_paid = DB::table('ledgers')
+                ->where('transaction_type_id', 4)//4=payment
+                ->whereBetween('transaction_date', [$mindate_ledger, $before1day])
+                ->where('reftbl', null)
+                ->orWhere('reftbl', 'ledgers')
+                ->sum('amount');
+            $balance_bd = $bd_salesamount - $bd_purchaseamount - $bd_total_expense - $bd_total_salary;
+            $balance_bd_collect = $bd_salesamount_collect - $bd_purchaseamount_paid - $bd_total_expense - $bd_total_salary;
+            //        balance b/d = brought down
+
+            //        Income in given date range
+            $sales = Invoice::with('user.profile')->orderBy('transaction_date', 'desc')
+                ->whereBetween('transaction_date', [$start_date, $end_date])
+                ->where('invoice_total', '>', 0)
+                ->where('transaction_type', 'Sales')
+                ->get();
+//        dd($sales);
+            $purchase = Invoice::orderBy('transaction_date', 'desc')
+                ->whereBetween('transaction_date', [$start_date, $end_date])
+                ->where('invoice_total', '>', 0)
+                ->where('transaction_type', 'Purchase')
+                ->get();
+//        dd($purchase);
+            $receipt = Ledger::orderBy('transaction_date', 'desc')
+                ->whereBetween('transaction_date', [$start_date, $end_date])
+                ->where('amount', '>', 0)
+                ->where('transaction_type_id', 3)
+                ->where('reftbl', null)
+                ->orWhere('reftbl', 'ledgers')
+                ->get();
+            $payment = Ledger::orderBy('transaction_date', 'desc')
+                ->whereBetween('transaction_date', [$start_date, $end_date])
+                ->where('amount', '>', 0)
+                ->where('transaction_type_id', 4)
+                ->where('reftbl', null)
+                ->orWhere('reftbl', 'ledgers')
+                ->get();
+//        dd($sales);
+            $total_salesamount = DB::table('invoices')
+                ->where('transaction_type', 'Sales')
+                ->whereBetween('transaction_date', [$start_date, $end_date])
+                ->sum('invoice_total');
+            $total_salesamount_collect = DB::table('ledgers')
+                ->where('transaction_type_id', 3)
+                ->whereBetween('transaction_date', [$start_date, $end_date])
+                ->where('reftbl', null)
+                ->orWhere('reftbl', 'ledgers')
+                ->sum('amount');
+            $total_purchaseamount = DB::table('invoices')
+                ->where('transaction_type', 'Purchase')
+                ->whereBetween('transaction_date', [$start_date, $end_date])
+                ->sum('invoice_total');
+            $total_purchaseamount_paid = DB::table('ledgers')
+                ->where('transaction_type_id', 4)
+                ->whereBetween('transaction_date', [$start_date, $end_date])
+                ->where('reftbl', null)
+                ->orWhere('reftbl', 'ledgers')
+                ->sum('amount');
+            $total_income = $total_salesamount_collect - $total_purchaseamount_paid;
+            //        Expense in given date range
+            $expense = Expense::with('expense_type')
+                ->orderBy('expense_date', 'desc')
+                ->whereBetween('expense_date', [$start_date, $end_date])
+                ->get();
+            $total_expense = DB::table('expenses')
+                ->whereBetween('expense_date', [$start_date, $end_date])
+                ->sum('expense_amount');
+
+            $salary = EmployeeSalary::with('user.profile')->orderBy('created_at', 'desc')
+                ->whereBetween('created_at', [$start_date, $end_date])
+                ->where('paidsalary_amount', '>', 0)
+                ->get();
+            $total_salary = DB::table('employee_salaries')
+                ->whereBetween('created_at', [$start_date, $end_date])
+                ->sum('paidsalary_amount');
+        }
         $balance = $balance_bd + $total_salesamount - $total_purchaseamount - $total_expense - $total_salary;
         $balance_collect = $balance_bd_collect + $total_salesamount_collect - $total_purchaseamount_paid - $total_expense - $total_salary;
 
@@ -596,46 +725,93 @@ class ReportController extends Controller
         $title_date_range = 'Balance Summary Report of ' . $of . ' From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
 
 
-        return view('report.balance_report', compact('expense',  'total_expense', 'total_income', 'balance', 'balance_collect',
+        return view('report.balance_report', compact('expense', 'total_expense', 'total_income', 'balance', 'balance_collect',
             'bd_total_expense', 'balance_bd', 'balance_bd_collect', 'start_date', 'end_date', 'total_salesamount', 'total_salesamount_collect', 'total_salary',
-            'total_purchaseamount', 'total_purchaseamount_paid', 'sales', 'purchase', 'salary', 'receipt', 'payment','title_date_range'));
+            'total_purchaseamount', 'total_purchaseamount_paid', 'sales', 'purchase', 'salary', 'receipt', 'payment', 'title_date_range'));
     }
 
     public function balance_sheet()
     {
         abort_if(Gate::denies('ReportAccess'), redirect('error'));
-        $inventory_products = DB::table('invoice_details')->select('product_id')->distinct('product_id')->pluck('product_id')->toArray();
-        $product_total=[];
-        for ($i = 0; $i < count($inventory_products); $i++) {
-            $instock = (DB::table('invoice_details')->where('product_id', $inventory_products[$i])
-                    ->where('transaction_type', 'Purchase')->sum('qty'))
-                - (DB::table('invoice_details')->where('product_id', $inventory_products[$i])
-                    ->where('transaction_type', 'Sales')->sum('qty'));
-            $mrp = DB::table('products')->select('unitbuy_price')->where('id', $inventory_products[$i])->sum('unitbuy_price');
-            $product_total[] = $instock * $mrp;
-        }
-        $total_asset_inventory = array_sum($product_total);
+        if (session()->get('branch') != 'all') {
 
-        $total_salesamount = DB::table('invoices')
-            ->where('transaction_type', 'Sales')
-            ->sum('invoice_total');
-        $total_salesamount_collect = DB::table('ledgers')
-            ->where('transaction_type_id', 3)
-            ->where('reftbl', null )
-            ->orWhere('reftbl', 'ledgers')
-            ->sum('amount');
-        $total_purchaseamount = DB::table('invoices')
-            ->where('transaction_type', 'Purchase')
-            ->sum('invoice_total');
-        $total_purchaseamount_paid = DB::table('ledgers')
-            ->where('transaction_type_id', 4)
-            ->where('reftbl', null )
-            ->orWhere('reftbl', 'ledgers')
-            ->sum('amount');
-        $total_expense = DB::table('expenses')
-            ->sum('expense_amount');
-        $total_salary = DB::table('employee_salaries')
-            ->sum('paidsalary_amount');
+            $inventory_products = DB::table('invoice_details')->select('product_id')
+                ->where('branch_id', session()->get('branch'))
+                ->distinct('product_id')->pluck('product_id')->toArray();
+            $product_total = [];
+            for ($i = 0; $i < count($inventory_products); $i++) {
+                $instock = (DB::table('invoice_details')->where('branch_id', session()->get('branch'))
+                        ->where('product_id', $inventory_products[$i])
+                        ->where('transaction_type', 'Purchase')->sum('qty'))
+                    - (DB::table('invoice_details')->where('branch_id', session()->get('branch'))
+                        ->where('product_id', $inventory_products[$i])
+                        ->where('transaction_type', 'Sales')->sum('qty'));
+                $mrp = DB::table('products')->select('unitbuy_price')->where('id', $inventory_products[$i])->sum('unitbuy_price');
+                $product_total[] = $instock * $mrp;
+            }
+            $total_asset_inventory = array_sum($product_total);
+
+            $total_salesamount = DB::table('invoices')
+                ->where('branch_id', session()->get('branch'))
+                ->where('transaction_type', 'Sales')
+                ->sum('invoice_total');
+            $total_salesamount_collect = DB::table('ledgers')
+                ->where('branch_id', session()->get('branch'))
+                ->where('transaction_type_id', 3)
+                ->where('reftbl', null)
+                ->orWhere('reftbl', 'ledgers')
+                ->sum('amount');
+            $total_purchaseamount = DB::table('invoices')
+                ->where('branch_id', session()->get('branch'))
+                ->where('transaction_type', 'Purchase')
+                ->sum('invoice_total');
+            $total_purchaseamount_paid = DB::table('ledgers')
+                ->where('branch_id', session()->get('branch'))
+                ->where('transaction_type_id', 4)
+                ->where('reftbl', null)
+                ->orWhere('reftbl', 'ledgers')
+                ->sum('amount');
+            $total_expense = DB::table('expenses')
+                ->where('branch_id', session()->get('branch'))
+                ->sum('expense_amount');
+            $total_salary = DB::table('employee_salaries')
+                ->where('branch_id', session()->get('branch'))
+                ->sum('paidsalary_amount');
+        } else {
+            $inventory_products = DB::table('invoice_details')->select('product_id')->distinct('product_id')->pluck('product_id')->toArray();
+            $product_total = [];
+            for ($i = 0; $i < count($inventory_products); $i++) {
+                $instock = (DB::table('invoice_details')->where('product_id', $inventory_products[$i])
+                        ->where('transaction_type', 'Purchase')->sum('qty'))
+                    - (DB::table('invoice_details')->where('product_id', $inventory_products[$i])
+                        ->where('transaction_type', 'Sales')->sum('qty'));
+                $mrp = DB::table('products')->select('unitbuy_price')->where('id', $inventory_products[$i])->sum('unitbuy_price');
+                $product_total[] = $instock * $mrp;
+            }
+            $total_asset_inventory = array_sum($product_total);
+
+            $total_salesamount = DB::table('invoices')
+                ->where('transaction_type', 'Sales')
+                ->sum('invoice_total');
+            $total_salesamount_collect = DB::table('ledgers')
+                ->where('transaction_type_id', 3)
+                ->where('reftbl', null)
+                ->orWhere('reftbl', 'ledgers')
+                ->sum('amount');
+            $total_purchaseamount = DB::table('invoices')
+                ->where('transaction_type', 'Purchase')
+                ->sum('invoice_total');
+            $total_purchaseamount_paid = DB::table('ledgers')
+                ->where('transaction_type_id', 4)
+                ->where('reftbl', null)
+                ->orWhere('reftbl', 'ledgers')
+                ->sum('amount');
+            $total_expense = DB::table('expenses')
+                ->sum('expense_amount');
+            $total_salary = DB::table('employee_salaries')
+                ->sum('paidsalary_amount');
+
+        }
 
         return view('report.balance_sheet', compact('total_expense', 'total_salesamount', 'total_salesamount_collect',
             'total_salary', 'total_purchaseamount', 'total_purchaseamount_paid', 'total_asset_inventory'));
