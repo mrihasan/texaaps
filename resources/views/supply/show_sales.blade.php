@@ -19,6 +19,7 @@
             padding: 0;
             size: A4 portrait;
         }
+
         /* Adjust margins to fit content within A4 size */
         @page {
             margin: 20mm; /* Adjust as needed */
@@ -104,6 +105,11 @@
                        href="#custom-tabs-one-transaction" role="tab" aria-controls="custom-tabs-one-transaction"
                        aria-selected="false">Transaction History</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="custom-tabs-one-attachment-tab" data-toggle="pill"
+                       href="#custom-tabs-one-attachment" role="tab" aria-controls="custom-tabs-one-attachment"
+                       aria-selected="false">Attachment</a>
+                </li>
 
             </ul>
         </div>
@@ -162,7 +168,7 @@
                                         @elseif($invoice->user->profile->company_name_id!=null)
                                             <strong>{{$invoice->user->profile->company_name->title}}</strong>
                                             <br/>
-{{--                                            {{$invoice->user->profile->company_name->contact_no2 ?? ''}}<br/>--}}
+                                            {{--                                            {{$invoice->user->profile->company_name->contact_no2 ?? ''}}<br/>--}}
                                             {{$invoice->user->profile->company_name->address ?? ''}}<br/>
                                             {{$invoice->user->profile->company_name->address2 ?? ''}}<br/>
                                             {{$invoice->user->profile->company_name->contact_no ?? ''}}<br/>
@@ -262,7 +268,8 @@
                                     <td colspan="2" style="text-align:right">
                                         <strong>{{'From '.\Carbon\Carbon::parse($mindate_ledger)->format('d-M-Y').' to '.\Carbon\Carbon::parse($before1day_invoice)->format('d-M-Y')}} </strong>
                                     </td>
-                                    <td colspan="1" style="text-align:right">{{number_format($ledger['balance_before1day'],0)}}</td>
+                                    <td colspan="1"
+                                        style="text-align:right">{{number_format($ledger['balance_before1day'],0)}}</td>
                                     <td colspan="2" style="text-align:right">(-)Discount :</td>
                                     <td style="text-align:right">{{$invoice->discount}}</td>
 
@@ -271,7 +278,8 @@
                                     <td colspan="2" style="text-align:right">Today
                                         <strong>( {{\Carbon\Carbon::parse($invoice->transaction_date)->format('d-M-Y')}}
                                             )</strong></td>
-                                    <td colspan="1" style="text-align:right">{{number_format($ledger['balance_today'],0)}}</td>
+                                    <td colspan="1"
+                                        style="text-align:right">{{number_format($ledger['balance_today'],0)}}</td>
                                     <td colspan="2" style="text-align:right">Net Amount:</td>
                                     <td style="text-align:right">{{number_format($invoice->total_amount,0)}}</td>
 
@@ -516,10 +524,10 @@
                                 <tr style="border: none">
                                     <td colspan="6" style="border: none">
                                         <div class="pad_footer">
-                                            <!-- <p>
+                                        <!-- <p>
                                                 <img src="{!! asset( 'storage/images/pad_bottom.jpg'. '?'. 'time='. time()) !!}"
                                                      class="img-fluid" style="border: none" width="75%"></p> -->
-                                            <!-- <div class="row">
+                                        <!-- <div class="row">
                                                 <p class="col-md-6">
                                                     <small>Software By : www.eidyict.com 01716-383038</small>
                                                 </p>
@@ -531,16 +539,34 @@
 
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                        <strong>texaaps</strong><br>
-                                                        Rangs Naharz, H-14 (5<sup>th</sup> floor), Shahjalal Avenue, Sector-04, Uttara, Dhaka-1230, Bangladesh <br>
-                                                        <a href="mailto:patwary@texaaps.com">patwary@texaaps.com</a> |  <a href="http://www.texaaps.com/" target="_blank">www.texaaps.com</a>
-                                                        <br>
-                                                    <small><strong>Software By: </strong> <a href="http://www.eidyict.com/" target="_blank">www.eidyict.com</a>, <a href="tel:+8801716383038"> 01716-383038</a> &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;  
-                                                    <strong>Print
-                                                        Time: </strong>{{\Carbon\Carbon::now()->format(' D, d-M-Y, h:ia')}}</small>
+                                                    <strong>texaaps</strong><br>
+                                                    Rangs Naharz, H-14 (5<sup>th</sup> floor), Shahjalal Avenue,
+                                                    Sector-04, Uttara, Dhaka-1230, Bangladesh <br>
+                                                    <a href="mailto:patwary@texaaps.com">patwary@texaaps.com</a> | <a
+                                                            href="http://www.texaaps.com/" target="_blank">www.texaaps.com</a>
+                                                    <br>
+                                                    <small><strong>Software By: </strong> <a
+                                                                href="http://www.eidyict.com/" target="_blank">www.eidyict.com</a>,
+                                                        <a href="tel:+8801716383038"> 01716-383038</a> &nbsp; &nbsp;
+                                                        &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+                                                        &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+                                                        &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+                                                        &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+                                                        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+                                                        &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+                                                        &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+                                                        &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;
+                                                        &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+                                                        &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+                                                        &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+                                                        &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+                                                        &nbsp;&nbsp; &nbsp;
+                                                        <strong>Print
+                                                            Time: </strong>{{\Carbon\Carbon::now()->format(' D, d-M-Y, h:ia')}}
+                                                    </small>
 
                                                 </div>
-                                                <!-- <div class="col-md-6" style="text-align: right">
+                                            <!-- <div class="col-md-6" style="text-align: right">
                                                     <small style="padding-right: 50px">Print
                                                         Time:{{\Carbon\Carbon::now()->format(' D, d-M-Y, h:ia')}}</small>
                                                 </div> -->
@@ -585,7 +611,8 @@
                                         <td>{{ $data->transaction_code }}</td>
 
                                         <td>
-                                            <a href="{{ route('user.show',$data->user->id) }}" class="btn btn-success btn-xs"
+                                            <a href="{{ route('user.show',$data->user->id) }}"
+                                               class="btn btn-success btn-xs"
                                                title="User Profile View"><span class="far fa-user-circle"
                                                                                aria-hidden="true"></span></a>
                                             {{$data->user->name??''}}</td>
@@ -608,6 +635,49 @@
                         <a type="button" id="pbutton2" class="btn btn-warning pull-right"><i
                                     class="fa fa-print"> Print</i></a>
                     </div>
+                </div>
+                <div class="tab-pane fade" id="custom-tabs-one-attachment" role="tabpanel"
+                     aria-labelledby="custom-tabs-one-attachment-tab">
+
+                    <form action="{{ route('attachment_update', $invoice->id) }}" class="form-horizontal" 
+                          method="post" enctype="multipart/form-data">
+                        {!! Form::hidden('invoice_id', $invoice->id )!!}
+                        @csrf
+                        @method('PATCH')
+
+                        <div class="form-group{{ $errors->has('attachment') ? ' has-error' : '' }}">
+                            <label class="col-md-10 control-label"> Update attachment (if any) : <span
+                                        class="required"> * </span></label>
+                            <div class="col-md-10">
+                                {!! Form::file('attachment', null, array('class'=>'form-control')) !!}
+                                <span class="help-block">only pdf format and not more then 500KB</span>
+                                @if ($errors->has('attachment'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('attachment') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                            <div class="text-right">
+                                <button class="btn btn-primary pull-right">Save</button>
+                            </div>
+
+                        </div>
+                        <div class="col-md-12">
+                            @if($invoice->attachment)
+                            <iframe src="{!! asset( 'storage/attachments/'. $invoice->attachment . '?'. 'time='. time()) !!}#view=fitW"
+                                    width="100%" height="auto" style="min-height: 500px"></iframe>
+                                @else
+                            <div>
+                                <h5>No documents found</h5>
+                            </div>
+                                @endif
+
+                        </div>
+
+                        {{--<div class="clearfix"></div>--}}
+                    </form>
+
+
                 </div>
 
             </div>

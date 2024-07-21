@@ -18,6 +18,7 @@ use DateTime;
 use DateInterval;
 use Illuminate\Support\Facades\Gate;
 use DataTables;
+use Illuminate\Support\Facades\Storage;
 
 class InvoiceController extends Controller
 {
@@ -896,4 +897,39 @@ class InvoiceController extends Controller
         return view('report.invoice_due_report', compact('invoicesWithDueAndPaymentHistory','title_date_range','user_type'));
 
     }
+
+    public function attachment_update(Request $request)
+    {
+//        dd($request);
+        $this->validate($request, [
+            'attachment' => 'required|mimes:pdf|max:5000'
+        ]);
+
+        $attachment = $request->file('attachment');
+
+        $data = Invoice::where('id',$request->invoice_id)->first();
+//        dd($data);
+
+        if (isset($attachment)) {
+            $attachmentName = $data->sl_no.'_' .date('YmdHis').'.'. $attachment->getClientOriginalExtension();
+
+            if (!Storage::disk('public')->exists('attachments/')) {
+                Storage::disk('public')->makeDirectory('attachments/');
+            }
+            if (Storage::disk('public')->exists('attachments/'. $data->attachment)) {
+                Storage::disk('public')->delete('attachments/'. $data->attachment);
+            }
+            Storage::disk('public')->put( 'attachments/'.$attachmentName, \File::get($attachment));
+        } else {
+            $attachmentName = $data->attachment;
+        }
+//dd($imageName);
+        $data->attachment = $attachmentName;
+        $data->save();
+
+        \Session::flash('flash_success', 'attachment updated successfully');
+        return redirect()->back();
+
+    }
+
 }

@@ -101,6 +101,7 @@ Route::resource('expense', '\App\Http\Controllers\ExpenseController')
     ->name('index', 'expenseList');
 Route::resource('setting', '\App\Http\Controllers\SettingController');
 
+Route::patch('attachment_update', [\App\Http\Controllers\InvoiceController::class, 'attachment_update'])->name('attachment_update');
 Route::get('invoice_due_report/{type}', '\App\Http\Controllers\InvoiceController@invoice_due_report')->name('invoice_due_report');
 Route::resource('invoice', \App\Http\Controllers\InvoiceController::class);
 Route::get('invoice/{id}', '\App\Http\Controllers\InvoiceController@show')->name('invoice');
