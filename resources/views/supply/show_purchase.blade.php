@@ -96,6 +96,11 @@
                        href="#custom-tabs-one-transaction" role="tab" aria-controls="custom-tabs-one-transaction"
                        aria-selected="false">Transaction History</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="custom-tabs-one-attachment-tab" data-toggle="pill"
+                       href="#custom-tabs-one-attachment" role="tab" aria-controls="custom-tabs-one-attachment"
+                       aria-selected="false">Attachment</a>
+                </li>
 
 
             </ul>
@@ -373,6 +378,49 @@
                         <a type="button" id="pbutton2" class="btn btn-warning pull-right"><i
                                     class="fa fa-print"> Print</i></a>
                     </div>
+                </div>
+                <div class="tab-pane fade" id="custom-tabs-one-attachment" role="tabpanel"
+                     aria-labelledby="custom-tabs-one-attachment-tab">
+
+                    <form action="{{ route('attachment_update', $invoice->id) }}" class="form-horizontal"
+                          method="post" enctype="multipart/form-data">
+                        {!! Form::hidden('invoice_id', $invoice->id )!!}
+                        @csrf
+                        @method('PATCH')
+
+                        <div class="form-group{{ $errors->has('attachment') ? ' has-error' : '' }}">
+                            <label class="col-md-10 control-label"> Update attachment (if any) : <span
+                                        class="required"> * </span></label>
+                            <div class="col-md-10">
+                                {!! Form::file('attachment', null, array('class'=>'form-control')) !!}
+                                <span class="help-block">only pdf format and not more then 500KB</span>
+                                @if ($errors->has('attachment'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('attachment') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                            <div class="text-right">
+                                <button class="btn btn-primary pull-right">Save</button>
+                            </div>
+
+                        </div>
+                        <div class="col-md-12">
+                            @if($invoice->attachment)
+                                <iframe src="{!! asset( 'storage/attachments/'. $invoice->attachment . '?'. 'time='. time()) !!}#view=fitW"
+                                        width="100%" height="auto" style="min-height: 500px"></iframe>
+                            @else
+                                <div>
+                                    <h5>No documents found</h5>
+                                </div>
+                            @endif
+
+                        </div>
+
+                        {{--<div class="clearfix"></div>--}}
+                    </form>
+
+
                 </div>
 
             </div>
