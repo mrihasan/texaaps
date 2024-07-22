@@ -100,6 +100,12 @@
                                     <p>{{ __('all_settings.Manage Purchase') }}</p>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="{{ url('returnTransaction') }}" class="nav-link @yield('manage_return')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Manage Return</p>
+                                </a>
+                            </li>
                         @endcan
                     </ul>
                 </li>

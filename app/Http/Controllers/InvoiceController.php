@@ -160,17 +160,42 @@ class InvoiceController extends Controller
             ->render('supply.purchaseTransaction', compact('title'));
     }
 
-    public function returnTransaction()
+    public function returnTransaction(Request $request)
     {
-        $transactionReturn = Invoice::
-        with('user.profile.company_name')
-            ->with('entryBy')
-            ->with('updatedBy')
-            ->where('transaction_type', 'Return')
-            ->orderBy('transaction_date', 'desc')
-            ->orderBy('transaction_code', 'desc')
-            ->get();
-        return view('inventory_transaction_account.return_transaction', compact('transactionReturn'));
+        abort_if(Gate::denies('SupplyAccess'), redirect('error'));
+        if ($request->start_date == null) {
+            $start_date = Carbon::now()->subDays(90)->format('Y-m-d') . ' 00:00:00';
+            $end_date = date('Y-m-d') . ' 23:59:59';
+        } else {
+            $start_date = date('Y-m-d', strtotime($request->start_date)) . ' 00:00:00';
+            $end_date = date('Y-m-d', strtotime($request->end_date)) . ' 23:59:59';
+        }
+        if (session()->get('branch') != 'all') {
+            $transactionReturn = Invoice::
+            with('user')
+                ->with('branch')
+                ->with('entryBy')
+                ->with('updatedBy')
+                ->where('branch_id', session()->get('branch'))
+                ->where('transaction_type', 'Return')
+                ->whereBetween('transaction_date', [$start_date, $end_date])
+                ->orderBy('transaction_date', 'desc')
+                ->orderBy('transaction_code', 'desc')
+                ->get();
+        } else {
+            $transactionReturn = Invoice::
+            with('user')
+                ->with('branch')
+                ->with('entryBy')
+                ->with('updatedBy')
+                ->where('transaction_type', 'Return')
+                ->whereBetween('transaction_date', [$start_date, $end_date])
+                ->orderBy('transaction_date', 'desc')
+                ->orderBy('transaction_code', 'desc')
+                ->get();
+        }
+        $title_date_range = 'From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
+        return view('supply.return_transactions', compact('transactionReturn', 'title_date_range'));
     }
 
     public function putbackTransaction()
@@ -247,10 +272,11 @@ class InvoiceController extends Controller
 //dd($ledger);
             return view('inventory_transaction_account.show_order', compact('inventory_transaction_account', 'transaction_history', 'results', 'pad', 'transactionDetails',
                 'mindate_ledger', 'before1day_invoice', 'ledger'));
-        } else if ($invoice->transaction_type == 'Return') {
-            return view('inventory_transaction_account.show_return', compact('inventory_transaction_account',
-                'transaction_history', 'transactionDetails'));
-        } else if ($invoice->transaction_type == 'Put Back') {
+        }
+        else if ($invoice->transaction_type == 'Return') {
+            return view('supply.show_return', compact('invoice', 'settings', 'transactionDetails', 'related_customer'));
+        }
+        else if ($invoice->transaction_type == 'Put Back') {
             return view('inventory_transaction_account.show_putback', compact('inventory_transaction_account',
                 'transaction_history', 'transactionDetails'));
         }

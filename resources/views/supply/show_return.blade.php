@@ -1,14 +1,14 @@
 @extends('layouts.al305_main')
 @section('supply_mo','menu-open')
 @section('supply','active')
-@section('manage_sales','active')
-@section('title','Manage Sales')
+@section('manage_return','active')
+@section('title','Manage Return')
 @section('breadcrumb')
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{url('salesTransaction')}}" class="nav-link">{{ __('all_settings.Sales') }}</a>
+        <a href="{{url('returnTransaction')}}" class="nav-link">{{ __('all_settings.Return') }}</a>
     </li>
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">{{ __('all_settings.Manage Sales') }}</a>
+        <a href="#" class="nav-link">{{ __('all_settings.Manage Return') }}</a>
     </li>
 @endsection
 @push('css')
@@ -80,12 +80,12 @@
                 <li class="nav-item">
                     <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill"
                        href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home"
-                       aria-selected="true">Bill </a>
+                       aria-selected="true">Return Acknowledgment </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="custom-tabs-one-profile-tab" data-toggle="pill"
-                       href="#custom-tabs-one-profile" role="tab" aria-controls="custom-tabs-one-profile"
-                       aria-selected="false">Challan</a>
+                    <a href="{{ url('returnTransaction') }}" class="nav-link">
+                        Add Return
+                    </a>
                 </li>
 
             </ul>
@@ -118,7 +118,7 @@
                                         <br/>
                                         <h4 style="text-align: center;margin-top: 0px;margin-bottom: 0px; text-decoration: underline"
                                             class="company-name">
-                                            <strong>INVOICE/BILL</strong></h4>
+                                            <strong>Return Acknowledgment</strong></h4>
                                     </td>
                                     <td style="border: none; text-align: right" class="company-name">
                                         <strong>{{' Date: '.Carbon\Carbon::parse($invoice->transaction_date)->format('d-M-Y').','}}</strong><br/>
@@ -142,15 +142,15 @@
                                             <strong>To</strong></h6>
                                         @if($related_customer!=null)
                                             <strong>{{$related_customer->name}}</strong><br/>
-                                            {{$related_customer->mobile}}<br/>
                                             {{$related_customer->address}}<br/>
+                                            {{$related_customer->mobile}}<br/>
                                         @elseif($invoice->user->profile->company_name_id!=null)
                                             <strong>{{$invoice->user->profile->company_name->title}}</strong>
                                             <br/>
-                                            {{$invoice->user->profile->company_name->contact_no ?? ''}}<br/>
-                                            {{$invoice->user->profile->company_name->contact_no2 ?? ''}}<br/>
                                             {{$invoice->user->profile->company_name->address ?? ''}}<br/>
                                             {{$invoice->user->profile->company_name->address2 ?? ''}}<br/>
+                                            {{$invoice->user->profile->company_name->contact_no ?? ''}}<br/>
+                                            {{$invoice->user->profile->company_name->contact_no2 ?? ''}}<br/>
                                         @else
                                             <strong>{{$invoice->user->name}}</strong>
                                             <br/>
@@ -183,7 +183,7 @@
                                 </tr>
                                 <tr style="border: none">
                                     <td style="text-align:right; border: none" width="95%" colspan="3">
-                                        <p style="text-align:justify; white-space: pre-wrap">{{ $invoice->notes }}</p>
+                                        <p style="text-align:justify; white-space: pre-wrap">Notes: {{ $invoice->notes }}</p>
                                     </td>
 
                                 </tr>
@@ -236,7 +236,7 @@
 
                                 </tr>
                                 <tr>
-                                    <td colspan="3" style="text-align:center"><strong>Ledger Balance</strong></td>
+                                    <td colspan="3" style="text-align:center"></td>
                                     {{--<td colspan="1" style="text-align:center" ></td>--}}
                                     {{--<td colspan="1" style="text-align:center"></td>--}}
                                     {{--<td colspan="1" style="text-align:center">All</td>--}}
@@ -271,7 +271,7 @@
                                 </tr>
                                 <tr>
                                     <td colspan="3" style="text-align:left">
-                                        </td>
+                                    </td>
                                     <td colspan="2" style="text-align:right">Invoice Total :</td>
                                     <td style="text-align:right">{{number_format(round($invoice->invoice_total),0)}}</td>
                                 </tr>
@@ -306,7 +306,7 @@
                                 <tr style="border: none">
                                     <td colspan="6" style="border: none">
                                         <div class="pad_footer">
-                                            <!-- <p>
+                                        <!-- <p>
                                                 <img src="{!! asset( 'storage/images/pad_bottom.jpg'. '?'. 'time='. time()) !!}"
                                                      class="img-fluid" style="border: none" width="75%"></p> -->
                                             <div class="row">
@@ -352,177 +352,6 @@
                                         class="far fa-edit"
                                         aria-hidden="true"></span></a>
                         @endcan
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="custom-tabs-one-profile" role="tabpanel"
-                     aria-labelledby="custom-tabs-one-profile-tab">
-                    <div class="portlet-body form portrait" id="print_this1">
-                        <div class="content">
-                            <table class="center" width="90%" style="border: none">
-
-                                <tbody>
-                                <tr style="border: none">
-                                    <td style="border: none"><img
-                                                src="{!! asset( 'storage/images/pad_top.png'. '?'. 'time='. time()) !!}"
-                                                class="img-fluid" style="border: none"></td>
-                                </tr>
-                                <tr style="border: none">
-                                    <td style="border: none" class="company-name">
-                                        <strong>{{'Reference: '.$invoice->reference}}</strong></td>
-                                    <td style="border: none; text-align: right" class="company-name">
-                                        <br/>
-                                        <br/>
-                                        <br/>
-                                        <br/>
-                                        <br/>
-                                        <h4 style="text-align: center;margin-top: 0px;margin-bottom: 0px; text-decoration: underline"
-                                            class="company-name">
-                                            <strong>Challan</strong></h4>
-                                    </td>
-                                    <td style="border: none; text-align: right" class="company-name">
-                                        <strong>{{' Date: '.Carbon\Carbon::parse($invoice->transaction_date)->format('d-M-Y').','}}</strong><br/>
-                                        <strong>
-                                            {{'Bill No: '.$invoice->transaction_code}}
-                                            <br/>
-                                            {{' By: '.($invoice->entryBy->name)}}
-                                            <br/>
-                                        </strong>
-
-                                    </td>
-                                </tr>
-
-                                <tr style="border: none">
-                                    <td style="text-align:left; border: none" width="35% ">
-
-                                        <h6 style="text-align: left;margin-top: 0px;margin-bottom: 0px;"
-                                            class="company-name">
-                                            <strong>To</strong></h6>
-                                        @if($related_customer!=null)
-                                            <strong>{{$related_customer->name}}</strong><br/>
-                                            {{$related_customer->mobile}}<br/>
-                                            {{$related_customer->address}}<br/>
-                                        @elseif($invoice->user->profile->company_name_id!=null)
-                                            <strong>{{$invoice->user->profile->company_name->title}}</strong>
-                                            <br/>
-                                            {{$invoice->user->profile->company_name->contact_no ?? ''}}<br/>
-                                            {{$invoice->user->profile->company_name->contact_no2 ?? ''}}<br/>
-                                            {{$invoice->user->profile->company_name->address ?? ''}}<br/>
-                                            {{$invoice->user->profile->company_name->address2 ?? ''}}<br/>
-                                        @else
-                                            <strong>{{$invoice->user->name}}</strong>
-                                            <br/>
-                                            {{$invoice->user->profile->mobile}}
-                                            <br/>{{$invoice->user->profile->address}}
-                                            <br/>{{$invoice->user->profile->address2}}<br/>
-                                        @endif
-                                    </td>
-
-                                    <td style="text-align:center;border: none " width="30%">
-
-                                    </td>
-                                    <td style="text-align:center; border: none" width="35%">
-                                        <div class="company-address"
-                                             style="text-align: right; color: blue; font-size:12px">
-                                        </div>
-                                    </td>
-
-                                </tr>
-                                <tr style="border: none">
-                                    <td style="text-align:left; border: none" width="35% ">
-
-                                    </td>
-
-                                    <td style="text-align:center; border: none" width="30%">
-                                    </td>
-                                    <td style="text-align:right; border: none" width="35%">
-                                    </td>
-
-                                </tr>
-                                <tr style="border: none">
-                                    <td style="text-align:right; border: none" width="95%" colspan="3">
-                                        <p style="text-align:justify; white-space: pre-wrap">{{ $invoice->notes }}</p>
-                                    </td>
-
-                                </tr>
-                                </tbody>
-                            </table>
-                            <table class="table-hover center" width="90%" style="table-layout: fixed; ">
-                                <thead>
-                                <tr>
-                                    <th style="text-align:center" width="5%">Sl</th>
-                                    <th style="text-align:center" width="50%">Details</th>
-                                    <th style="text-align:center" width="10%">Qty</th>
-                                    <th style="text-align:center" width="10%">Unit</th>
-                                </tr>
-                                </thead>
-                                <tbody style="border: none">
-                                @foreach($transactionDetails as $key=>$details)
-                                    <tr style="border-bottom-style: hidden">
-                                        <td>{{ $key+1 }}</td>
-
-                                        <td>
-                                            <strong>Product : </strong>{{ $details->product_title }}<br/>
-                                            <strong>Brand : </strong>{{ $details->brand_title }}<br/>
-                                            <strong>Model : </strong>{{ $details->model }}<br/>
-
-                                        </td>
-                                        <td style="text-align:center">{{ $details->qty}} </td>
-                                        <td style="text-align:center">{{ $details->unit_name}}</td>
-                                    </tr>
-                                    <tr></tr>
-                                @endforeach
-
-                                </tbody>
-                            </table>
-                            <table class="center" width="90%" style="table-layout: fixed; border: none">
-                                <tr style="border: none">
-                                    {{--<td style="border: none"></td>--}}
-                                    <td style="border: none" colspan="5">
-                                        <br/>
-                                        Thank you.
-                                        <br/>
-                                        <br/>
-
-                                        Best regards,
-                                        <br/>
-                                        <br/>
-                                        <br/>
-                                        <br/>
-                                        Mob: +880176-5450149.<br/>
-                                        E-mail: noman@texaaps.com
-                                    </td>
-                                    {{--<td colspan="4" style="border: none"></td>--}}
-                                </tr>
-                                <tr style="border: none">
-                                    <td colspan="6" style="border: none">
-                                        <div class="pad_footer">
-                                            <p>
-                                                <img src="{!! asset( 'storage/images/pad_bottom.jpg'. '?'. 'time='. time()) !!}"
-                                                     class="img-fluid" style="border: none" width="75%"></p>
-                                            <div class="row">
-                                                <p class="col-md-6">
-                                                    <small>Software By : www.eidyict.com 01716-383038</small>
-                                                </p>
-                                                <p class="col-md-6" style="text-align: right">
-                                                    <small>Print
-                                                        Time:{{\Carbon\Carbon::now()->format(' D, d-M-Y, h:ia')}}</small>
-                                                </p>
-                                            </div>
-
-                                        </div>
-
-                                    </td>
-                                </tr>
-
-                            </table>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <a href="{{ url()->previous() }}" class="btn btn-outline-primary"><i
-                                    class="fa fa-arrow-left"
-                                    aria-hidden="true"></i>{{ __('all_settings.Back') }}</a>
-                        <a type="button" id="pbutton1" class="btn btn-warning pull-right"><i
-                                    class="fa fa-print"> Print</i></a>
                     </div>
                 </div>
 

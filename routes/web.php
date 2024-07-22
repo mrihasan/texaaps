@@ -114,6 +114,9 @@ Route::get('/in_stock_qty', '\App\Http\Controllers\InvoiceDetailController@in_st
 Route::get('/salesTransaction', '\App\Http\Controllers\InvoiceController@salesTransaction')->name('salesTransaction');
 Route::get('/salesCreate', '\App\Http\Controllers\InvoiceDetailController@salesCreate')->name('salesCreate');
 
+Route::get('/returnCreate', '\App\Http\Controllers\InvoiceDetailController@returnCreate')->name('returnCreate');
+Route::get('/returnTransaction', '\App\Http\Controllers\InvoiceController@returnTransaction')->name('returnTransaction');
+
 Route::get('/getDataTable', '\App\Http\Controllers\InvoiceController@getDataTable')->name('getDataTable');
 Route::get('/showDataTable', '\App\Http\Controllers\InvoiceController@showDataTable')->name('showDataTable');
 
