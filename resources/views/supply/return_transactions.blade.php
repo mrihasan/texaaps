@@ -97,9 +97,9 @@
                                     @can('SupplyAccess')
                                         <a href="{{ url('invoice/' . $data->id ) }}" class="btn btn-success btn-xs"
                                            title="Show"><span class="far fa-eye" aria-hidden="true"></span></a>
-                                        <a href="{{ url('invoice/' . $data->id . '/edit') }}"
-                                           class="btn btn-info btn-xs" title="Edit"><span class="far fa-edit"
-                                                                                          aria-hidden="true"></span></a>
+                                        {{--<a href="{{ url('invoice/' . $data->id . '/edit') }}"--}}
+                                           {{--class="btn btn-info btn-xs" title="Edit"><span class="far fa-edit"--}}
+                                                                                          {{--aria-hidden="true"></span></a>--}}
                                     @endcan
                                     @can('SupplyDelete')
                                         {!! Form::open([

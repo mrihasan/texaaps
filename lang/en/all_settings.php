@@ -176,6 +176,7 @@ return [
     'Sales'=>'Sales',
     'Add Sales'=>'Add Sales',
     'Manage Sales'=>'Manage Sales',
+    'Manage Return'=>'Manage Return',
     'Purchase'=>'Purchase',
     'Add Purchase'=>'Add Purchase',
     'Manage Purchase'=>'Manage Purchase',
@@ -184,6 +185,7 @@ return [
     'Select Date Ranges' => 'Select Date Ranges',
     'Transaction' => 'Transaction',
     'Update Sales' => 'Update Sales',
+    'Update Return' => 'Update Return',
     'Made By' => 'Made By',
 
 

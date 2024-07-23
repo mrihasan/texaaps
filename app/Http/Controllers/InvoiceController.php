@@ -378,8 +378,18 @@ class InvoiceController extends Controller
                     return view('supply.salesEditWalking', compact('invoice', 'inventory', 'branch', 'customers', 'supplier', 'related_customer', 'brands'));
                 } else
                     return view('supply.salesEdit', compact('invoice', 'inventory', 'customers', 'supplier', 'branch', 'brands'));
-            } elseif ($invoice->transaction_type == 'Return')
-                return view('supply.edit_return', compact('inventory_transaction_account', 'invoice', 'inventory', 'customer', 'supplier'));
+            }
+            else if ($invoice->transaction_type == 'Return') {
+                if ($invoice->user_id == 6) {
+                    $related_customer = WalkingCustomer::where('type', 'Invoice')->where('invoice_id', $invoice->id)->first();
+//                    return view('supply.salesEditWalking', compact('invoice', 'inventory', 'branch', 'customers', 'supplier', 'related_customer', 'brands'));
+                    return view('supply.returnEdit', compact('invoice', 'inventory', 'customers', 'supplier', 'branch', 'brands',$related_customer));
+                } else{
+                    $related_customer=null;
+                    return view('supply.returnEdit', compact('invoice', 'inventory', 'customers', 'supplier', 'branch', 'brands','related_customer'));
+                }
+            }
+
             elseif ($invoice->transaction_type == 'Put Back')
                 return view('supply.edit_putback', compact('inventory_transaction_account', 'invoice', 'inventory', 'customer', 'supplier'));
             else return view('errors.503');
@@ -484,7 +494,8 @@ class InvoiceController extends Controller
 
             \Session::flash('flash_message', 'Successfully Updated');
             return redirect('invoice/' . $last_insert_id);
-        } elseif ($request->transaction_type == 'Sales' && $request->customer_id == 6) { //Sales Walking customer
+        }
+        elseif ($request->transaction_type == 'Sales' && $request->customer_id == 6) { //Sales Walking customer
             $this->validate($request, [
                 'customer_id' => 'required',
                 'total_amount' => 'required',
@@ -582,7 +593,8 @@ class InvoiceController extends Controller
 
             \Session::flash('flash_message', 'Successfully Updated');
             return redirect('invoice/' . $last_insert_id);
-        } elseif ($request->transaction_type == 'Sales') { //Sales Walking customer
+        }
+        elseif ($request->transaction_type == 'Sales') {
 //            dd($request);
             $this->validate($request, [
                 'customer_id' => 'required',
@@ -674,12 +686,19 @@ class InvoiceController extends Controller
 
             \Session::flash('flash_message', 'Successfully Updated');
             return redirect('invoice/' . $last_insert_id);
-        } elseif ($request->transaction_type == 'Return') { //Return
+        }
+        elseif ($request->transaction_type == 'Return') { //Return
             $this->validate($request, [
                 'customer_id' => 'required',
+                'total_amount' => 'required',
+                'less_amount' => 'required',
+                'invoice_total' => 'required',
             ]);
             $ProductID_a = [];
-            $mrpUnitPrice_a = [];
+            $BrandID_a = [];
+            $Model_a = [];
+            $Details_a = [];
+            $unitSellPrice_a = [];
             $Qty_a = [];
             $unit_name_a = [];
             $mrpTotal_a = [];
@@ -688,10 +707,23 @@ class InvoiceController extends Controller
                 $ProductID_a[] = $ProductID_;
             }
             $ProductID_e = $ProductID_a;
-            foreach ($request['mrpUnitPrice'] as $mrpUnitPrice_) {
-                $mrpUnitPrice_a[] = $mrpUnitPrice_;
+            foreach ($request['unitSellPrice'] as $unitSellPrice_) {
+                $unitSellPrice_a[] = $unitSellPrice_;
             }
-            $mrpUnitPrice_e = $mrpUnitPrice_a;
+            foreach ($request['brandId'] as $BrandID_) {
+                $BrandID_a[] = $BrandID_;
+            }
+            $BrandID_e = $BrandID_a;
+            foreach ($request['model'] as $Model_) {
+                $Model_a[] = $Model_;
+            }
+            $Model_e = $Model_a;
+            foreach ($request['product_details'] as $Details_) {
+                $Details_a[] = $Details_;
+            }
+            $Details_e = $Details_a;
+
+            $unitSellPrice_e = $unitSellPrice_a;
             foreach ($request['quantity'] as $Qty_) {
                 $Qty_a[] = $Qty_;
             }
@@ -705,53 +737,52 @@ class InvoiceController extends Controller
             }
             $mrpTotal_e = $mrpTotal_a;
 
-            $del_inventory_transaction = DB::table('inventory_transactions')
-                ->where('transaction_code', $request->transaction_code)->delete();
-            $del_inventory_transaction_account = DB::table('inventory_transaction_accounts')
-                ->where('transaction_code', $request->transaction_code)->delete();
+            $related_customer = WalkingCustomer::where('type', 'Invoice')->where('invoice_id', $invoice->id)->first(); //invoice_id, ledger_id
+
+            $del_walking_customer = DB::table('walking_customers')
+                ->where('invoice_id', $invoice->id)->delete();
+
+            $del_inventory_transaction_account = DB::table('invoice_details')
+                ->where('invoice_id', $invoice->id)->delete();
+
+            $invoice->reference = $request->reference;
+            $invoice->user_id = $request->customer_id;
+            $invoice->branch_id = $request->branch;
+            $invoice->vat = $request->tax_amount;
+            $invoice->discount = $request->discount_amount;
+            $invoice->vat_per = $request->vat_per;
+            $invoice->disc_per = $request->disc_per;
+            $invoice->less_amount = $request->less_amount;
+            $invoice->product_total = $request->product_total;
+            $invoice->total_amount = $request->total_amount;
+            $invoice->invoice_total = $request->invoice_total;
+            $invoice->notes = $request->notes;
+            $invoice->updated_by = Auth::id();
+            $invoice->save();
 
             $count_ids = count($ProductID_e);
-            if (count($mrpUnitPrice_e) != $count_ids) throw new \Exception("Bad Request Input Array lengths");
+            if (count($unitSellPrice_e) != $count_ids) throw new \Exception("Bad Request Input Array lengths");
             for ($i = 0; $i < $count_ids; $i++) {
-
                 if (empty($ProductID_e[$i])) continue; // skip all the blank ones
                 $inventory_transaction = new InvoiceDetail();
+                $inventory_transaction->invoice_id = $invoice->id;
+                $inventory_transaction->branch_id = $request->branch;
                 $inventory_transaction->product_id = $ProductID_e[$i];
-                $inventory_transaction->mrpUnitPrice = $mrpUnitPrice_e[$i];
+                $inventory_transaction->brand_id = $BrandID_e[$i];
+                $inventory_transaction->model = $Model_e[$i];
+                $inventory_transaction->product_details = $Details_e[$i];
+                $inventory_transaction->usell_price = $unitSellPrice_e[$i];
                 $inventory_transaction->qty = $Qty_e[$i];
                 $inventory_transaction->unit_name = $unit_name_e[$i];
-                $inventory_transaction->mrpTotal = $mrpTotal_e[$i];
-                $inventory_transaction->transaction_date = date('Y-m-d H:i:s', strtotime($request->transaction_date));
-                $inventory_transaction->user_id = $request->customer_id;
+                $inventory_transaction->line_total = $mrpTotal_e[$i];
                 $inventory_transaction->transaction_type = $request->transaction_type;
-                $inventory_transaction->transaction_code = $request->transaction_code;
                 $inventory_transaction->save();
-
             }
-            $inventory_transaction_account = new Invoice();
-            $inventory_transaction_account->transaction_date = date('Y-m-d H:i:s', strtotime($request->transaction_date));
-            $inventory_transaction_account->transaction_code = $request->transaction_code;
-            $inventory_transaction_account->reference = $request->reference;
-            $inventory_transaction_account->user_id = $request->customer_id;
-            $inventory_transaction_account->transaction_type = $request->transaction_type;
-            $inventory_transaction_account->vat = $request->tax_amount;
-            $inventory_transaction_account->discount = $request->discount_amount;
-            $inventory_transaction_account->less_amount = $request->less_amount;
-            $inventory_transaction_account->product_total = $request->product_total;
-            $inventory_transaction_account->total_amount = $request->total_amount;
-            $inventory_transaction_account->invoice_total = $request->invoice_total;
-            $inventory_transaction_account->notes = $request->notes;
-            $inventory_transaction_account->entry_by = $request->entry_by;
-            $inventory_transaction_account->created_at = date('Y-m-d H:i:s', strtotime($request->created_at));
-            $inventory_transaction_account->updated_by = Auth::user()->id;
-            $inventory_transaction_account->vat_per = $request->vat_per;
-            $inventory_transaction_account->disc_per = $request->disc_per;
-            $inventory_transaction_account->save();
 
-            $last_insert_id = $inventory_transaction_account->id;
+            $last_insert_id = $invoice->id;
 
             \Session::flash('flash_message', 'Successfully Updated');
-            return redirect('inventory_transaction_account/' . $last_insert_id);
+            return redirect('invoice/' . $last_insert_id);
         } elseif ($request->transaction_type == 'Put Back') { //Putback
             $this->validate($request, [
                 'supplier_id' => 'required',
@@ -861,16 +892,28 @@ class InvoiceController extends Controller
 
     public function destroy(Invoice $invoice)
     {
+//        dd($invoice);
         abort_if(Gate::denies('SupplyDelete'), redirect('error'));
+        $tr_type=$invoice->transaction_type;
 //check the sales is made aganest by order
         if (strpos($invoice->reference, 'OSE-') !== false)
             return redirect()->back()->with('flash_message', 'You can not Delete a process order');
 
         $del_invoice_details = DB::table('invoice_details')
             ->where('invoice_id', $invoice->id)->delete();
+        $del_walking_customer = DB::table('walking_customers')
+            ->where('invoice_id', $invoice->id)->delete();
         $invoice->delete();
         \Session::flash('flash_message', 'Successfully Deleted');
-        return redirect()->back();
+
+        if ($tr_type=='Sales')
+        return redirect('salesTransaction');
+        elseif ($tr_type=='Purchase')
+        return redirect('purchaseTransaction');
+        elseif ($tr_type=='Return')
+        return redirect('returnTransaction');
+        else
+        return redirect('error');
     }
 
     public function invoice_due_report($type)

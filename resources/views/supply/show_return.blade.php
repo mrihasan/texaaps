@@ -347,10 +347,10 @@
                             {!! Form::close() !!}
                         @endcan
                         @can('SupplyAccess')
-                            <a href="{{ url('invoice/' . $invoice->id . '/edit') }}"
-                               class="btn btn-info btn-xs fa-pull-right" title="Edit" style="margin-right: 10px"><span
-                                        class="far fa-edit"
-                                        aria-hidden="true"></span></a>
+                            {{--<a href="{{ url('invoice/' . $invoice->id . '/edit') }}"--}}
+                               {{--class="btn btn-info btn-xs fa-pull-right" title="Edit" style="margin-right: 10px"><span--}}
+                                        {{--class="far fa-edit"--}}
+                                        {{--aria-hidden="true"></span></a>--}}
                         @endcan
                     </div>
                 </div>
