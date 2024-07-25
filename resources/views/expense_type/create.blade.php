@@ -1,38 +1,57 @@
 @extends('layouts.al305_main')
-@section('expense_mo','menu-open')
-@section('expense','active')
-@section('manage_expense_type','active')
-@section('title','Add Expense Type')
+{{--@section('expense_mo','menu-open')--}}
+{{--@section('expense','active')--}}
+{{--@section('manage_expense_type','active')--}}
+{{--@section('title','Add Expense Type')--}}
+@section($sidebar['main_menu'].'_mo','menu-open')
+@section($sidebar['main_menu'],'active')
+@section('manage_'.$sidebar['module_name_menu'],'active')
+@section('title','Add '.$sidebar['module_name'])
 @section('breadcrumb')
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{ url('expense_type') }}" class="nav-link">Expense Type</a>
+        <a href="#" class="nav-link">{{$sidebar['main_menu_cap']}}</a>
     </li>
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">Add Expense Type</a>
+        <a href="#" class="nav-link">{{'Add '.$sidebar['module_name']}}</a>
     </li>
 @endsection
 @push('css')
 @endpush
 @section('maincontent')
+    <div class="card card-success card-tabs">
+        <div class="card-header p-0 pt-1">
+            <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill"
+                       href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home"
+                       aria-selected="true">Add {{$sidebar['module_name']}} </a>
+                </li>
+                @can('ExpenseAccess')
+                    <li class="nav-item">
+                        <a href="{{ route('module.index', ['module' => $sidebar['module_name_menu']]) }}" class="nav-link">
+                            Manage {{$sidebar['module_name']}}
+                        </a>
+                    </li>
+                @endcan
 
-    <div class="row justify-content-center">
-        <div class="card card-info col-md-8">
-            <div class="card-header">
-                <h3 class="card-title">Add Expense Type</h3>
-            </div>
-            {!! Form::open(array('route' => 'expense_type.store','method'=>'POST','class'=>'form-horizontal','id'=>'saveForm')) !!}
+            </ul>
+        </div>
 
+{{--            {!! Form::open(array('route' => 'expense_type.store','method'=>'POST','class'=>'form-horizontal','id'=>'saveForm')) !!}--}}
+        {!! Form::open(['route' => ['module.store', 'module' => $sidebar['module_name_menu']], 'method' => 'POST', 'class' => 'form-horizontal', 'id' => 'saveForm']) !!}
+
+        {!! Form::hidden('type', ($sidebar['module_name']=='expense_type'?'Expense':'Fixed Asset') )!!}
 
             {{ csrf_field() }}
 
             <div class="card-body">
 
                 <div class="form-group row {{ $errors->has('expense_name') ? ' has-error' : '' }}">
-                    <label for="expense_name" class="col-md-4 control-label text-md-right">Expense Type Name :
+                    <label for="expense_name" class="col-md-4 control-label text-md-right">{{$sidebar['module_name']}} Name :
                         <span class="required"> * </span></label>
                     <div class="col-md-6">
                         <input id="expense_name" type="text" class="form-control input-circle" name="expense_name"
-                               value="{{ old('expense_name') }}" placeholder="Enter Expense Type Name">
+                               value="{{ old('expense_name') }}" placeholder="Enter {{$sidebar['module_name']}} Name">
                         @if ($errors->has('expense_name'))
                             <span class="help-block">
                                         <strong>{{ $errors->first('expense_name') }}</strong>
@@ -57,7 +76,6 @@
 
             {!! Form::close() !!}
         </div>
-    </div>
 @endsection
 @push('js')
 

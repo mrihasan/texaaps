@@ -1,14 +1,26 @@
 @extends('layouts.al305_main')
-@section('expense_mo','menu-open')
-@section('expense','active')
-@section('manage_expense_type','active')
-@section('title','View Expense Type')
+{{--@section('expense_mo','menu-open')--}}
+{{--@section('expense','active')--}}
+{{--@section('manage_expense_type','active')--}}
+{{--@section('title','View Expense Type')--}}
+{{--@section('breadcrumb')--}}
+{{--<li class="nav-item d-none d-sm-inline-block">--}}
+{{--<a href="{{ url('expense_type') }}" class="nav-link">Expense Type</a>--}}
+{{--</li>--}}
+{{--<li class="nav-item d-none d-sm-inline-block">--}}
+{{--<a href="#" class="nav-link">Show Expense Type</a>--}}
+{{--</li>--}}
+{{--@endsection--}}
+@section($sidebar['main_menu'].'_mo','menu-open')
+@section($sidebar['main_menu'],'active')
+@section('manage_'.$sidebar['module_name_menu'],'active')
+@section('title','Details of '.$expense_type->expense_name)
 @section('breadcrumb')
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{ url('expense_type') }}" class="nav-link">Expense Type</a>
+        <a href="#" class="nav-link">{{$sidebar['main_menu_cap']}}</a>
     </li>
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">Show Expense Type</a>
+        <a href="#" class="nav-link">{{'Show '.$sidebar['module_name']}}</a>
     </li>
 @endsection
 @push('css')
@@ -17,18 +29,38 @@
 @endpush
 @section('maincontent')
 
-    <div class="card card-success">
-        <div class="card-header">
-            <h3 class="card-title">Expense Type Details</h3>
+    <div class="card card-success card-tabs">
+        <div class="card-header p-0 pt-1">
+            <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill"
+                       href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home"
+                       aria-selected="true">{{'Details of '.$expense_type->expense_name}} </a>
+                </li>
+                @can('ExpenseAccess')
+                    <li class="nav-item">
+                        <a href="{{ route('module.index', ['module' => $sidebar['module_name_menu']]) }}"
+                           class="nav-link">
+                            Manage {{$sidebar['module_name']}}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('module.create', ['module' => $sidebar['module_name_menu']]) }}"
+                           class="nav-link">
+                            Add {{$sidebar['module_name']}}
+                        </a>
+                    </li>
+                @endcan
+
+            </ul>
         </div>
-        <!-- /.card-header -->
         <div class="card-body">
             <table class="table dataTables table-striped table-bordered table-hover">
                 <thead>
                 <tr style="background-color: #dff0d8">
                     <th>S.No</th>
-                    <th>Date of Expense</th>
-                    <th> Expense Name</th>
+                    <th>Date</th>
+                    <th> Title</th>
                     <th>Amount</th>
                     <th>Comments</th>
                     <th>Status</th>
@@ -54,7 +86,7 @@
                         <td style="text-align:right">{{ $section->expense_amount }}</td>
                         <td>{{ $section->comments }}</td>
                         <td>{{ $section->status }}</td>
-                        <td>{{ $section->user->profile->full_name }}</td>
+                        <td>{{ $section->user->name }}</td>
                         <td>
                             {{ ($section->approved_date==null)?'Not Yet Approved':entryBy($section->approved_by) }}
                         </td>
@@ -65,6 +97,7 @@
                 </tbody>
             </table>
         </div>
+    </div>
     </div>
 @endsection
 
@@ -88,7 +121,7 @@
                 {extend: 'copy'},
                 {extend: 'csv'},
                 {extend: 'excel', title: 'Transaction Data'},
-                {extend: 'pdf', title: 'Transaction Data'},
+                {extend: 'pdf', title: '{{'Details of '.$expense_type['expense_name']}}'},
                 {
                     extend: 'print',
                     customize: function (win) {

@@ -90,7 +90,18 @@ Route::post('employee_salary/employ_salary_value', '\App\Http\Controllers\Employ
 Route::resource('employee_salary', '\App\Http\Controllers\EmployeeSalaryController');
 
 //Expense Route________________________________________________________________________
-Route::resource('expense_type', '\App\Http\Controllers\ExpenseTypeController');
+Route::prefix('{module}')->group(function () {
+    Route::resource('items', '\App\Http\Controllers\ExpenseTypeController')->parameters(['items' => 'item'])->names([
+        'index' => 'module.index',
+        'create' => 'module.create',
+        'store' => 'module.store',
+        'show' => 'module.show',
+        'edit' => 'module.edit',
+        'update' => 'module.update',
+        'destroy' => 'module.destroy',
+    ]);
+});
+//Route::resource('expense_type', '\App\Http\Controllers\ExpenseTypeController');
 Route::get('/expense_approved', '\App\Http\Controllers\ExpenseController@expense_approved')->name('expense_approved');
 Route::get('/date_wise_expense', '\App\Http\Controllers\ExpenseController@date_wise_expense')->name('date_wise_expense');
 Route::get('/expense_dt', '\App\Http\Controllers\ExpenseController@expense_dt')->name('expense_dt');

@@ -1,14 +1,14 @@
 @extends('layouts.al305_main')
-@section('expense_mo','menu-open')
-@section('expense','active')
-@section('manage_expense_type','active')
-@section('title','Manage Expense Type')
+@section($sidebar['main_menu'].'_mo','menu-open')
+@section($sidebar['main_menu'],'active')
+@section('manage_'.$sidebar['module_name_menu'],'active')
+@section('title','Manage '.$sidebar['module_name'])
 @section('breadcrumb')
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{ url('expense_type') }}" class="nav-link">Expense Type</a>
+        <a href="#" class="nav-link">{{$sidebar['main_menu_cap']}}</a>
     </li>
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">Manage Expense Type</a>
+        <a href="#" class="nav-link">{{'Manage '.$sidebar['module_name']}}</a>
     </li>
 @endsection
 @push('css')
@@ -24,12 +24,12 @@
                 <li class="nav-item">
                     <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill"
                        href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home"
-                       aria-selected="true">Manage Expense Type </a>
+                       aria-selected="true">{{'Manage '.$sidebar['module_name']}} </a>
                 </li>
                 @can('ExpenseAccess')
                 <li class="nav-item">
-                    <a href="{{ url('expense_type/create') }}" class="nav-link">
-                        Add Expense Type
+                    <a href="{{ route('module.create', ['module' => $sidebar['module_name_menu']]) }}" class="nav-link">
+                        Add {{$sidebar['module_name']}}
                     </a>
                 </li>
                 @endcan
@@ -41,7 +41,7 @@
                     <thead>
                     <tr style="background-color: #dff0d8">
                         <th>S.No</th>
-                        <th> Expense Name</th>
+                        <th> {{$sidebar['module_name'].' Title'}}</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
@@ -51,10 +51,16 @@
                             <td>{{ $key+1 }}</td>
                             <td>{{ $section->expense_name }}</td>
 
+
                             <td>
-                                <a href="{{ url('expense_type/'.$section->id) }}" class="btn btn-success btn-xs"
+                                {{--<a href="{{ url('expense_type/'.$section->id) }}" class="btn btn-success btn-xs"--}}
+                                   {{--title="View "><span class="far fa-eye" aria-hidden="true"></span></a>--}}
+                                {{--<a href="{{ url('expense_type/'.$section->id) }}" class="btn btn-success btn-xs"--}}
+                                   {{--title="View "><span class="far fa-eye" aria-hidden="true"></span></a>--}}
+                                <a href="{{ route('module.show', ['module' => $sidebar['module_name_menu'], 'item' => $section->id]) }}" class="btn btn-success btn-xs"
                                    title="View "><span class="far fa-eye" aria-hidden="true"></span></a>
-                                @can('ExpenseAccess')
+
+                            @can('ExpenseAccess')
                                     <a href="{{ url('expense_type/' . $section->id . '/edit') }}"
                                        class="btn btn-info btn-xs" title="Edit"><span class="far fa-edit"
                                                                                       aria-hidden="true"></span></a>
@@ -80,7 +86,7 @@
                     </tbody>
                 </table>
             </div>
-        </div>
+
     </div>
 @endsection
 @push('js')

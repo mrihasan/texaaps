@@ -10,6 +10,7 @@ class ExpenseType extends Model
     use HasFactory;
     protected $fillable = [
         'expense_name',
+        'type',
     ];
     public function expense()
     {

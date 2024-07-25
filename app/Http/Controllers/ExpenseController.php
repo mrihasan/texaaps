@@ -25,6 +25,7 @@ class ExpenseController extends Controller
 
     public function index()
     {
+        dd('test');
 //        abort_if(Gate::denies('expense-access'), redirect('error'));
         $start_date = Carbon::now()->subDays(90)->format('Y-m-d') . ' 00:00:00';
         $end_date = date('Y-m-d') . ' 23:59:59';

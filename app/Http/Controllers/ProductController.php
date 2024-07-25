@@ -36,9 +36,14 @@ class ProductController extends Controller
 //            $product->stock = $totalStock;
             $totalPurchase = $product->inventory_details()->where('transaction_type', 'Purchase')->sum('qty');
             $totalSales = $product->inventory_details()->where('transaction_type', 'Sales')->sum('qty');
+            $valuePurchase = $product->inventory_details()->where('transaction_type', 'Purchase')->sum('line_total');
+            $valueSales = $product->inventory_details()->where('transaction_type', 'Sales')->sum('line_total');
             $product->totalPurchase = $totalPurchase;
             $product->totalSales = $totalSales;
             $product->stock = $totalPurchase-$totalSales;
+            $product->totalPurchaseValue = $valuePurchase;
+            $product->totalSalesValue = $valueSales;
+            $product->totalValue = $valuePurchase-$valueSales;
         }
         $header_title='Product stock report';
         return view('report.product_stock_report', compact('products','header_title'));

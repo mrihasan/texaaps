@@ -395,7 +395,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ url('expense') }}" class="nav-link @yield('manage_expense')">
+                                <a href="{{ url('expense/expense') }}" class="nav-link @yield('manage_expense')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Expense (Non Approved)</p>
                                 </a>
@@ -407,10 +407,58 @@
                                     <p>Expense (Approved)</p>
                                 </a>
                             </li>
+                            {{--<li class="nav-item">--}}
+                                {{--<a href="{{ url('expense_type') }}" class="nav-link @yield('manage_expense_type')">--}}
+                                    {{--<i class="far fa-circle nav-icon"></i>--}}
+                                    {{--<p>Manage Expense Type</p>--}}
+                                {{--</a>--}}
+                            {{--</li>--}}
                             <li class="nav-item">
-                                <a href="{{ url('expense_type') }}" class="nav-link @yield('manage_expense_type')">
+                                <a href="{{ route('module.index', ['module' => 'expense_type']) }}" class="nav-link @yield('manage_expense_type')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Manage Expense Type</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                @endcan
+                @can('ExpenseAccess')
+                    <li class="nav-item has-treeview @yield('fixed_asset_mo')">
+                        <a href="#" class="nav-link @yield('fixed_asset')">
+                            <i class="nav-icon far fa-minus-square"></i>
+                            <p>
+                                Fixed Asset
+                                <i class="fas fa-angle-left right"></i>
+                                {{--<span class="badge badge-info right">6</span>--}}
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            {{--@can('fixed_asset-create')--}}
+                            <li class="nav-item">
+                                <a href="{{ url('expense/create') }}" class="nav-link @yield('add_fixed_asset')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Add Fixed Asset
+                                        <small style="color: orange"> (Alt+X)</small>
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ url('expense') }}" class="nav-link @yield('manage_fixed_asset')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Expense (Non Approved)</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ url('expense_approved') }}"
+                                   class="nav-link @yield('manage_fixed_asset_approved')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Expense (Approved)</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('module.index', ['module' => 'fixed_asset_type']) }}" class="nav-link @yield('manage_fixed_asset_type')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Manage Fixed Asset Type</p>
                                 </a>
                             </li>
                         </ul>

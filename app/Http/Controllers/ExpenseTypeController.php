@@ -9,21 +9,60 @@ use Illuminate\Support\Facades\Redirect;
 
 class ExpenseTypeController extends Controller
 {
-    public function __construct()
+//    public function __construct()
+//    {
+//        $this->middleware('auth');
+//    }
+    protected $module;
+
+    public function __construct(Request $request)
     {
         $this->middleware('auth');
+        $this->module = $request->route('module');
     }
+
     public function index()
     {
 //        abort_if(Gate::denies('expense-access'), redirect('error'));
-        $expense_type = ExpenseType::all();
-        return view('expense_type.index', compact('expense_type'));
+        if ($this->module == 'expense_type') {
+            $sidebar['main_menu'] = 'expense';
+            $sidebar['main_menu_cap'] = 'Expense';
+            $sidebar['module_name_menu'] = 'expense_type';
+            $sidebar['module_name'] = 'Expense Type';
+            $expense_type = ExpenseType::where('type', 'expense')->get();
+            return view('expense_type.index', compact('expense_type', 'sidebar'));
+        } elseif ($this->module == 'fixed_asset_type') {
+            $sidebar['main_menu'] = 'fixed_asset';
+            $sidebar['main_menu_cap'] = 'Fixed Asset';
+            $sidebar['module_name_menu'] = 'fixed_asset_type';
+            $sidebar['module_name'] = 'Fixed Asset Type';
+            $expense_type = ExpenseType::where('type', 'Fixed Asset')->get();
+            return view('expense_type.index', compact('expense_type', 'sidebar'));
+        }
+
     }
-    public function show(ExpenseType $expense_type)
+
+    public function show( $module, $id)
     {
-//        dd($expense_type);
-        return view('expense_type.show',compact('expense_type'));
+//        dd($module);
+//        return view('expense_type.show', compact('expense_type'));
+        if ($this->module == 'expense_type') {
+            $sidebar['main_menu'] = 'expense';
+            $sidebar['main_menu_cap'] = 'Expense';
+            $sidebar['module_name_menu'] = 'expense_type';
+            $sidebar['module_name'] = 'Expense Type';
+            $expense_type = ExpenseType::where('id', $id)->first();
+            return view('expense_type.show', compact('expense_type', 'sidebar'));
+        } elseif ($this->module == 'fixed_asset_type') {
+            $sidebar['main_menu'] = 'fixed_asset';
+            $sidebar['main_menu_cap'] = 'Fixed Asset';
+            $sidebar['module_name_menu'] = 'fixed_asset_type';
+            $sidebar['module_name'] = 'Fixed Asset Type';
+            $expense_type = ExpenseType::where('id', $id)->first();
+            return view('expense_type.show', compact('expense_type', 'sidebar'));
+        }
     }
+
     public function destroy(ExpenseType $expense_type)
     {
         abort_if(Gate::denies('ExpenseDelete'), redirect('error'));
@@ -32,31 +71,54 @@ class ExpenseTypeController extends Controller
             return Redirect::back();
         } else {
             $expense_type->delete();
-            \Session::flash('flash_message','Successfully Deleted');
+            \Session::flash('flash_message', 'Successfully Deleted');
             return redirect('expense');
         }
     }
+
     public function create()
     {
         abort_if(Gate::denies('ExpenseAccess'), redirect('error'));
-        return view('expense_type.create');
+        if ($this->module == 'expense_type') {
+            $sidebar['main_menu'] = 'expense';
+            $sidebar['main_menu_cap'] = 'Expense';
+            $sidebar['module_name_menu'] = 'expense_type';
+            $sidebar['module_name'] = 'Expense Type';
+            return view('expense_type.create', compact('sidebar'));
+        } elseif ($this->module == 'fixed_asset_type') {
+            $sidebar['main_menu'] = 'fixed_asset';
+            $sidebar['main_menu_cap'] = 'Fixed Asset';
+            $sidebar['module_name_menu'] = 'fixed_asset_type';
+            $sidebar['module_name'] = 'Fixed Asset Type';
+            return view('expense_type.create', compact('sidebar'));
+        }
     }
+
     public function store(Request $request)
     {
+//        dd($request);
         abort_if(Gate::denies('ExpenseAccess'), redirect('error'));
         $this->validate($request, [
             'expense_name' => 'required|unique:expense_types',
         ]);
         $input = $request->all();
         ExpenseType::create($input);
-        \Session::flash('flash_message','Successfully Added');
-        return redirect('expense_type');
+        \Session::flash('flash_message', 'Successfully Added');
+
+        if ($request->type == 'Expense')
+            return redirect('expense_type/items');
+        elseif ($request->type == 'Fixed Asset')
+            return redirect('fixed_asset_type/items');
+        else
+            return redirect('error');
     }
+
     public function edit(ExpenseType $expense_type)
     {
         abort_if(Gate::denies('ExpenseAccess'), redirect('error'));
-        return view('expense_type.edit',compact('expense_type'));
+        return view('expense_type.edit', compact('expense_type'));
     }
+
     public function update(Request $request, ExpenseType $expense_type)
     {
         abort_if(Gate::denies('ExpenseAccess'), redirect('error'));
@@ -65,7 +127,7 @@ class ExpenseTypeController extends Controller
         ]);
         $expense_type->update($request->all());
 
-        \Session::flash('flash_message','Successfully Updated');
+        \Session::flash('flash_message', 'Successfully Updated');
         return redirect('expense_type');
     }
 

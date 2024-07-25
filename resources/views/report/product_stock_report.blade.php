@@ -56,8 +56,31 @@
                             <th>
                                 Stock
                             </th>
+                            <th>
+                                Purchase Value
+                            </th>
+                            <th>
+                                Sales Value
+                            </th>
+                            <th>
+                                Stock Value
+                            </th>
                         </tr>
                         </thead>
+                        <tfoot>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        </tfoot>
                         <tbody>
                         @foreach($products as $key=>$product)
                             <tr>
@@ -83,6 +106,15 @@
                                 </td>
                                 <td>
                                     {{ $product->stock ?? '' }}
+                                </td>
+                                <td>
+                                    {{ $product->totalPurchaseValue ?? '' }}
+                                </td>
+                                <td>
+                                    {{ $product->totalSalesValue ?? '' }}
+                                </td>
+                                <td>
+                                    {{ $product->totalValue ?? '' }}
                                 </td>
                             </tr>
                         @endforeach
@@ -116,7 +148,7 @@
 //                { targets: [0,1,2,3,4, 5,6,7 ], className: 'text-center' },
                 {targets: [0], className: 'text-center'},
                 {targets: [1, 2], className: 'text-left'},
-                {targets: [3,4,5,6], className: 'text-right',render: $.fn.dataTable.render.number(',', '.', 0, '')},
+                {targets: [3,4,5,6,7,8,9], className: 'text-right',render: $.fn.dataTable.render.number(',', '.', 0, '')},
             ],
 
             buttons: [
@@ -164,10 +196,11 @@
                             doc.content[1].table.body[i][4].alignment = 'right';
                             doc.content[1].table.body[i][5].alignment = 'right';
                             doc.content[1].table.body[i][6].alignment = 'right';
-//                            doc.content[1].table.body[i][7].alignment = 'left';
-//                            doc.content[1].table.body[i][8].alignment = 'left';
+                            doc.content[1].table.body[i][7].alignment = 'right';
+                            doc.content[1].table.body[i][8].alignment = 'right';
+                            doc.content[1].table.body[i][9].alignment = 'right';
                         }
-                        doc.content[1].table.widths = ['5%', '40%', '15%','10%','10%','10%','10%'];
+                        doc.content[1].table.widths = ['5%', '20%', '10%','5%','10%','10%','10%','10%','10%','10%'];
 //                        doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
                         doc.content.splice(0, 1);
                         var now = new Date();
@@ -260,7 +293,25 @@
                             .css('font-size', 'inherit');
                     }
                 }
-            ]
+            ],
+            "footerCallback": function (row, data, start, end, display) {
+                var api = this.api();
+//                nb_cols = api.columns().nodes().length;
+                nb_cols = 10;
+                var j = 4;
+                while (j < nb_cols) {
+                    var pageTotal = api
+                        .column(j, {page: 'current'})
+                        .data()
+                        .reduce(function (a, b) {
+                            return (Number(a) + Number(b)).toFixed(0);
+                        }, 0);
+                    // Update footer
+                    $(api.column(j).footer()).html(pageTotal);
+                    j++;
+                }
+            }
+
 
         });
     });
