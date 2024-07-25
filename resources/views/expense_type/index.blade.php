@@ -61,14 +61,28 @@
                                    title="View "><span class="far fa-eye" aria-hidden="true"></span></a>
 
                             @can('ExpenseAccess')
-                                    <a href="{{ url('expense_type/' . $section->id . '/edit') }}"
-                                       class="btn btn-info btn-xs" title="Edit"><span class="far fa-edit"
-                                                                                      aria-hidden="true"></span></a>
+                                    {{--<a href="{{ url('expense_type/' . $section->id . '/edit') }}"--}}
+                                       {{--class="btn btn-info btn-xs" title="Edit"><span class="far fa-edit" aria-hidden="true"></span></a>--}}
+                                    <a href="{{ route('module.edit', ['module' => $sidebar['module_name_menu'], 'item' => $section->id]) }}" class="btn btn-info btn-xs"
+                                       title="Edit "><span class="far fa-edit" aria-hidden="true"></span></a>
+
                                 @endcan
                                 @can('ExpenseDelete')
+                                    {{--{!! Form::open([--}}
+                                        {{--'method'=>'DELETE',--}}
+                                        {{--'url' => ['expense_type', $section->id],--}}
+                                        {{--'style' => 'display:inline'--}}
+                                    {{--]) !!}--}}
+                                    {{--{!! Form::button('<span class="far fa-trash-alt" aria-hidden="true" title="Delete" />', array(--}}
+                                            {{--'type' => 'submit',--}}
+                                            {{--'class' => 'btn btn-danger btn-xs',--}}
+                                            {{--'title' => 'Delete',--}}
+                                            {{--'onclick'=>'return confirm("Confirm delete?")'--}}
+                                    {{--))!!}--}}
+                                    {{--{!! Form::close() !!}--}}
                                     {!! Form::open([
                                         'method'=>'DELETE',
-                                        'url' => ['expense_type', $section->id],
+                                        'route' => ['module.destroy', 'module' => $sidebar['module_name_menu'],'item' => $section->id],
                                         'style' => 'display:inline'
                                     ]) !!}
                                     {!! Form::button('<span class="far fa-trash-alt" aria-hidden="true" title="Delete" />', array(
@@ -78,6 +92,8 @@
                                             'onclick'=>'return confirm("Confirm delete?")'
                                     ))!!}
                                     {!! Form::close() !!}
+
+{{--                                    {!! Form::open(['route' => ['module.store', 'module' => $sidebar['module_name_menu']], 'method' => 'POST', 'class' => 'form-horizontal', 'id' => 'saveForm']) !!}--}}
                                 @endcan
 
                             </td>

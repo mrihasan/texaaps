@@ -12,7 +12,7 @@
         <a href="#" class="nav-link">{{$sidebar['main_menu_cap']}}</a>
     </li>
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">{{'Add '.$sidebar['module_name']}}</a>
+        <a href="#" class="nav-link">{{'Create '.$sidebar['module_name']}}</a>
     </li>
 @endsection
 @push('css')
