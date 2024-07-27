@@ -387,7 +387,7 @@
                         <ul class="nav nav-treeview">
                             {{--@can('expense-create')--}}
                             <li class="nav-item">
-                                <a href="{{ url('expense/create') }}" class="nav-link @yield('add_expense')">
+                                <a href="{{ route('efa.expenseCreate', ['efa' => 'expense']) }}" class="nav-link @yield('add_expense')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Add Expense
                                         <small style="color: orange"> (Alt+X)</small>
@@ -395,7 +395,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ url('expense/expense') }}" class="nav-link @yield('manage_expense')">
+                                <a href="{{ route('efa.expenseList', ['efa' => 'expense']) }}" class="nav-link @yield('manage_expense')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Expense (Non Approved)</p>
                                 </a>
@@ -425,7 +425,7 @@
                 @can('ExpenseAccess')
                     <li class="nav-item has-treeview @yield('fixed_asset_mo')">
                         <a href="#" class="nav-link @yield('fixed_asset')">
-                            <i class="nav-icon far fa-minus-square"></i>
+                            <i class="nav-icon fa fa-building"></i>
                             <p>
                                 Fixed Asset
                                 <i class="fas fa-angle-left right"></i>
@@ -435,24 +435,23 @@
                         <ul class="nav nav-treeview">
                             {{--@can('fixed_asset-create')--}}
                             <li class="nav-item">
-                                <a href="{{ url('expense/create') }}" class="nav-link @yield('add_fixed_asset')">
+                                <a href="{{ route('efa.expenseCreate', ['efa' => 'fixed_asset']) }}" class="nav-link @yield('add_fixed_asset')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Add Fixed Asset
-                                        <small style="color: orange"> (Alt+X)</small>
                                     </p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ url('expense') }}" class="nav-link @yield('manage_fixed_asset')">
+                                <a href="{{ route('efa.expenseList', ['efa' => 'fixed_asset']) }}" class="nav-link @yield('manage_fixed_asset')">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>Expense (Non Approved)</p>
+                                    <p>Non Approved</p>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ url('expense_approved') }}"
                                    class="nav-link @yield('manage_fixed_asset_approved')">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>Expense (Approved)</p>
+                                    <p>Approved</p>
                                 </a>
                             </li>
                             <li class="nav-item">

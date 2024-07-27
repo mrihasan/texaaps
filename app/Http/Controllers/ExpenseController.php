@@ -18,22 +18,47 @@ use DateTime;
 
 class ExpenseController extends Controller
 {
-    public function __construct()
+    protected $efa;
+    public function __construct(Request $request)
     {
         $this->middleware('auth');
+        $this->efa = $request->route('efa');
     }
 
     public function index()
     {
-        dd('test');
+//        dd($this->efa);
 //        abort_if(Gate::denies('expense-access'), redirect('error'));
         $start_date = Carbon::now()->subDays(90)->format('Y-m-d') . ' 00:00:00';
         $end_date = date('Y-m-d') . ' 23:59:59';
         $header_title = 'Expense From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
 
+        if ($this->efa == 'expense') {
+            $sidebar['main_menu'] = 'expense';
+            $sidebar['main_menu_cap'] = 'Expense';
+            $sidebar['module_name_menu'] = 'expense';
+            $sidebar['module_name'] = 'Expense';
+            $type = 'Expense';
+
+        } elseif ($this->efa == 'fixed_asset') {
+            $sidebar['main_menu'] = 'fixed_asset';
+            $sidebar['main_menu_cap'] = 'Fixed Asset';
+            $sidebar['module_name_menu'] = 'fixed_asset';
+            $sidebar['module_name'] = 'Fixed Asset';
+            $type = 'Fixed Asset';
+        }
+        else {
+            $sidebar['main_menu'] = 'expense';
+            $sidebar['main_menu_cap'] = 'Expense';
+            $sidebar['module_name_menu'] = 'expense';
+            $sidebar['module_name'] = 'Expense';
+            $type = 'Expense';
+        }
+//        dd($type);
         if (session()->get('branch') != 'all') {
             $expense = Expense::with('user')->with('approvedBy')->with('expense_type')
                 ->with('branch')
+                ->where('type', $type)
                 ->whereBetween('expense_date', [$start_date, $end_date])
                 ->where('status', 'Submitted')
                 ->orWhere('status', 'Updated')
@@ -41,15 +66,19 @@ class ExpenseController extends Controller
                 ->orderBy('expense_date', 'desc')->orderBy('created_at', 'desc')->get();
 
         } else {
-            $expense = Expense::with('user')->with('approvedBy')->with('expense_type')
-                ->with('branch')
+//            dd($type);
+            $expense = Expense::with('user', 'approvedBy', 'expense_type', 'branch')
+                ->where('type', $type)
                 ->whereBetween('expense_date', [$start_date, $end_date])
-                ->where('status', 'Submitted')
-                ->orWhere('status', 'Updated')
-                ->orderBy('expense_date', 'desc')->orderBy('created_at', 'desc')->get();
-        }
-
-        return view('expense.index', compact('expense', 'header_title'));
+                ->where(function ($query) {
+                    $query->where('status', 'Submitted')
+                        ->orWhere('status', 'Updated');
+                })
+                ->orderBy('expense_date', 'desc')
+                ->orderBy('created_at', 'desc')
+                ->get();        }
+//dd($expense);
+        return view('expense.index', compact('expense', 'header_title','sidebar'));
     }
 
 
@@ -101,12 +130,34 @@ class ExpenseController extends Controller
 
     public function create()
     {
+//        dd($this->efa);
         abort_if(Gate::denies('ExpenseAccess'), redirect('error'));
-        $expense_type = ExpenseType::orderBy('expense_name')->pluck('expense_name', 'id')->prepend('Select a Expense Type', '')->toArray();
+        if ($this->efa == 'expense') {
+            $sidebar['main_menu'] = 'expense';
+            $sidebar['main_menu_cap'] = 'Expense';
+            $sidebar['module_name_menu'] = 'expense';
+            $sidebar['module_name'] = 'Expense';
+            $type = 'Expense';
+        } elseif ($this->efa == 'fixed_asset') {
+            $sidebar['main_menu'] = 'fixed_asset';
+            $sidebar['main_menu_cap'] = 'Fixed Asset';
+            $sidebar['module_name_menu'] = 'fixed_asset';
+            $sidebar['module_name'] = 'Fixed Asset';
+            $type = 'Fixed Asset';
+        }
+        else {
+            $sidebar['main_menu'] = 'expense';
+            $sidebar['main_menu_cap'] = 'Expense';
+            $sidebar['module_name_menu'] = 'expense';
+            $sidebar['module_name'] = 'Expense';
+            $type = 'Expense';
+        }
+
+        $expense_type = ExpenseType::where('type',$type)->orderBy('expense_name')->pluck('expense_name', 'id')->prepend('Select a Type', '')->toArray();
         $transaction_methods = TransactionMethod::orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Method', '')->toArray();
         $branches = branch_list();
         $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
-        return view('expense.create', compact('expense_type', 'transaction_methods', 'branches', 'to_accounts'));
+        return view('expense.create', compact('expense_type', 'transaction_methods', 'branches', 'to_accounts','sidebar'));
     }
 
     public function store(Request $request)
@@ -138,6 +189,7 @@ class ExpenseController extends Controller
                 $expense->expense_date = $exp_date;
                 $expense->expense_amount = $request->expense_amount;
                 $expense->comments = $request->expense_comments;
+                $expense->type = $request->type;
                 $expense->status = 'Submitted';
                 $expense->user_id = Auth::user()->id;
                 $expense->transaction_code = $transaction_code;

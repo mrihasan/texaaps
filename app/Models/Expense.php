@@ -22,6 +22,8 @@ class Expense extends Model
         'usr_id',
         'transaction_code',
         'sl_no',
+        'type',
+        'deprecation',
     ];
 
     public function expense_type()

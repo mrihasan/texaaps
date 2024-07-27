@@ -1,14 +1,14 @@
 @extends('layouts.al305_main')
-@section('expense_mo','menu-open')
-@section('expense','active')
-@section('add_expense','active')
-@section('title','Add Expense')
+@section($sidebar['main_menu'].'_mo','menu-open')
+@section($sidebar['main_menu'],'active')
+@section('add_'.$sidebar['module_name_menu'],'active')
+@section('title','Add '.$sidebar['module_name'])
 @section('breadcrumb')
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{ url('expense') }}" class="nav-link">Expense</a>
+        <a href="#" class="nav-link">{{$sidebar['main_menu_cap']}}</a>
     </li>
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">Add Expense</a>
+        <a href="#" class="nav-link">{{'Manage '.$sidebar['module_name']}}</a>
     </li>
 @endsection
 @push('css')
@@ -22,11 +22,12 @@
     <div class="row justify-content-center">
         <div class="card card-info col-md-8">
             <div class="card-header">
-                <h3 class="card-title">Add Expense</h3>
+                <h3 class="card-title">Add {{$sidebar['module_name']}}</h3>
             </div>
 
-            {!! Form::open(['url' => 'expense', 'files'=> true,'class'=>'form-horizontal','id'=>'saveForm']) !!}
-
+{{--            {!! Form::open(['url' => 'expense', 'files'=> true,'class'=>'form-horizontal','id'=>'saveForm']) !!}--}}
+            {!! Form::open(['route' => ['efa.store', 'efa' => $sidebar['module_name_menu']], 'method' => 'POST', 'class' => 'form-horizontal', 'id' => 'saveForm']) !!}
+            {!! Form::hidden('type', ($sidebar['module_name']=='Expense'?'Expense':'Fixed Asset') )!!}
             {{ csrf_field() }}
 
             <div class="card-body">
@@ -64,7 +65,7 @@
                 </div>
 
                 <div class="form-group row {{ $errors->has('expense_type') ? ' has-error' : '' }}">
-                    <label class="col-sm-4 control-label text-md-right">Select Expense type : <span
+                    <label class="col-sm-4 control-label text-md-right">Select {{$sidebar['module_name']}} Type : <span
                                 class="required"> * </span></label>
                     <div class="col-sm-6">
                         {{ Form::select('expense_type', $expense_type, null,['class'=>'form-control select2', 'id'=>'expense_type', 'autofocus'=>'autofocus' ] ) }}
@@ -78,7 +79,7 @@
                 </div>
 
                 <div class="form-group row {{ $errors->has('expense_date') ? ' has-error' : '' }}">
-                    <label class="col-md-4 control-label text-md-right">Expense Date : <span
+                    <label class="col-md-4 control-label text-md-right">Date : <span
                                 class="required"> * </span></label>
                     <div class="col-md-6 input-group date" id="expense_date" data-target-input="nearest">
                         <input type="text" class="form-control datetimepicker-input" name="expense_date"
@@ -109,7 +110,20 @@
 
                     </div>
                 </div>
-
+@if($sidebar['module_name']=='Fixed Asset')
+                <div class="form-group row {{ $errors->has('deprecation') ? ' has-error' : '' }}">
+                    <label class="col-md-4 control-label text-md-right">Deprecation (%) :<span
+                                class="required"> * </span></label>
+                    <div class="col-md-6">
+                        {!! Form::number('deprecation', null,['class'=>'form-control ', 'placeholder'=>'Enter deprecation %', 'step'=>'any','min'=>'0','max'=>'100']) !!}
+                        @if ($errors->has('deprecation'))
+                            <span class="help-block">
+                                        <strong>{{ $errors->first('deprecation') }}</strong>
+                                    </span>
+                        @endif
+                    </div>
+                </div>
+@endif
 
                 <div class="form-group row {{ $errors->has('transaction_method') ? ' has-error' : '' }}">
                     <label class="col-sm-4 control-label text-md-right">Transaction Method : <span
@@ -127,7 +141,7 @@
                 <div class="form-group row">
                     <label class="col-md-4 control-label text-md-right"> Comments:</label>
                     <div class="col-md-6">
-                        {!! Form::textarea('expense_comments', null,['class'=>'form-control ', 'placeholder'=>'i.e: Conveyance of Mr.x from Motijil to Badda']) !!}
+                        {!! Form::textarea('expense_comments', null,['class'=>'form-control ', 'placeholder'=>'Comments']) !!}
                     </div>
                 </div>
 

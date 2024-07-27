@@ -367,7 +367,8 @@
             }
             if ((event.key === 'x' || event.key === 'X') && event.altKey) {
 {{--                window.location.href = "{{ route('expenseCreate') }}";--}}
-                window.open("{{ route('expenseCreate') }}", "_blank");
+{{--                window.open("{{ route('expenseCreate') }}", "_blank");--}}
+                window.open("{{ route('efa.expenseCreate', ['efa' => 'expense']) }}", "_blank");
             }
         });
     });

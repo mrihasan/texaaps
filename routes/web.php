@@ -107,9 +107,23 @@ Route::get('/date_wise_expense', '\App\Http\Controllers\ExpenseController@date_w
 Route::get('/expense_dt', '\App\Http\Controllers\ExpenseController@expense_dt')->name('expense_dt');
 Route::put('checked_expense/{id}','\App\Http\Controllers\ExpenseController@checked_expense')->name('checked_expense');
 Route::put('approve_expense/{id}','\App\Http\Controllers\ExpenseController@approve_expense')->name('approve_expense');
-Route::resource('expense', '\App\Http\Controllers\ExpenseController')
-    ->name('create', 'expenseCreate')
-    ->name('index', 'expenseList');
+
+Route::prefix('{efa}')->group(function () {
+    Route::resource('expense', '\App\Http\Controllers\ExpenseController')->parameters(['expense' => 'item'])->names([
+        'index' => 'efa.expenseList',
+        'create' => 'efa.expenseCreate',
+        'store' => 'efa.store',
+        'show' => 'efa.show',
+        'edit' => 'efa.edit',
+        'update' => 'efa.update',
+        'destroy' => 'efa.destroy',
+    ]);
+});
+
+//Route::resource('expense', '\App\Http\Controllers\ExpenseController')
+//    ->name('create', 'expenseCreate')
+//    ->name('index', 'expenseList');
+
 Route::resource('setting', '\App\Http\Controllers\SettingController');
 
 Route::patch('attachment_update', [\App\Http\Controllers\InvoiceController::class, 'attachment_update'])->name('attachment_update');

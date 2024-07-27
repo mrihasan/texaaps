@@ -1,16 +1,29 @@
 @extends('layouts.al305_main')
-@section('expense_mo','menu-open')
-@section('expense','active')
-@section('manage_expense','active')
-@section('title','Manage Expense')
+{{--@section('expense_mo','menu-open')--}}
+{{--@section('expense','active')--}}
+{{--@section('manage_expense','active')--}}
+{{--@section('title','Manage Expense')--}}
+{{--@section('breadcrumb')--}}
+    {{--<li class="nav-item d-none d-sm-inline-block">--}}
+        {{--<a href="{{ url('expense') }}" class="nav-link">Expense</a>--}}
+    {{--</li>--}}
+    {{--<li class="nav-item d-none d-sm-inline-block">--}}
+        {{--<a href="#" class="nav-link">Manage Expense</a>--}}
+    {{--</li>--}}
+{{--@endsection--}}
+@section($sidebar['main_menu'].'_mo','menu-open')
+@section($sidebar['main_menu'],'active')
+@section('manage_'.$sidebar['module_name_menu'],'active')
+@section('title','Manage '.$sidebar['module_name'])
 @section('breadcrumb')
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{ url('expense') }}" class="nav-link">Expense</a>
+        <a href="#" class="nav-link">{{$sidebar['main_menu_cap']}}</a>
     </li>
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">Manage Expense</a>
+        <a href="#" class="nav-link">{{'Manage '.$sidebar['module_name']}}</a>
     </li>
 @endsection
+
 @push('css')
 <link rel="stylesheet" href="{{ asset('supporting/dataTables/bs4/datatables.min.css') }}">
 <link rel="stylesheet" href="{{ asset('supporting/dataTables/fixedHeader.dataTables.min.css') }}">
@@ -44,8 +57,8 @@
                         <thead>
                         <tr style="background-color: #dff0d8">
                             <th>S.No</th>
-                            <th>Date of Expense</th>
-                            <th> Expense Name</th>
+                            <th>Date </th>
+                            <th> Title</th>
                             <th>Amount</th>
                             <th>Branch</th>
                             <th>Comments</th>
