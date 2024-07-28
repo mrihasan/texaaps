@@ -19,6 +19,7 @@ use DateTime;
 class ExpenseController extends Controller
 {
     protected $efa;
+
     public function __construct(Request $request)
     {
         $this->middleware('auth');
@@ -31,7 +32,6 @@ class ExpenseController extends Controller
 //        abort_if(Gate::denies('expense-access'), redirect('error'));
         $start_date = Carbon::now()->subDays(90)->format('Y-m-d') . ' 00:00:00';
         $end_date = date('Y-m-d') . ' 23:59:59';
-        $header_title = 'Expense From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
 
         if ($this->efa == 'expense') {
             $sidebar['main_menu'] = 'expense';
@@ -46,8 +46,7 @@ class ExpenseController extends Controller
             $sidebar['module_name_menu'] = 'fixed_asset';
             $sidebar['module_name'] = 'Fixed Asset';
             $type = 'Fixed Asset';
-        }
-        else {
+        } else {
             $sidebar['main_menu'] = 'expense';
             $sidebar['main_menu_cap'] = 'Expense';
             $sidebar['module_name_menu'] = 'expense';
@@ -56,12 +55,13 @@ class ExpenseController extends Controller
         }
 //        dd($type);
         if (session()->get('branch') != 'all') {
-            $expense = Expense::with('user')->with('approvedBy')->with('expense_type')
-                ->with('branch')
+            $expense = Expense::with('user', 'approvedBy', 'expense_type', 'branch')
                 ->where('type', $type)
                 ->whereBetween('expense_date', [$start_date, $end_date])
-                ->where('status', 'Submitted')
-                ->orWhere('status', 'Updated')
+                ->where(function ($query) {
+                    $query->where('status', 'Submitted')
+                        ->orWhere('status', 'Updated');
+                })
                 ->where('branch_id', session()->get('branch'))
                 ->orderBy('expense_date', 'desc')->orderBy('created_at', 'desc')->get();
 
@@ -76,9 +76,11 @@ class ExpenseController extends Controller
                 })
                 ->orderBy('expense_date', 'desc')
                 ->orderBy('created_at', 'desc')
-                ->get();        }
+                ->get();
+        }
 //dd($expense);
-        return view('expense.index', compact('expense', 'header_title','sidebar'));
+        $header_title = $type . ' From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
+        return view('expense.index', compact('expense', 'header_title', 'sidebar'));
     }
 
 
@@ -120,12 +122,47 @@ class ExpenseController extends Controller
         $start_date = Carbon::now()->subDays(90)->format('Y-m-d') . ' 00:00:00';
         $end_date = date('Y-m-d') . ' 23:59:59';
 
-        $expense = Expense::with('user')->with('approvedBy')->with('expense_type')->
-        where('status', 'Approved')
-            ->whereBetween('expense_date', [$start_date, $end_date])
-            ->orderBy('expense_date', 'desc')->orderBy('created_at', 'desc')->get();
-        $header_title = 'Expense From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
-        return view('expense.index_approved', compact('expense', 'header_title'));
+        if ($this->efa == 'expense') {
+            $sidebar['main_menu'] = 'expense';
+            $sidebar['main_menu_cap'] = 'Expense';
+            $sidebar['module_name_menu'] = 'expense_approved';
+            $sidebar['module_name'] = 'Expense';
+            $type = 'Expense';
+
+        } elseif ($this->efa == 'fixed_asset') {
+            $sidebar['main_menu'] = 'fixed_asset';
+            $sidebar['main_menu_cap'] = 'Fixed Asset';
+            $sidebar['module_name_menu'] = 'fixed_asset_approved';
+            $sidebar['module_name'] = 'Fixed Asset';
+            $type = 'Fixed Asset';
+        } else {
+            $sidebar['main_menu'] = 'expense';
+            $sidebar['main_menu_cap'] = 'Expense';
+            $sidebar['module_name_menu'] = 'expense';
+            $sidebar['module_name'] = 'Expense';
+            $type = 'Expense';
+        }
+
+        if (session()->get('branch') != 'all') {
+            $expense = Expense::with('user', 'approvedBy', 'expense_type', 'branch')
+                ->where('type', $type)
+                ->where('status', 'Approved')
+                ->whereBetween('expense_date', [$start_date, $end_date])
+                ->where('branch_id', session()->get('branch'))
+                ->orderBy('expense_date', 'desc')->orderBy('created_at', 'desc')->get();
+
+        } else {
+//            dd($type);
+            $expense = Expense::with('user', 'approvedBy', 'expense_type', 'branch')
+                ->where('type', $type)
+                ->where('status', 'Approved')
+                ->whereBetween('expense_date', [$start_date, $end_date])
+                ->orderBy('expense_date', 'desc')
+                ->orderBy('created_at', 'desc')
+                ->get();
+        }
+        $header_title = $type . ' From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
+        return view('expense.index_approved', compact('expense', 'header_title', 'sidebar'));
     }
 
     public function create()
@@ -144,8 +181,7 @@ class ExpenseController extends Controller
             $sidebar['module_name_menu'] = 'fixed_asset';
             $sidebar['module_name'] = 'Fixed Asset';
             $type = 'Fixed Asset';
-        }
-        else {
+        } else {
             $sidebar['main_menu'] = 'expense';
             $sidebar['main_menu_cap'] = 'Expense';
             $sidebar['module_name_menu'] = 'expense';
@@ -153,11 +189,11 @@ class ExpenseController extends Controller
             $type = 'Expense';
         }
 
-        $expense_type = ExpenseType::where('type',$type)->orderBy('expense_name')->pluck('expense_name', 'id')->prepend('Select a Type', '')->toArray();
+        $expense_type = ExpenseType::where('type', $type)->orderBy('expense_name')->pluck('expense_name', 'id')->prepend('Select a Type', '')->toArray();
         $transaction_methods = TransactionMethod::orderBy('title')->pluck('title', 'id')->prepend('Select Transaction Method', '')->toArray();
         $branches = branch_list();
         $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
-        return view('expense.create', compact('expense_type', 'transaction_methods', 'branches', 'to_accounts','sidebar'));
+        return view('expense.create', compact('expense_type', 'transaction_methods', 'branches', 'to_accounts', 'sidebar'));
     }
 
     public function store(Request $request)
@@ -400,34 +436,80 @@ class ExpenseController extends Controller
 
     public function date_wise_expense(Request $request)
     {
-//        dd($request->start_date);
+//        dd($request);
 //        abort_if(Gate::denies('expense-access'), redirect('error'));
-//        $start_date = date('Y-m-d', strtotime($request->start_date));
-//        $end_date = date('Y-m-d', strtotime($request->end_date));
         $start_date = date('Y-m-d', strtotime($request->start_date)) . ' 00:00:00';
         $end_date = date('Y-m-d', strtotime($request->end_date)) . ' 23:59:59';
+        if ($this->efa == 'expense') {
+            $sidebar['main_menu'] = 'expense';
+            $sidebar['main_menu_cap'] = 'Expense';
+            $sidebar['module_name_menu'] = 'expense';
+            $sidebar['module_name'] = 'Expense';
+            $type = 'Expense';
 
-        $header_title = 'Expense From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
-//dd($header_title);
-        if ($request->approval_type == 'Approved') {
-            $expense = Expense::with('user')->with('approvedBy')->with('expense_type')
-                ->whereBetween('expense_date', [$start_date, $end_date])
-                ->where('status', $request->approval_type)
-                ->orderBy('expense_date', 'desc')->orderBy('created_at', 'desc')->get();
-            return view('expense.index_approved', compact('expense', 'header_title'));
-        } elseif ($request->approval_type == 'Submitted') {
-            $expense = Expense::with('user')->with('approvedBy')->with('expense_type')
-                ->whereBetween('expense_date', [$start_date, $end_date])
-                ->where('status', $request->approval_type)
-                ->orderBy('expense_date', 'desc')->orderBy('created_at', 'desc')->get();
-            return view('expense.index', compact('expense', 'header_title'));
-        } else
-            $expense = Expense::with('user')->with('approvedBy')->with('expense_type')
-                ->whereBetween('expense_date', [$start_date, $end_date])
-                ->orderBy('expense_date', 'desc')->orderBy('created_at', 'desc')->get();
-        return view('expense.index', compact('expense', 'header_title'));
+        } elseif ($this->efa == 'fixed_asset') {
+            $sidebar['main_menu'] = 'fixed_asset';
+            $sidebar['main_menu_cap'] = 'Fixed Asset';
+            $sidebar['module_name_menu'] = 'fixed_asset';
+            $sidebar['module_name'] = 'Fixed Asset';
+            $type = 'Fixed Asset';
+        } else {
+            $sidebar['main_menu'] = 'expense';
+            $sidebar['main_menu_cap'] = 'Expense';
+            $sidebar['module_name_menu'] = 'expense';
+            $sidebar['module_name'] = 'Expense';
+            $type = 'Expense';
+        }
+
+        if (session()->get('branch') != 'all') {
+            if ($request->approval_type == 'Approved') {
+                $expense = Expense::with('user', 'approvedBy', 'expense_type', 'branch')
+                    ->whereBetween('expense_date', [$start_date, $end_date])
+                    ->where('type', $type)
+                    ->where('status', $request->approval_type)
+                    ->where('branch_id', session()->get('branch'))
+                    ->orderBy('expense_date', 'desc')->orderBy('created_at', 'desc')->get();
+//            return view('expense.index_approved', compact('expense', 'header_title'));
+            } elseif ($request->approval_type == 'Submitted') {
+                $expense = Expense::with('user', 'approvedBy', 'expense_type', 'branch')
+                    ->whereBetween('expense_date', [$start_date, $end_date])
+                    ->where('type', $type)
+                    ->where('status', $request->approval_type)
+                    ->where('branch_id', session()->get('branch'))
+                    ->orderBy('expense_date', 'desc')->orderBy('created_at', 'desc')->get();
+//            return view('expense.index', compact('expense', 'header_title'));
+            } else {
+                $expense = Expense::with('user', 'approvedBy', 'expense_type', 'branch')
+                    ->whereBetween('expense_date', [$start_date, $end_date])
+                    ->where('type', $type)
+                    ->where('branch_id', session()->get('branch'))
+                    ->orderBy('expense_date', 'desc')->orderBy('created_at', 'desc')->get();
+            }
+        } else {
+            if ($request->approval_type == 'Approved') {
+                $expense = Expense::with('user', 'approvedBy', 'expense_type', 'branch')
+                    ->whereBetween('expense_date', [$start_date, $end_date])
+                    ->where('type', $type)
+                    ->where('status', $request->approval_type)
+                    ->orderBy('expense_date', 'desc')->orderBy('created_at', 'desc')->get();
+//            return view('expense.index_approved', compact('expense', 'header_title'));
+            } elseif($request->approval_type == 'Submitted') {
+                $expense = Expense::with('user', 'approvedBy', 'expense_type', 'branch')
+                    ->whereBetween('expense_date', [$start_date, $end_date])
+                    ->where('type', $type)
+                    ->where('status', $request->approval_type)
+                    ->orderBy('expense_date', 'desc')->orderBy('created_at', 'desc')->get();
+//            return view('expense.index', compact('expense', 'header_title'));
+            } else {
+                $expense = Expense::with('user', 'approvedBy', 'expense_type', 'branch')
+                    ->where('type', $type)
+                    ->whereBetween('expense_date', [$start_date, $end_date])
+                    ->orderBy('expense_date', 'desc')->orderBy('created_at', 'desc')->get();
+            }
+        }
+        $header_title = $request->approval_type.' '.$type . ' From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
+        return view('expense.index', compact('expense', 'header_title', 'sidebar'));
     }
-
 
 
 }

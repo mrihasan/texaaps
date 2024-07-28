@@ -401,7 +401,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ url('expense_approved') }}"
+                                <a href="{{ route('efa.expense_approved', ['efa' => 'expense']) }}"
                                    class="nav-link @yield('manage_expense_approved')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Expense (Approved)</p>
@@ -448,7 +448,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ url('expense_approved') }}"
+                                <a href="{{ route('efa.expense_approved', ['efa' => 'fixed_asset']) }}"
                                    class="nav-link @yield('manage_fixed_asset_approved')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Approved</p>
