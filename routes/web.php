@@ -110,7 +110,7 @@ Route::put('approve_expense/{id}','\App\Http\Controllers\ExpenseController@appro
 Route::prefix('{efa}')->group(function () {
     Route::get('/date_wise_expense', '\App\Http\Controllers\ExpenseController@date_wise_expense')->name('efa.date_wise_expense');
     Route::get('/expense_approved', '\App\Http\Controllers\ExpenseController@expense_approved')->name('efa.expense_approved');
-    Route::resource('expense', '\App\Http\Controllers\ExpenseController')->parameters(['expense' => 'item'])->names([
+    Route::resource('expense', '\App\Http\Controllers\ExpenseController')->parameters(['expense' => 'exp'])->names([
         'index' => 'efa.expenseList',
         'create' => 'efa.expenseCreate',
         'store' => 'efa.store',

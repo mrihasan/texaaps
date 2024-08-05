@@ -143,10 +143,16 @@
                                 </td>
 
                                 <td>
-                                    <a href="{{ url('expense/'.$section->id) }}" class="btn btn-success btn-xs" title="View "><span class="far fa-eye" aria-hidden="true"></span></a>
-                                    @can('ExpenseAccess')
-                                    <a href="{{ url('expense/' . $section->id . '/edit') }}" class="btn btn-info btn-xs"
-                                       title="Edit"><span class="far fa-edit" aria-hidden="true"></span></a>
+                                    {{--<a href="{{ url('expense/'.$section->id) }}" class="btn btn-success btn-xs" title="View "><span class="far fa-eye" aria-hidden="true"></span></a>--}}
+                                    <a href="{{ route('efa.show', ['efa' => $sidebar['module_name_menu'], 'exp' => $section->id]) }}" class="btn btn-success btn-xs"
+                                       title="View "><span class="far fa-eye" aria-hidden="true"></span></a>
+
+                                @can('ExpenseAccess')
+                                    {{--<a href="{{ url('expense/' . $section->id . '/edit') }}" class="btn btn-info btn-xs"--}}
+                                       {{--title="Edit"><span class="far fa-edit" aria-hidden="true"></span></a>--}}
+                                        <a href="{{ route('efa.edit', ['efa' => $sidebar['module_name_menu'], 'exp' => $section->id]) }}" class="btn btn-info btn-xs"
+                                           title="Edit "><span class="far fa-edit" aria-hidden="true"></span></a>
+
                                     @endcan
                                     @can('ExpenseDelete')
 

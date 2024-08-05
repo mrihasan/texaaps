@@ -1,16 +1,29 @@
 @extends('layouts.al305_main')
-@section('expense_mo','menu-open')
-@section('expense','active')
-@section(($expense->approved_by != null)?'manage_expense_approved':'manage_expense','active')
-@section('title','Manage Expense')
+{{--@section('expense_mo','menu-open')--}}
+{{--@section('expense','active')--}}
+{{--@section(($expense->approved_by != null)?'manage_expense_approved':'manage_expense','active')--}}
+{{--@section('title','Manage Expense')--}}
+{{--@section('breadcrumb')--}}
+    {{--<li class="nav-item d-none d-sm-inline-block">--}}
+        {{--<a href="{{ url('expense') }}" class="nav-link">Expense</a>--}}
+    {{--</li>--}}
+    {{--<li class="nav-item d-none d-sm-inline-block">--}}
+        {{--<a href="#" class="nav-link">Show Expense</a>--}}
+    {{--</li>--}}
+{{--@endsection--}}
+@section($sidebar['main_menu'].'_mo','menu-open')
+@section($sidebar['main_menu'],'active')
+@section('manage_'.$sidebar['module_name_menu'],'active')
+@section('title','Manage '.$sidebar['module_name'])
 @section('breadcrumb')
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{ url('expense') }}" class="nav-link">Expense</a>
+        <a href="#" class="nav-link">{{$sidebar['main_menu_cap']}}</a>
     </li>
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">Show Expense</a>
+        <a href="#" class="nav-link">{{'Manage '.$sidebar['module_name']}}</a>
     </li>
 @endsection
+
 @push('css')
 <link rel="stylesheet" href="{{ asset('supporting/dataTables/bs4/datatables.min.css') }}">
 <link rel="stylesheet" href="{{ asset('supporting/dataTables/fixedHeader.dataTables.min.css') }}">
@@ -25,7 +38,7 @@
                 <li class="nav-item">
                     <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill"
                        href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home"
-                       aria-selected="true">Expanse Details</a>
+                       aria-selected="true">{{$sidebar['module_name']}} Details</a>
                 </li>
             </ul>
         </div>
@@ -43,7 +56,7 @@
                         </tr>
                         <tr style="border: none">
                             <td style="border: none" colspan="3">
-                                <h3 style="text-align: center">Expense
+                                <h3 style="text-align: center">{{$sidebar['module_name']}}
                                 </h3>
                             </td>
                         </tr>
@@ -74,7 +87,7 @@
                         </tr>
                         <tr>
                             <th>
-                                Expense Date
+                                Date
                             </th>
                             <td colspan="2">
                                 {{ Carbon\Carbon::parse($expense->expense_date)->format('d-M-Y') }}
@@ -82,7 +95,7 @@
                         </tr>
                         <tr>
                             <th>
-                                Expense Type
+                                {{$sidebar['module_name']}} Type
                             </th>
                             <td colspan="2">
                                 {{ $expense->expense_type->expense_name }}
@@ -90,12 +103,22 @@
                         </tr>
                         <tr>
                             <th>
-                                Expense Amount
+                                Amount
                             </th>
                             <td colspan="2">
                                 {{ number_format($expense->expense_amount,0) }}
                             </td>
                         </tr>
+                        @if($sidebar['module_name']=='Fixed Asset')
+                        <tr>
+                            <th>
+                                Deprecation (%)
+                            </th>
+                            <td colspan="2">
+                                {{ number_format($expense->deprecation,0) }}
+                            </td>
+                        </tr>
+                        @endif
                         <tr>
                             <th>
                                 Transaction Made From

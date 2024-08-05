@@ -1,14 +1,14 @@
 @extends('layouts.al305_main')
-@section('expense_mo','menu-open')
-@section('expense','active')
-@section('manage_expense','active')
-@section('title','Update Expense')
+@section($sidebar['main_menu'].'_mo','menu-open')
+@section($sidebar['main_menu'],'active')
+@section('manage_'.$sidebar['module_name_menu'],'active')
+@section('title','Manage '.$sidebar['module_name'])
 @section('breadcrumb')
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{ url('expense') }}" class="nav-link">Expense</a>
+        <a href="#" class="nav-link">{{$sidebar['main_menu_cap']}}</a>
     </li>
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">Update Expense</a>
+        <a href="#" class="nav-link">{{'Manage '.$sidebar['module_name']}}</a>
     </li>
 @endsection
 @push('css')
@@ -24,7 +24,8 @@
                 <h3 class="card-title">Update Expense</h3>
             </div>
 
-            {!! Form::model($expense,['method'=>'PATCH', 'route'=>['expense.update',$expense->id],'class'=>'form-horizontal','id'=>'saveForm']) !!}
+            {{--{!! Form::model($expense,['method'=>'PATCH', 'route'=>['expense.update',$expense->id],'class'=>'form-horizontal','id'=>'saveForm']) !!}--}}
+            {!! Form::model($expense, ['method' => 'PATCH', 'route' => ['efa.update', 'efa' => $sidebar['module_name_menu'], 'exp' => $expense->id], 'class' => 'form-horizontal']) !!}
 
             {{ csrf_field() }}
 
@@ -100,6 +101,21 @@
 
                     </div>
                 </div>
+                @if($sidebar['module_name']=='Fixed Asset')
+                    <div class="form-group row {{ $errors->has('deprecation') ? ' has-error' : '' }}">
+                        <label class="col-md-4 control-label text-md-right">Deprecation (%) :<span
+                                    class="required"> * </span></label>
+                        <div class="col-md-6">
+                            {!! Form::number('deprecation', null,['class'=>'form-control ', 'placeholder'=>'Enter deprecation %', 'step'=>'any','min'=>'0','max'=>'100']) !!}
+                            @if ($errors->has('deprecation'))
+                                <span class="help-block">
+                                        <strong>{{ $errors->first('deprecation') }}</strong>
+                                    </span>
+                            @endif
+                        </div>
+                    </div>
+                @endif
+
                 <div class="form-group row {{ $errors->has('transaction_method_id') ? ' has-error' : '' }}">
                     <label class="col-sm-4 control-label text-md-right">Transaction Method : <span
                                 class="required"> * </span></label>

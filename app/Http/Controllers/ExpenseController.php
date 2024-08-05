@@ -200,6 +200,15 @@ class ExpenseController extends Controller
     {
 //        dd($request);
         abort_if(Gate::denies('ExpenseAccess'), redirect('error'));
+        if ($this->efa == 'expense') {
+            $initial = 'EXP';
+
+        } elseif ($this->efa == 'fixed_asset') {
+            $initial = 'FXA';
+        } else {
+            $initial = 'EXP';
+        }
+
         $this->validate($request, [
             'expense_date' => 'required',
             'expense_amount' => 'required',
@@ -210,13 +219,13 @@ class ExpenseController extends Controller
         ]);
 
         try {
-            DB::transaction(function () use ($request) {
+            DB::transaction(function () use ($request, $initial) {
 
-                $transaction_code = autoTimeStampCode('EXP');
+                $transaction_code = autoTimeStampCode($initial);
 
                 $exp_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
                 $td = new DateTime($exp_date);
-                $sl_no = createSl('TA-EXP-', 'expenses', 'expense_date', $td);
+                $sl_no = createSl('TA-' . $initial . '-', 'expenses', 'expense_date', $td);
 
                 $expense = new Expense();
                 $expense->sl_no = $sl_no;
@@ -226,6 +235,7 @@ class ExpenseController extends Controller
                 $expense->expense_amount = $request->expense_amount;
                 $expense->comments = $request->expense_comments;
                 $expense->type = $request->type;
+                $expense->deprecation = ($request->type == 'Fixed Asset') ? $request->deprecation : null;
                 $expense->status = 'Submitted';
                 $expense->user_id = Auth::user()->id;
                 $expense->transaction_code = $transaction_code;
@@ -270,18 +280,58 @@ class ExpenseController extends Controller
         } catch (\Exception $e) {
             \Session::flash('flash_error', 'Failed to save , Try again.');
         }
-        return redirect('expense');
+        return redirect($this->efa . '/expense');
     }
 
-    public function show(Expense $expense)
+    public function show($efa, $id)
     {
-        return view('expense.show', compact('expense'));
+//        dd($efa.' '.$id);
+        if ($this->efa == 'expense') {
+            $sidebar['main_menu'] = 'expense';
+            $sidebar['main_menu_cap'] = 'Expense';
+            $sidebar['module_name_menu'] = 'expense';
+            $sidebar['module_name'] = 'Expense';
+            $expense = Expense::where('id', $id)->first();
+
+        } elseif ($this->efa == 'fixed_asset') {
+            $sidebar['main_menu'] = 'fixed_asset';
+            $sidebar['main_menu_cap'] = 'Fixed Asset';
+            $sidebar['module_name_menu'] = 'fixed_asset';
+            $sidebar['module_name'] = 'Fixed Asset';
+            $expense = Expense::where('id', $id)->first();
+        } else {
+            $sidebar['main_menu'] = 'expense';
+            $sidebar['main_menu_cap'] = 'Expense';
+            $sidebar['module_name_menu'] = 'expense';
+            $sidebar['module_name'] = 'Expense';
+            $expense = Expense::where('id', $id)->first();
+        }
+
+        return view('expense.show', compact('expense', 'sidebar'));
     }
 
-    public function edit(Expense $expense)
+    public function edit($efa, $id)
     {
 //        dd($expense->office_rent);
         abort_if(Gate::denies('ExpenseAccess'), redirect('error'));
+        if ($this->efa == 'expense') {
+            $sidebar['main_menu'] = 'expense';
+            $sidebar['main_menu_cap'] = 'Expense';
+            $sidebar['module_name_menu'] = 'expense';
+            $sidebar['module_name'] = 'Expense';
+
+        } elseif ($this->efa == 'fixed_asset') {
+            $sidebar['main_menu'] = 'fixed_asset';
+            $sidebar['main_menu_cap'] = 'Fixed Asset';
+            $sidebar['module_name_menu'] = 'fixed_asset';
+            $sidebar['module_name'] = 'Fixed Asset';
+        } else {
+            $sidebar['main_menu'] = 'expense';
+            $sidebar['main_menu_cap'] = 'Expense';
+            $sidebar['module_name_menu'] = 'expense';
+            $sidebar['module_name'] = 'Expense';
+        }
+        $expense = Expense::where('id', $id)->first();
         $expense_type = ExpenseType::pluck('expense_name', 'id');
         $transaction_methods = TransactionMethod::orderBy('title')->pluck('title', 'id')->toArray();
         if (session()->get('branch') == 'all') {
@@ -291,11 +341,13 @@ class ExpenseController extends Controller
         }
         $to_accounts = DB::table('bank_accounts')->where('status', 'Active')->pluck('account_name', 'id')->prepend('Select Account', '')->toArray();
         $bank_ledger = DB::table('bank_ledgers')->where('transaction_code', $expense->transaction_code)->first();
-        return view('expense.edit', compact('expense', 'expense_type', 'branches', 'transaction_methods', 'to_accounts', 'bank_ledger'));
+        return view('expense.edit', compact('expense', 'expense_type', 'branches', 'transaction_methods', 'to_accounts', 'bank_ledger', 'sidebar'));
     }
 
-    public function update(Request $request, Expense $expense)
+//    public function update(Request $request, Expense $expense)
+    public function update(Request $request, $efa, $exp)
     {
+//        dd($efa);
         abort_if(Gate::denies('ExpenseAccess'), redirect('error'));
         $this->validate($request, [
             'expense_date' => 'required',
@@ -306,7 +358,8 @@ class ExpenseController extends Controller
         ]);
 
         try {
-            DB::transaction(function () use ($request, $expense) {
+            $expense = Expense::where('id', $exp)->first();
+            DB::transaction(function () use ($request, $expense, $efa) {
                 $inputDate = $request->expense_date;
                 $givenDate = $expense->expense_date;
                 $sl_no = null;
@@ -321,7 +374,12 @@ class ExpenseController extends Controller
                     $td = new DateTime($exp_date);
                     // Compare the month and year
                     if (($inputMonthYear != $givenMonthYear) || $expense->sl_no == null) {
-                        $sl_no = createSl('TA-EXP-', 'expenses', 'expense_date', $td);
+                        if ($efa == 'expense')
+                            $sl_no = createSl('TA-EXP-', 'expenses', 'expense_date', $td);
+                        elseif ($efa == 'fixed_asset')
+                            $sl_no = createSl('TA-FXA-', 'expenses', 'expense_date', $td);
+                        else
+                            $sl_no = createSl('TA-EXP-', 'expenses', 'expense_date', $td);
                     } else {
                         $sl_no = $expense->sl_no;
                     }
@@ -332,6 +390,7 @@ class ExpenseController extends Controller
                 $expense->branch_id = $request->branch;
                 $expense->expense_date = date('Y-m-d', strtotime($request->expense_date)) . date(' H:i:s');
                 $expense->expense_amount = $request->expense_amount;
+                $expense->deprecation = ($efa == 'fixed_asset') ? $request->deprecation : null;
                 $expense->comments = $request->expense_comments;
                 $expense->status = 'Updated';
                 $expense->updated_by = Auth::user()->id;
@@ -383,7 +442,15 @@ class ExpenseController extends Controller
         } catch (\Exception $e) {
             \Session::flash('flash_error', 'Failed to save , Try again.');
         }
-        return redirect('expense');
+
+        if ($efa == 'expense')
+            return redirect('expense/expense/'.$expense->id);
+        elseif ($efa == 'fixed_asset')
+            return redirect('fixed_asset/expense/'.$expense->id);
+        else
+            return redirect('error');
+
+//        return redirect('expense');
     }
 
     public function destroy(Expense $expense)
@@ -493,7 +560,7 @@ class ExpenseController extends Controller
                     ->where('status', $request->approval_type)
                     ->orderBy('expense_date', 'desc')->orderBy('created_at', 'desc')->get();
 //            return view('expense.index_approved', compact('expense', 'header_title'));
-            } elseif($request->approval_type == 'Submitted') {
+            } elseif ($request->approval_type == 'Submitted') {
                 $expense = Expense::with('user', 'approvedBy', 'expense_type', 'branch')
                     ->whereBetween('expense_date', [$start_date, $end_date])
                     ->where('type', $type)
@@ -507,7 +574,7 @@ class ExpenseController extends Controller
                     ->orderBy('expense_date', 'desc')->orderBy('created_at', 'desc')->get();
             }
         }
-        $header_title = $request->approval_type.' '.$type . ' From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
+        $header_title = $request->approval_type . ' ' . $type . ' From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
         return view('expense.index', compact('expense', 'header_title', 'sidebar'));
     }
 

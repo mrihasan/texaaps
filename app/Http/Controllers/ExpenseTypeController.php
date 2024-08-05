@@ -124,6 +124,7 @@ class ExpenseTypeController extends Controller
 
     public function update(Request $request, $module, $item)
     {
+//        dd($module);
         abort_if(Gate::denies('ExpenseAccess'), redirect('error'));
         $this->validate($request, [
             'expense_name' => 'required|unique:expense_types',
