@@ -383,11 +383,14 @@ class InvoiceController extends Controller
                 if ($invoice->user_id == 6) {
                     $related_customer = WalkingCustomer::where('type', 'Invoice')->where('invoice_id', $invoice->id)->first();
 //                    return view('supply.salesEditWalking', compact('invoice', 'inventory', 'branch', 'customers', 'supplier', 'related_customer', 'brands'));
-                    return view('supply.returnEdit', compact('invoice', 'inventory', 'customers', 'supplier', 'branch', 'brands',$related_customer));
+//                    return view('supply.returnEdit', compact('invoice', 'inventory', 'customers', 'supplier', 'branch', 'brands',$related_customer));
                 } else{
+
                     $related_customer=null;
-                    return view('supply.returnEdit', compact('invoice', 'inventory', 'customers', 'supplier', 'branch', 'brands','related_customer'));
                 }
+//                dd($related_customer);
+                return view('supply.returnEdit', compact('invoice', 'inventory', 'customers', 'supplier', 'branch', 'brands','related_customer'));
+
             }
 
             elseif ($invoice->transaction_type == 'Put Back')
@@ -777,6 +780,17 @@ class InvoiceController extends Controller
                 $inventory_transaction->line_total = $mrpTotal_e[$i];
                 $inventory_transaction->transaction_type = $request->transaction_type;
                 $inventory_transaction->save();
+            }
+
+            if ($request->customer_id==6) {
+                $customer = new WalkingCustomer();
+                $customer->type = 'Invoice';
+                $customer->invoice_id = $invoice->id;
+                $customer->ledger_id = null;
+                $customer->name = $request->name;
+                $customer->mobile = $request->mobile;
+                $customer->address = $request->address;
+                $customer->save();
             }
 
             $last_insert_id = $invoice->id;

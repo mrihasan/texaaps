@@ -169,6 +169,7 @@
                     </div>
                 </div>
                 <div class="row suggestion">
+                    @if($related_customer==null)
                     <div class="col-md-4">
                         {!! Form::text('name', null,['class'=>'form-control ', 'placeholder'=>"Please Enter Customer Name",'style'=>"background-color: #FEA7A7"]) !!}
                     </div>
@@ -178,6 +179,18 @@
                     <div class="col-md-4">
                         {!! Form::text('address', null,['class'=>'form-control ', 'placeholder'=>"Please Enter Customer Address",'style'=>"background-color: #FEA7A7"]) !!}
                     </div>
+                        @else
+                        <div class="col-md-4">
+                            {!! Form::text('name', $related_customer->name,['class'=>'form-control ', 'placeholder'=>"Please Enter Customer Name",'style'=>"background-color: #FEA7A7"]) !!}
+                        </div>
+                        <div class="col-md-4">
+                            {!! Form::text('mobile', $related_customer->mobile,['class'=>'form-control ', 'placeholder'=>"Please Enter Customer Mobile No",'style'=>"background-color: #FEA7A7"]) !!}
+                        </div>
+                        <div class="col-md-4">
+                            {!! Form::text('address', $related_customer->address,['class'=>'form-control ', 'placeholder'=>"Please Enter Customer Address",'style'=>"background-color: #FEA7A7"]) !!}
+                        </div>
+                        @endif
+
                 </div>
 
                 <div class='row'>
@@ -434,12 +447,25 @@
 
 
 </script>
+{{--<script>--}}
+    {{--$(document).ready(function () {--}}
+        {{--$(".suggestion").hide()--}}
+        {{--$('[name=customer_id]').on('change', function () {--}}
+            {{--$('.suggestion').toggle(this.value === '6');--}}
+        {{--})--}}
+    {{--});--}}
+{{--</script>--}}
+
 <script>
     $(document).ready(function () {
-        $(".suggestion").hide()
+        function toggleSuggestion() {
+            $('.suggestion').toggle($('[name=customer_id]').val() === '6');
+        }
+
+        toggleSuggestion(); // Call this function on page load
         $('[name=customer_id]').on('change', function () {
-            $('.suggestion').toggle(this.value === '6');
-        })
+            toggleSuggestion(); // Call this function on customer_id change
+        });
     });
 </script>
 
