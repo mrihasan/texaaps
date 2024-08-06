@@ -118,6 +118,28 @@
                                 {{ number_format($expense->deprecation,0) }}
                             </td>
                         </tr>
+                        <tr>
+                            <th>
+                                Asset Life
+                            </th>
+                            <td colspan="2">
+
+                                {{ Carbon\Carbon::parse($expense->expense_date)->diffForHumans([
+                'parts' => 4,
+                'join' => ', ',
+                'short' => true
+            ]); }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Current Asset Value
+                            </th>
+                            <td colspan="2">
+                                {{number_format($expense->expense_amount * pow((1 - $expense->deprecation/100), Carbon\Carbon::parse($expense->expense_date)->diffInDays() / 365),0)}}
+
+                            </td>
+                        </tr>
                         @endif
                         <tr>
                             <th>
@@ -284,8 +306,8 @@
 
                             <td style="text-align:center; border: none" width="30%">
                                 Checked by<br/><br/>
-                                @if($expense->user->employee && $expense->checked_by!=null && ($expense->checkedBy->employee->user->imageprofile->sign!='default_sign'||$expense->checkedBy->employee->user->imageprofile->sign!=null))
-                                    <img src="{!! asset( 'storage/sign/'. $expense->checkedBy->employee->user->imageprofile->sign. '?'. 'time='. time()) !!}"
+                                @if($expense->checked_by!=null && ($expense->checkedBy->imageprofile->sign!='default_sign' || $expense->checkedBy->imageprofile->sign!=null))
+                                    <img src="{!! asset( 'storage/sign/'. $expense->checkedBy->imageprofile->sign. '?'. 'time='. time()) !!}"
                                          class="img-fluid" alt="Sign Image">
                                 @else
                                     <img src="{!! asset( 'storage/sign/blank_sign.png'. '?'. 'time='. time()) !!}"
@@ -302,8 +324,8 @@
                             </td>
                             <td style="text-align:right; border: none" width="35%">
                                 Approved By<br/><br/>
-                                @if($expense->user->employee && $expense->approved_by!=null && ($expense->approvedBy->employee->user->imageprofile->sign!='default_sign'||$expense->approvedBy->employee->user->imageprofile->sign!=null))
-                                    <img src="{!! asset( 'storage/sign/'. $expense->approvedBy->employee->user->imageprofile->sign. '?'. 'time='. time()) !!}"
+                                @if($expense->approved_by!=null && ($expense->approvedBy->imageprofile->sign!='default_sign'||$expense->approvedBy->imageprofile->sign!=null))
+                                    <img src="{!! asset( 'storage/sign/'. $expense->approvedBy->imageprofile->sign. '?'. 'time='. time()) !!}"
                                          class="img-fluid" alt="Sign Image">
                                 @else
                                     <img src="{!! asset( 'storage/sign/blank_sign.png'. '?'. 'time='. time()) !!}"

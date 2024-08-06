@@ -306,7 +306,7 @@ class ExpenseController extends Controller
             $sidebar['module_name'] = 'Expense';
             $expense = Expense::where('id', $id)->first();
         }
-
+//        dd($expense->checkedBy->imageprofile);
         return view('expense.show', compact('expense', 'sidebar'));
     }
 
@@ -579,11 +579,6 @@ class ExpenseController extends Controller
     }
 
     public function fixed_asset_statement(Request $request){
-        $sidebar['main_menu'] = 'fixed_asset';
-        $sidebar['main_menu_cap'] = 'Fixed Asset';
-        $sidebar['module_name_menu'] = 'fixed_asset';
-        $sidebar['module_name'] = 'Fixed Asset';
-
         if ($request->start_date == null) {
             $start_date = Carbon::now()->subDays(90)->format('Y-m-d') . ' 00:00:00';
             $end_date = date('Y-m-d') . ' 23:59:59';
@@ -623,7 +618,7 @@ class ExpenseController extends Controller
 //        dd($fixed_assets);
 //        $header_title='Fixed Asset Statement';
         $header_title = 'Fixed Asset Statement From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
-        return view('expense.fixed_asset_statement', compact('fixed_assets','header_title','sidebar'));
+        return view('expense.fixed_asset_statement', compact('fixed_assets','header_title'));
     }
 
     private function calculateCurrentValue($initialValue, $annualDepreciationRate, $lifeDays)

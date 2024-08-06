@@ -916,7 +916,44 @@ class InvoiceController extends Controller
 
         \Session::flash('flash_success', 'attachment updated successfully');
         return redirect()->back();
-
     }
+
+    public function vatTransaction(Request $request)
+    {
+        abort_if(Gate::denies('SupplyAccess'), redirect('error'));
+        if ($request->start_date == null) {
+            $start_date = Carbon::now()->subDays(90)->format('Y-m-d') . ' 00:00:00';
+            $end_date = date('Y-m-d') . ' 23:59:59';
+        } else {
+            $start_date = date('Y-m-d', strtotime($request->start_date)) . ' 00:00:00';
+            $end_date = date('Y-m-d', strtotime($request->end_date)) . ' 23:59:59';
+        }
+//        dd($start_date.'---'.$end_date);
+        if (session()->get('branch') != 'all') {
+            $transactionSales = Invoice::
+            with('user')
+                ->with('branch')
+                ->where('branch_id', session()->get('branch'))
+                ->where('transaction_type', 'Sales')
+                ->where('vat', '>', 0)
+                ->whereBetween('transaction_date', [$start_date, $end_date])
+                ->orderBy('transaction_date', 'desc')
+                ->orderBy('transaction_code', 'desc')
+                ->get();
+        } else {
+            $transactionSales = Invoice::
+            with('user')
+                ->with('branch')
+                ->where('transaction_type', 'Sales')
+                ->where('vat', '>', 0)
+                ->whereBetween('transaction_date', [$start_date, $end_date])
+                ->orderBy('transaction_date', 'desc')
+                ->orderBy('transaction_code', 'desc')
+                ->get();
+        }
+        $title_date_range = 'Sales VAT/Tax Statement From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
+        return view('supply.vat_transactions', compact('transactionSales', 'title_date_range'));
+    }
+
 
 }

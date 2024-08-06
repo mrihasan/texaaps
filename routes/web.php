@@ -138,6 +138,7 @@ Route::post('invoice/{id}/auto_product', '\App\Http\Controllers\InvoiceDetailCon
 Route::post('price_quotation/{id}/auto_product', '\App\Http\Controllers\InvoiceDetailController@auto_product')->name('auto_product_edit');
 //Route::post('/auto_sales', '\App\Http\Controllers\InvoiceDetailController@auto_sales')->name('auto_sales');
 Route::get('/in_stock_qty', '\App\Http\Controllers\InvoiceDetailController@in_stock_qty')->name('in_stock_qty');
+Route::get('/vatTransaction', '\App\Http\Controllers\InvoiceController@vatTransaction')->name('vatTransaction');
 Route::get('/salesTransaction', '\App\Http\Controllers\InvoiceController@salesTransaction')->name('salesTransaction');
 Route::get('/salesCreate', '\App\Http\Controllers\InvoiceDetailController@salesCreate')->name('salesCreate');
 

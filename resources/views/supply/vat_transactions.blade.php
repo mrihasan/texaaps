@@ -1,21 +1,28 @@
 @extends('layouts.al305_main')
 @section('report_mo','menu-open')
 @section('report','active')
-@section('fixed_asset_statement','active')
-@section('title',$header_title)
+@section('vat_statement','active')
+@section('title',$title_date_range)
 @section('breadcrumb')
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">Fixed Asset</a>
+        <a href="{{url('salesTransaction')}}" class="nav-link">{{ __('all_settings.Sales') }}</a>
     </li>
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">Fixed Asset Statement</a>
+        <a href="#" class="nav-link">{{ __('all_settings.Manage Sales') }}</a>
     </li>
 @endsection
 @push('css')
+<style>
+    .total{
+        font-weight: bolder;
+        text-align: right;
+    }
+</style>
+
 <link rel="stylesheet" href="{{ asset('supporting/dataTables/bs4/datatables.min.css') }}">
 <link rel="stylesheet" href="{{ asset('supporting/dataTables/fixedHeader.dataTables.min.css') }}">
-{{--<link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.1.5/css/fixedHeader.dataTables.min.css">--}}
 <link rel="stylesheet" href="{{ asset('supporting/bootstrap-daterangepicker/daterangepicker.min.css') }}">
+<link rel="stylesheet" href="{{ asset('alte305/plugins/select2/css/select2.min.css') }}">
 
 @endpush
 @section('maincontent')
@@ -25,7 +32,7 @@
                 <li class="nav-item">
                     <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill"
                        href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home"
-                       aria-selected="true">{{$header_title}} </a>
+                       aria-selected="true">{{ $title_date_range }} </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="custom-tabs-one-profile-tab" data-toggle="pill"
@@ -42,30 +49,12 @@
                     <table class="table dataTables table-striped table-bordered table-hover">
                         <thead>
                         <tr>
-                            <th>
-                                S/N
-                            </th>
-                            <th>
-                                Comments
-                            </th>
-                            <th>
-                                Type
-                            </th>
-                            <th>
-                                Purchase Date
-                            </th>
-                            <th>
-                                deprecation
-                            </th>
-                            <th>
-                                Life
-                            </th>
-                            <th>
-                                Purchase value
-                            </th>
-                            <th>
-                                Current Value
-                            </th>
+                            <th class="col-md-1"> Date</th>
+                            <th> Sl No</th>
+                            <th class="col-md-3">Customer<br/>Info</th>
+                            <th style="text-align:right">Total<br/>amount</th>
+                            <th style="text-align:right">Vat/Tax<br/>%</th>
+                            <th style="text-align:right">Vat/Tax<br/>Amount</th>
                         </tr>
                         </thead>
                         <tfoot>
@@ -75,42 +64,27 @@
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-
+                            <th class="total"></th>
                         </tr>
                         </tfoot>
                         <tbody>
-                        @foreach($fixed_assets as $key=>$product)
+                        @foreach($transactionSales as $data)
                             <tr>
+                                <td>{{ Carbon\Carbon::parse($data->transaction_date)->format('d-M-Y') }}</td>
+                                <td>                                        <a href="{{ url('invoice/' . $data->id ) }}" class="btn btn-success btn-xs"
+                                                                               title="Show"><span class="far fa-eye" aria-hidden="true"></span></a>
+                                    {{ $data->sl_no }}</td>
                                 <td>
-                                    {{ $key+1}}
+                                    <a href="{{ route('user.show',$data->user->id) }}" class="btn btn-success btn-xs"
+                                       title="User Profile View"><span class="far fa-user-circle"
+                                                                       aria-hidden="true"></span></a>
+                                    {{$data->user->name.', '.$data->user->cell_phone}}
                                 </td>
-                                <td>
-                                    <a href="{{ url('fixed_asset/expense/' . $product->id ) }}" class="btn btn-success btn-xs"
-                                       title="Show"><span class="far fa-eye" aria-hidden="true"></span></a> {{ $product->comments}}
-
-                                </td>
-                                <td>
-                                    {{ $product->expense_type->expense_name ?? '' }}
-                                </td>
-                                <td>
-                                    {{ Carbon\Carbon::parse($product->expense_date)->format('d-M-Y') }}
-                                </td>
-                                <td>
-                                    {{ $product->deprecation ?? '' }}
-                                </td>
-                                <td>
-                                    {{ $product->lifeDate. '('.$product->lifeDay.' days)' }}
-                                </td>
-                                <td>
-                                    {{ $product->expense_amount ?? '' }}
-                                </td>
-                                <td>
-                                    {{ $product->currentValue ?? '' }}
-                                </td>
+                                <td style="text-align:right">{{ $data->total_amount }}</td>
+                                <td style="text-align:right">{{ $data->vat_per }}</td>
+                                <td style="text-align:right">{{ $data->vat }}</td>
                             </tr>
+
                         @endforeach
                         </tbody>
                     </table>
@@ -121,7 +95,7 @@
                         <div class="card card-info col-md-8">
                             <div class="card-body">
 
-                                {!! Form::open(array('method' => 'get', 'url' => 'fixed_asset_statement','class'=>'form-horizontal')) !!}
+                                {!! Form::open(array('method' => 'get', 'url' => 'vatTransaction','class'=>'form-horizontal')) !!}
                                 {!! Form::hidden('start_date', null,['class'=>'StartDate','id'=>'StartDate'] )!!}
                                 {!! Form::hidden('end_date', null,['class'=>'EndDate','id'=>'EndDate'] )!!}
 
@@ -157,6 +131,7 @@
                 </div>
 
             </div>
+
         </div>
     </div>
 @endsection
@@ -166,79 +141,25 @@
 <script src="{{ asset('supporting/dataTables/dataTables.fixedHeader.min.js')}}"></script>
 <script src="{!! asset('alte305/plugins/moment/moment.min.js')!!}"></script>
 <script src="{{ asset('supporting/bootstrap-daterangepicker/daterangepicker.min.js')}}"></script>
+<script src="{{ asset('supporting/vfs_fonts.js')}}"></script>
+<script src="{!! asset('alte305/plugins/select2/js/select2.full.min.js')!!}"></script>
 
 <script>
-    var startDate;
-    var endDate;
-    $(document).ready(function () {
-        $('#reportrange').daterangepicker(
-            {
-                startDate: moment().subtract(29,'days'),
-                endDate: moment(),
-                minDate: '01/01/2015',
-                maxDate: '12/31/2050',
-//                dateLimit: {days: 60},
-                showDropdowns: true,
-                showWeekNumbers: true,
-                timePicker: false,
-                ranges: {
-                    'Today': [moment(), moment()],
-                    'Yesterday': [moment().subtract(1,'days'), moment().subtract(1,'days')],
-//                    'Last 7 Days': [moment().subtract(6,'days'), moment()],
-                    'Last 30 Days': [moment().subtract(29,'days'), moment()],
-                    'This Month': [moment().startOf('month'), moment().endOf('month')],
-                    'Last Month': [moment().subtract(1,'month').startOf('month'), moment().subtract(1,'month').endOf('month')],
-                    'Last 6 Month': [moment().subtract(6, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-                    'This Year': [moment().startOf('year'), moment().endOf('year')],
-                    'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
-                    'The year before last year': [moment().subtract(2, 'year').startOf('year'), moment().subtract(2, 'year').endOf('year')]
+    pdfMake.fonts = {
+        Roboto: {
+            normal: 'Roboto-Regular.ttf',
+            bold: 'Roboto-Medium.ttf',
+            italics: 'Roboto-Italic.ttf',
+            bolditalics: 'Roboto-MediumItalic.ttf'
+        },
+        nikosh: {
+            normal: "NikoshBAN.ttf",
+            bold: "NikoshBAN.ttf",
+            italics: "NikoshBAN.ttf",
+            bolditalics: "NikoshBAN.ttf"
+        }
+    };
 
-                },
-                opens: 'right',
-                buttonClasses: ['btn btn-default'],
-                applyClass: 'btn-small btn-primary',
-                cancelClass: 'btn-small',
-//                format: 'DD/MM/YYYY',
-                format: 'DD-MM-Y',
-//                format: 'dd/mm/yyyy',
-                separator: ' to ',
-                locale: {
-                    applyLabel: 'Submit',
-                    fromLabel: 'From',
-                    toLabel: 'To',
-                    customRangeLabel: 'Custom Range',
-                    daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
-                    monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                    firstDay: 1
-                }
-            },
-
-            function (start, end) {
-//                console.log("Callback has been called!");
-                $('#reportrange span').html(start.format('D MMMM YYYY') + ' - ' + end.format('D MMMM YYYY'));
-                startDate = start;
-                endDate = end;
-                $("#StartDate").val(moment(startDate).format('YYYY-MM-DD'));
-                $("#EndDate").val(moment(endDate).format('YYYY-MM-DD'));
-            }
-        );
-        //Set the initial state of the picker label
-//        $('#reportrange span').html('Please select Date Range');
-        $('#reportrange span').html(moment().subtract(29,'days').format('D MMMM YYYY') + ' - ' + moment().format('D MMMM YYYY'));
-        $("#StartDate").val(moment().subtract(29,'days').format('YYYY-MM-DD'));
-        $("#EndDate").val(moment(endDate).format('YYYY-MM-DD'));
-//        $('#reportrange span').html(moment().format('D MMMM YYYY') + ' - ' + moment().format('D MMMM YYYY'));
-//        console.log(startDate);
-
-//        $('#saveBtn').click(function(){
-//            $("#StartDate").val(moment(startDate).format('YYYY-MM-DD'));
-//            $("#EndDate").val(moment(endDate).format('YYYY-MM-DD'));
-//            console.log(startDate.format('D MMMM YYYY') + ' - ' + endDate.format('D MMMM YYYY'));
-//        });
-    });
-</script>
-
-<script>
     $(document).ready(function () {
         $('.dataTables').DataTable({
             aaSorting: [],
@@ -255,8 +176,11 @@
 //                { targets: [ 0,1,2,3,4, 5, 6, 7, 8, 9 ], className: 'dt-head text-center'  },
 //                { targets: [0,1,2,3,4, 5,6,7 ], className: 'text-center' },
                 {targets: [0], className: 'text-center'},
-                {targets: [1, 2,3,5], className: 'text-left'},
-                {targets: [4,6,7], className: 'text-right',render: $.fn.dataTable.render.number(',', '.', 0, '')},
+//                {targets: [4], className: 'text-right'},
+                {
+                    targets: [5],
+                    render: $.fn.dataTable.render.number(',', '.', 0, '')
+                }
             ],
 
             buttons: [
@@ -264,7 +188,7 @@
                 {extend: 'csv'},
                 {
                     extend: 'excel', title: '{{ config('app.name', 'EIS') }}',
-                    messageTop: '{{$header_title}}'
+                    messageTop: '{{$title_date_range}}'
                 },
                     {{--{extend: 'pdf', title: 'DVL Transaction Data',--}}
                     {{--messageTop: 'Commission Report of {{entryBy($partner_id).' '. $title_date_range}} ',--}}
@@ -277,11 +201,11 @@
                     className: 'btn  btn-sm btn-table',
                     titleAttr: 'Export to Pdf',
                     text: '<span class="fa fa-file-pdf-o fa-lg"></span><i class="hidden-xs hidden-sm hidden-md"> Pdf</i>',
-                    filename: '{{$header_title}}',
+                    filename: '{{$title_date_range}}',
                     extension: '.pdf',
 //                    orientation : 'landscape',
                     orientation: 'portrait',
-                    title: "{{$header_title}}",
+                    title: "{{$title_date_range}}",
                     footer: true,
                     exportOptions: {
                         columns: ':visible:not(.not-export-col)',
@@ -301,12 +225,13 @@
                             doc.content[1].table.body[i][1].alignment = 'left';
                             doc.content[1].table.body[i][2].alignment = 'left';
                             doc.content[1].table.body[i][3].alignment = 'left';
-                            doc.content[1].table.body[i][4].alignment = 'right';
-                            doc.content[1].table.body[i][5].alignment = 'left';
-                            doc.content[1].table.body[i][6].alignment = 'right';
-                            doc.content[1].table.body[i][7].alignment = 'right';
+                            doc.content[1].table.body[i][4].alignment = 'left';
+                            doc.content[1].table.body[i][5].alignment = 'right';
+//                            doc.content[1].table.body[i][6].alignment = 'center';
+//                            doc.content[1].table.body[i][7].alignment = 'left';
+//                            doc.content[1].table.body[i][8].alignment = 'left';
                         }
-                        doc.content[1].table.widths = ['5%', '25%', '15%','10%','10%','15%','10%','10%'];
+                        doc.content[1].table.widths = ['10%', '15%', '20%', '15%', '15%', '15%', '10%'];
 //                        doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
                         doc.content.splice(0, 1);
                         var now = new Date();
@@ -326,18 +251,18 @@
                                     {
                                         alignment: 'left',
                                         italics: true,
-                                        text: '{{$header_title}}',
+                                        text: '{{$title_date_range}}',
                                         fontSize: 10,
                                         margin: [10, 0]
                                     },
-//                                    {
+                                    {
                                         //image: logo,
 //                                        alignment: 'center',
 //                                        width: 20,
 //                                        height: 20,
                                         {{--image: 'data:image/png;base64,{{$settings->logo_base64}}'--}}
 
-//                                    },
+                                    },
 
                                     {
                                         alignment: 'right',
@@ -389,7 +314,7 @@
                 {
                     extend: 'print',
                     footer: true,
-                    messageTop: '{{$header_title}}',
+                    messageTop: '{{$title_date_range}}',
                     messageBottom: '{{'Printed On: '.\Carbon\Carbon::now()->format(' D, d-M-Y, h:ia')}}',
                     customize: function (win) {
                         $(win.document.body).addClass('white-bg');
@@ -402,15 +327,15 @@
             ],
             "footerCallback": function (row, data, start, end, display) {
                 var api = this.api();
-//                nb_cols = api.columns().nodes().length;
-                nb_cols = 8;
-                var j = 6;
+                nb_cols = api.columns().nodes().length;
+//                nb_cols = 8;
+                var j = 5;
                 while (j < nb_cols) {
                     var pageTotal = api
                         .column(j, {page: 'current'})
                         .data()
                         .reduce(function (a, b) {
-                            return (Number(a) + Number(b)).toFixed(0);
+                            return (Number(a) + Number(b)).toFixed(2);
                         }, 0);
                     // Update footer
                     $(api.column(j).footer()).html(pageTotal);
@@ -418,12 +343,81 @@
                 }
             }
 
-
         });
     });
 
 </script>
 
+<script>
+    var startDate;
+    var endDate;
+    $(document).ready(function () {
+        $('#reportrange').daterangepicker(
+            {
+                startDate: moment().subtract(30, 'days'),
+                endDate: moment(),
+                minDate: '01/01/2015',
+                maxDate: '12/31/2050',
+//                dateLimit: {days: 60},
+                showDropdowns: true,
+                showWeekNumbers: true,
+                timePicker: false,
+                ranges: {
+                    'Today': [moment(), moment()],
+                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+//                    'Last 7 Days': [moment().subtract(6,'days'), moment()],
+                    'Last 30 Days': [moment().subtract(30, 'days'), moment()],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                    'Last 6 Month': [moment().subtract(6, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                    'This Year': [moment().startOf('year'), moment().endOf('year')],
+                    'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
+                    'The year before last year': [moment().subtract(2, 'year').startOf('year'), moment().subtract(2, 'year').endOf('year')]
+
+                },
+                opens: 'right',
+                buttonClasses: ['btn btn-default'],
+                applyClass: 'btn-small btn-primary',
+                cancelClass: 'btn-small',
+//                format: 'DD/MM/YYYY',
+                format: 'DD-MM-Y',
+//                format: 'dd/mm/yyyy',
+                separator: ' to ',
+                locale: {
+                    applyLabel: 'Submit',
+                    fromLabel: 'From',
+                    toLabel: 'To',
+                    customRangeLabel: 'Custom Range',
+                    daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+                    monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                    firstDay: 1
+                }
+            },
+
+            function (start, end) {
+                console.log("Callback has been called!");
+                $('#reportrange span').html(start.format('D MMMM YYYY') + ' - ' + end.format('D MMMM YYYY'));
+                startDate = start;
+                endDate = end;
+                $("#StartDate").val(moment(startDate).format('YYYY-MM-DD'));
+                $("#EndDate").val(moment(endDate).format('YYYY-MM-DD'));
+            }
+        );
+        //Set the initial state of the picker label
+//        $('#reportrange span').html('Please select Date Range');
+        $('#reportrange span').html(moment().subtract(30, 'days').format('D MMMM YYYY') + ' - ' + moment().format('D MMMM YYYY'));
+        $("#StartDate").val(moment().subtract(30, 'days').format('YYYY-MM-DD'));
+        $("#EndDate").val(moment(endDate).format('YYYY-MM-DD'));
+//        $('#reportrange span').html(moment().format('D MMMM YYYY') + ' - ' + moment().format('D MMMM YYYY'));
+//        console.log(startDate);
+
+//        $('#saveBtn').click(function(){
+//            $("#StartDate").val(moment(startDate).format('YYYY-MM-DD'));
+//            $("#EndDate").val(moment(endDate).format('YYYY-MM-DD'));
+//            console.log(startDate.format('D MMMM YYYY') + ' - ' + endDate.format('D MMMM YYYY'));
+//        });
+    });
+</script>
 
 @endpush
 
