@@ -578,5 +578,62 @@ class ExpenseController extends Controller
         return view('expense.index', compact('expense', 'header_title', 'sidebar'));
     }
 
+    public function fixed_asset_statement(Request $request){
+        $sidebar['main_menu'] = 'fixed_asset';
+        $sidebar['main_menu_cap'] = 'Fixed Asset';
+        $sidebar['module_name_menu'] = 'fixed_asset';
+        $sidebar['module_name'] = 'Fixed Asset';
+
+        if ($request->start_date == null) {
+            $start_date = Carbon::now()->subDays(90)->format('Y-m-d') . ' 00:00:00';
+            $end_date = date('Y-m-d') . ' 23:59:59';
+        } else {
+            $start_date = date('Y-m-d', strtotime($request->start_date)) . ' 00:00:00';
+            $end_date = date('Y-m-d', strtotime($request->end_date)) . ' 23:59:59';
+        }
+
+        if (session()->get('branch') != 'all') {
+            $fixed_assets = Expense::with('expense_type', 'branch')
+                ->whereBetween('expense_date', [$start_date, $end_date])
+                ->where('branch_id', session()->get('branch'))
+                ->where('type', 'Fixed Asset')
+                ->orderBy('expense_date', 'desc')
+                ->orderBy('created_at', 'desc')
+                ->get();
+        } else {
+            $fixed_assets = Expense::with('expense_type', 'branch')
+                ->whereBetween('expense_date', [$start_date, $end_date])
+                ->where('type', 'Fixed Asset')
+                ->orderBy('expense_date', 'desc')
+                ->orderBy('created_at', 'desc')
+                ->get();
+        }
+//        dd($fixed_assets);
+        $product='';
+        foreach ($fixed_assets as $product) {
+            $product->lifeDay = Carbon::parse($product->expense_date)->diffInDays();
+//            $product->lifeDate = Carbon::parse($product->expense_date)->diffForHumans();
+            $product->lifeDate = Carbon::parse($product->expense_date)->diffForHumans([
+                'parts' => 4,
+                'join' => ', ',
+                'short' => true
+            ]);
+            $product->currentValue = $this->calculateCurrentValue(floatval($product->expense_amount), floatval($product->deprecation)/100, intval(Carbon::parse($product->expense_date)->diffInDays()));
+        }
+//        dd($fixed_assets);
+//        $header_title='Fixed Asset Statement';
+        $header_title = 'Fixed Asset Statement From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
+        return view('expense.fixed_asset_statement', compact('fixed_assets','header_title','sidebar'));
+    }
+
+    private function calculateCurrentValue($initialValue, $annualDepreciationRate, $lifeDays)
+    {
+//        dd($lifeDays);
+        // Current value calculation using exponential decay formula
+        $currentValue = $initialValue * pow((1 - $annualDepreciationRate), $lifeDays / 365);
+//        dd($currentValue);
+        return round($currentValue, 2); // Round to 2 decimal places for currency representation
+    }
+
 
 }

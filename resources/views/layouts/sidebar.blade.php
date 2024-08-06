@@ -460,6 +460,12 @@
                                     <p>Manage Fixed Asset Type</p>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="{{url('fixed_asset_statement') }}" class="nav-link @yield('fixed_asset_statement')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Fixed Asset Statement</p>
+                                </a>
+                            </li>
                         </ul>
                     </li>
                 @endcan
