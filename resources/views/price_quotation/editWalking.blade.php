@@ -418,14 +418,6 @@
 
 </script>
 
-{{--<script>--}}
-    {{--$(document).ready(function () {--}}
-        {{--$(".suggestion").hide()--}}
-        {{--$('[name=customer_id]').on('change', function () {--}}
-            {{--$('.suggestion').toggle(this.value === '6');--}}
-        {{--})--}}
-    {{--});--}}
-{{--</script>--}}
 <script>
     $(document).ready(function () {
         $(".suggestion").toggle($('[name=customer_id]').val() === '6');

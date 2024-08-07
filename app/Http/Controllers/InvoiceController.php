@@ -543,7 +543,7 @@ class InvoiceController extends Controller
 //            $related_ledger = Ledger::where('id', $related_customer->ledger_id)->first();
 
             $del_walking_customer = DB::table('walking_customers')
-                ->where('invoice_id', $invoice->id)->delete();
+                ->where('type', 'Invoice')->where('invoice_id', $invoice->id)->delete();
             $del_invoice_details = DB::table('invoice_details')
                 ->where('invoice_id', $invoice->id)->delete();
 
@@ -648,7 +648,7 @@ class InvoiceController extends Controller
             $related_customer = WalkingCustomer::where('type', 'Invoice')->where('invoice_id', $invoice->id)->first(); //invoice_id, ledger_id
 
             $del_walking_customer = DB::table('walking_customers')
-                ->where('invoice_id', $invoice->id)->delete();
+                ->where('type', 'Invoice')->where('invoice_id', $invoice->id)->delete();
 
             $del_inventory_transaction_account = DB::table('invoice_details')
                 ->where('invoice_id', $invoice->id)->delete();

@@ -208,15 +208,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="row suggestion">
+                <div class="row suggestion" style="padding-bottom: 10px">
                     <div class="col-md-4">
-                        {!! Form::text('name', null,['class'=>'form-control ', 'placeholder'=>"Please Enter Customer Name",'style'=>"background-color: #FEA7A7"]) !!}
+                        {!! Form::text('name', $related_customer['name'],['class'=>'form-control ', 'placeholder'=>"Please Enter Customer Name",'style'=>"background-color: #cce5e5"]) !!}
                     </div>
                     <div class="col-md-4">
-                        {!! Form::text('mobile', null,['class'=>'form-control ', 'placeholder'=>"Please Enter Customer Mobile No",'style'=>"background-color: #FEA7A7"]) !!}
+                        {!! Form::text('mobile', $related_customer['mobile'],['class'=>'form-control ', 'placeholder'=>"Please Enter Customer Mobile No",'style'=>"background-color: #cce5e5"]) !!}
                     </div>
                     <div class="col-md-4">
-                        {!! Form::text('address', null,['class'=>'form-control ', 'placeholder'=>"Please Enter Customer Address",'style'=>"background-color: #FEA7A7"]) !!}
+                        {!! Form::text('address', $related_customer['address'],['class'=>'form-control ', 'placeholder'=>"Please Enter Customer Address",'style'=>"background-color: #cce5e5"]) !!}
                     </div>
                 </div>
 
@@ -492,10 +492,11 @@
 </script>
 <script>
     $(document).ready(function () {
-        $(".suggestion").hide()
+        $(".suggestion").toggle($('[name=customer_id]').val() === '6');
+
         $('[name=customer_id]').on('change', function () {
             $('.suggestion').toggle(this.value === '6');
-        })
+        });
     });
 </script>
 
