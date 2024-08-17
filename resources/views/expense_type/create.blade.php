@@ -40,7 +40,7 @@
 {{--            {!! Form::open(array('route' => 'expense_type.store','method'=>'POST','class'=>'form-horizontal','id'=>'saveForm')) !!}--}}
         {!! Form::open(['route' => ['module.store', 'module' => $sidebar['module_name_menu']], 'method' => 'POST', 'class' => 'form-horizontal', 'id' => 'saveForm']) !!}
 
-        {!! Form::hidden('type', ($sidebar['module_name']=='expense_type'?'Expense':'Fixed Asset') )!!}
+        {!! Form::hidden('type', ($sidebar['module_name']=='Expense Type'?'Expense':'Fixed Asset') )!!}
 
             {{ csrf_field() }}
 

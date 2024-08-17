@@ -45,7 +45,7 @@
         <div class="card-body">
 
             <div class="form-group row {{ $errors->has('expense_name') ? ' has-error' : '' }}">
-                <label for="expense_name" class="col-md-4 control-label text-md-right">Expense Type Name :
+                <label for="expense_name" class="col-md-4 control-label text-md-right">Title :
                     <span class="required"> * </span></label>
                 <div class="col-md-6">
                     {!! Form::text('expense_name', null,['class'=>'form-control ', 'placeholder'=>'Enter Expense Type Name ']) !!}

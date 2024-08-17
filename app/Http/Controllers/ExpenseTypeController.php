@@ -110,7 +110,7 @@ class ExpenseTypeController extends Controller
             $sidebar['module_name_menu'] = 'expense_type';
             $sidebar['module_name'] = 'Expense Type';
             $expense_type = ExpenseType::where('id', $id)->first();
-            return view('expense_type.Edit', compact('sidebar','expense_type'));
+            return view('expense_type.edit', compact('sidebar','expense_type'));
         } elseif ($this->module == 'fixed_asset_type') {
             $sidebar['main_menu'] = 'fixed_asset';
             $sidebar['main_menu_cap'] = 'Fixed Asset';
