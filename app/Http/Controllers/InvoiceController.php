@@ -229,20 +229,21 @@ class InvoiceController extends Controller
             ->select('invoice_details.id', 'invoice_details.product_id', 'invoice_details.qty', 'invoice_details.unit_name', 'invoice_details.usell_price',
                 'invoice_details.ubuy_price', 'invoice_details.status', 'invoice_details.line_total', 'brands.title as brand_title',
                 'products.title as product_title', 'invoice_details.product_id', 'invoice_details.model', 'invoice_details.product_details'
-//            ,'product_types.title as product_type_title'
-            // 'pq_details.product_details'
             )
             ->join('products', 'products.id', '=', 'invoice_details.product_id')
             ->join('brands', 'brands.id', '=', 'invoice_details.brand_id')
-            // ->join('pq_details', 'product.id', '=', 'invoice_details.product_id')
-//            ->join('product_types', 'product_types.id', '=', 'products.product_type_id')
             ->where('invoice_details.invoice_id', $invoice->id)
-            // ->groupBy(DB::raw('product_id'))
             ->get();
         //    dd($transactionDetails);
-        $mindate_ledger1 = DB::table('ledgers')->where('user_id', $invoice->user_id)->MIN('transaction_date');
-        $mindate_ledger = date('Y-m-d', strtotime($mindate_ledger1));
-        $mindate_ledger_datetime = $mindate_ledger . ' 00:00:00';
+        $mindate= getSmallestDate($invoice->user_id);
+
+//        dd($mindate->toDateTimeString());
+//        $mindate_ledger1 = DB::table('ledgers')->where('user_id', $invoice->user_id)->MIN('transaction_date');
+//        $mindate_ledger = date('Y-m-d', strtotime($mindate_ledger1));
+//        $mindate_ledger_datetime = $mindate_ledger . ' 00:00:01';
+        $mindate_ledger = date('Y-m-d', strtotime($mindate));
+//        dd($mindate_ledger);
+        $mindate_ledger_datetime = $mindate_ledger . ' 00:00:01';
         $settings = DB::table('settings')->first();
         $related_payment = Ledger::with('user')->with('entryby')
             ->where('invoice_id', $invoice->id)
@@ -282,7 +283,9 @@ class InvoiceController extends Controller
 
     private function ledger($user_id, $mindate_ledger, $before1day_invoice, $inventory_transaction_account_transaction_date, $inventory_transaction_account_transaction_type, $ledger_transaction_type)
     {
-//        dd($inventory_transaction_account_transaction_type);
+        $mindate_ledger1=date('Y-m-d H:i:s', strtotime($mindate_ledger));
+        $before1day_invoice1=date('Y-m-d H:i:s', strtotime($before1day_invoice));
+//        dd($mindate_ledger1.' '.$before1day_invoice1);
         $ledger['consumption_before1day'] = 0;
         $ledger['return_before1day'] = 0;
         $ledger['putback_before1day'] = 0;
@@ -302,11 +305,15 @@ class InvoiceController extends Controller
             $ledger['balance_before1day'] = 0;
         } else {
 //            dd('not same');
-            $ledger['consumption_before1day'] = DB::table('invoices')
-                ->where('transaction_type', $inventory_transaction_account_transaction_type)
+            $ledger['consumption_before1day'] =
+//                DB::table('invoices')
+            Invoice::
+                where('transaction_type', $inventory_transaction_account_transaction_type)
                 ->where('user_id', $user_id)
-                ->whereBetween('transaction_date', [$mindate_ledger, $before1day_invoice])
+                ->whereBetween('transaction_date', [$mindate_ledger1, $before1day_invoice1])
+//                ->get();
                 ->sum('invoice_total');
+//            dd($ledger['consumption_before1day']);
             $ledger['return_before1day'] = DB::table('invoices')
                 ->where('transaction_type', 'Return')
                 ->where('user_id', $user_id)
@@ -323,13 +330,14 @@ class InvoiceController extends Controller
                 ->whereBetween('transaction_date', [$mindate_ledger, $before1day_invoice])
                 ->sum('amount');
             $ledger['balance_before1day'] = $ledger['deposite_before1day'] + $ledger['return_before1day'] + $ledger['putback_before1day'] - $ledger['consumption_before1day'];
-//            dd($ledger['deposite_before1day']);
+//            dd($ledger['consumption_before1day']);
         }
         $ledger['consumption_today'] = DB::table('invoices')
             ->where('transaction_type', $inventory_transaction_account_transaction_type)
             ->where('user_id', $user_id)
             ->whereDate('transaction_date', date('Y-m-d', strtotime($inventory_transaction_account_transaction_date)))
             ->sum('invoice_total');
+//        dd($ledger['consumption_today']);
         $ledger['return_today'] = DB::table('invoices')
             ->where('transaction_type', 'Return')
             ->where('user_id', $user_id)

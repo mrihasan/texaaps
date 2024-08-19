@@ -183,6 +183,33 @@ function static_product_stock($product_id)
 
 }
 
+function getSmallestDate($user_id)
+{
+    $profile = DB::table('profiles')->where('user_id', $user_id)->first();
+    $ledger = DB::table('ledgers')->where('user_id', $user_id)->first();
+    $invoice = DB::table('invoices')->where('user_id', $user_id)->first();
+    // Parse the date strings into Carbon instances, ignoring invalid or empty dates
+    $dates = collect([$profile->joining_date, $ledger->transaction_date, $invoice->transaction_date])->map(function ($date) {
+        return $date ? Carbon\Carbon::parse($date) : null;
+    })->filter(); // Remove null values (i.e., invalid/missing dates)
+    // Check if there are valid dates
+    if ($dates->isEmpty()) {
+        return null; // Return null if no valid dates are found
+    }
+    // Find the earliest (smallest) date
+    return $dates->min();
+
+    /*
+    // Example usage
+    $date1 = '2024-08-19 14:30:00';
+    $date2 = null; // Missing
+    $date3 = '2024-08-19 15:30:00';
+    $date4 = ''; // Missing or empty string
+    $smallestDate = getSmallestDate($date1, $date2, $date3, $date4);
+    echo $smallestDate ? $smallestDate->toDateTimeString() : 'No valid date found';
+    */
+}
+
 function numberToWord($num)
 {
     $num = ( string )(( int )$num);
