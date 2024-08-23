@@ -29,7 +29,7 @@ class ProductController extends Controller
     }
     public function product_stock_report()
     {
-        $products = Product::with('inventory_details')->where('id', 120)->orderBy('title','asc')->get();
+        $products = Product::with('inventory_details')->orderBy('title','asc')->get();
         foreach ($products as $product) {
 //            $totalStock = $product->inventory_details()->where('transaction_type', 'Purchase')->sum('qty');
 //            $totalStock -= $product->inventory_details()->where('transaction_type', 'Sales')->sum('qty');
