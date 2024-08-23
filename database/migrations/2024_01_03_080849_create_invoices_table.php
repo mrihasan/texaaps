@@ -36,6 +36,7 @@ return new class extends Migration
             $table->integer('entry_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->text('notes')->nullable();
+            $table->string('attachment')->nullable();
 
             $table->timestamps();
         });

@@ -161,7 +161,7 @@
                             </th>
                             <td colspan="2">
                                 @if($ledger->invoice_id)
-                                    {{ $ledger->invoice->sl_no}}
+                                    {{ $ledger->invoice->sl_no ?? 'null'}}
                                     <a href="{{ url('invoice/' . $ledger->invoice_id ) }}" class="btn btn-outline-info btn-xs"
                                        title="Show Invoice"><span class="far fa-eye" aria-hidden="true"></span></a>
                                 @else N/A

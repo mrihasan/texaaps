@@ -29,7 +29,7 @@ class ProductController extends Controller
     }
     public function product_stock_report()
     {
-        $products = Product::with('inventory_details')->orderBy('title','asc')->get();
+        $products = Product::with('inventory_details')->where('id', 120)->orderBy('title','asc')->get();
         foreach ($products as $product) {
 //            $totalStock = $product->inventory_details()->where('transaction_type', 'Purchase')->sum('qty');
 //            $totalStock -= $product->inventory_details()->where('transaction_type', 'Sales')->sum('qty');
@@ -38,13 +38,24 @@ class ProductController extends Controller
             $totalSales = $product->inventory_details()->where('transaction_type', 'Sales')->sum('qty');
             $valuePurchase = $product->inventory_details()->where('transaction_type', 'Purchase')->sum('line_total');
             $valueSales = $product->inventory_details()->where('transaction_type', 'Sales')->sum('line_total');
+            $lastPurchaseValue = $product->inventory_details()
+                    ->where('transaction_type', 'Purchase')
+                    ->whereHas('invoice', function ($query) {
+                        $query->orderBy('transaction_date', 'desc'); // Order by the invoice date
+                    })
+                    ->orderBy('id', 'desc')
+                    ->first() // Get the most recent purchase
+                    ->ubuy_price ?? 0;
+            $product->lastPurchaseValue = $lastPurchaseValue;
             $product->totalPurchase = $totalPurchase;
             $product->totalSales = $totalSales;
             $product->stock = $totalPurchase-$totalSales;
             $product->totalPurchaseValue = $valuePurchase;
             $product->totalSalesValue = $valueSales;
-            $product->totalValue = $valuePurchase-$valueSales;
+//            $product->totalValue = $lastPurchaseValue * ($totalPurchase-$totalSales);
+            $product->totalValue = ($totalPurchase-$totalSales)*$lastPurchaseValue ;
         }
+//        dd($products);
         $header_title='Product stock report';
         return view('report.product_stock_report', compact('products','header_title'));
     }

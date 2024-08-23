@@ -28,6 +28,10 @@ class Invoice extends Model
     {
         return $this->hasMany('App\Models\WalkingCustomer');
     }
+    public function ledgers()
+    {
+        return $this->hasMany('App\Models\Ledger');
+    }
 //    public function invoice_detail()
 //    {
 //        return $this->belongsTo('App\Models\InvoiceDetail')->orderBy('created_at', 'desc');

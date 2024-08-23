@@ -826,7 +826,12 @@ class InvoiceController extends Controller
         if (strpos($invoice->reference, 'OSE-') !== false)
             return redirect()->back()->with('flash_message', 'You can not Delete a process order');
 
-        $del_invoice_details = DB::table('invoice_details')
+        if ($invoice->ledgers->count()) {
+//            dd($invoice->ledgers->count());
+            \Session::flash('flash_error', 'Can\'t Delete this, ' . $invoice->ledgers->count() . ' nos payment/receipt found, please delete first this payment/receipt');
+            return redirect()->back();
+        }
+            $del_invoice_details = DB::table('invoice_details')
             ->where('invoice_id', $invoice->id)->delete();
         $del_walking_customer = DB::table('walking_customers')
             ->where('invoice_id', $invoice->id)->delete();

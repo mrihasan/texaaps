@@ -71,7 +71,7 @@
                                 {{--<td>{{ $data->entryby->name}}</td>--}}
                                 <td>
                                     @if($data->invoice_id)
-                                        {{ $data->invoice->sl_no}}
+                                        {{ $data->invoice->sl_no ?? 'null'}}
                                         <a href="{{ url('invoice/' . $data->invoice_id ) }}" class="btn btn-outline-info btn-xs"
                                            title="Show Invoice"><span class="far fa-eye" aria-hidden="true"></span></a>
                                     @else N/A

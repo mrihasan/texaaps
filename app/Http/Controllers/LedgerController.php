@@ -79,6 +79,7 @@ class LedgerController extends Controller
             ->where('reftbl', null )
             ->orWhere('reftbl', 'ledgers')
             ->orderBy('transaction_date', 'desc')->get();
+//        dd($receipts);
         $header_title = 'Receipt From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
         return view('accounting.receipt_index', compact('receipts', 'header_title'));
     }
