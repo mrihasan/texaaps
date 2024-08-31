@@ -40,6 +40,7 @@ class CompanyNameController extends Controller
 
     public function edit(CompanyName $company_name)
     {
+        dd('Update from user-s profile');
         abort_if(Gate::denies('ProductMgtAccess'), redirect('error'));
         return view('company_name.edit', compact('company_name'));
     }

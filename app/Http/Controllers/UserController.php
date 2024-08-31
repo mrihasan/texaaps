@@ -116,6 +116,8 @@ class UserController extends Controller
                     $profile = new Profile();
                     $profile->user_id = $user->id;
                     $profile->gender = 'Male';
+                    $profile->contact_no1 = $request->cell_phone;
+                    $profile->contact_no2 = $request->contact_no2;
                     $profile->company_name_id = $company->id;
                     $profile->save();
 
@@ -300,6 +302,19 @@ class UserController extends Controller
 //            dd($user);
             $user->update($input);
             $user->roles()->sync($request->input('roles', []));
+
+            if ($user->user_type_id==3 || $user->user_type_id==4) {
+                $company_data = CompanyName::where('id', $user->profile->company_name_id)->first();
+                $company_data->title = $request->name;
+                $company_data->email = $request->email;
+                $company_data->contact_no = $request->cell_phone;
+                $company_data->save();
+
+                $profile_data = Profile::where('user_id',$user->id)->first();
+                $profile_data->contact_no1 = $request->cell_phone;
+                $profile_data->save();
+
+            }
 
             //        return redirect()->route('user.index')
             \Session::flash('flash_success', 'User updated successfully');

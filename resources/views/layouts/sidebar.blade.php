@@ -142,12 +142,12 @@
                                 <p>Manage Product Type</p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="{{ url('company_name') }}" class="nav-link @yield('manage_company_name')">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Manage Company</p>
-                            </a>
-                        </li>
+                        {{--<li class="nav-item">--}}
+                            {{--<a href="{{ url('company_name') }}" class="nav-link @yield('manage_company_name')">--}}
+                                {{--<i class="far fa-circle nav-icon"></i>--}}
+                                {{--<p>Manage Company</p>--}}
+                            {{--</a>--}}
+                        {{--</li>--}}
                         <li class="nav-item">
                             <a href="{{ url('brand') }}" class="nav-link @yield('manage_brand')">
                                 <i class="far fa-circle nav-icon"></i>

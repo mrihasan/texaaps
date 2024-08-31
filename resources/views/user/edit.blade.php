@@ -223,28 +223,30 @@
                                             </div>
                                         </div>
 
-                                        <div
-                                                class="form-group row {{ $errors->has('contact_no1') ? ' has-error' : '' }}">
-                                            <label for="contact_no1" class="col-md-4 control-label text-right">Contact
-                                                No1: </label>
-                                            <div class="col-md-6">
-                                                <input type="text" class="form-control" name="contact_no1"
-                                                       value="{{ $user->profile->contact_no1 }}" autocomplete="false"
-                                                       placeholder="Contact No" onfocus="true">
-                                                @if ($errors->has('contact_no1'))
-                                                    <span class="help-block">
-                                        <strong>{{ $errors->first('contact_no1') }}</strong>
-                                    </span>
-                                                @endif
-                                            </div>
-                                        </div>
+                                        {{--contact number 1 replaced with mobile number--}}
+                                        {{--<div--}}
+                                        {{--class="form-group row {{ $errors->has('contact_no1') ? ' has-error' : '' }}">--}}
+                                        {{--<label for="contact_no1" class="col-md-4 control-label text-right">Contact--}}
+                                        {{--No1: </label>--}}
+                                        {{--<div class="col-md-6">--}}
+                                        {{--<input type="text" class="form-control" name="contact_no1"--}}
+                                        {{--value="{{ $user->profile->company_name->contact_no }}" autocomplete="false"--}}
+                                        {{--placeholder="Contact No" onfocus="true">--}}
+                                        {{--@if ($errors->has('contact_no1'))--}}
+                                        {{--<span class="help-block">--}}
+                                        {{--<strong>{{ $errors->first('contact_no1') }}</strong>--}}
+                                        {{--</span>--}}
+                                        {{--@endif--}}
+                                        {{--</div>--}}
+                                        {{--</div>--}}
                                         <div
                                                 class="form-group row {{ $errors->has('contact_no2') ? ' has-error' : '' }}">
                                             <label for="contact_no2" class="col-md-4 control-label text-right">Contact
                                                 No2: </label>
                                             <div class="col-md-6">
                                                 <input type="text" class="form-control" name="contact_no2"
-                                                       value="{{ $user->profile->contact_no2 }}" autocomplete="false"
+                                                       value="{{ $user->profile->company_name->contact_no2 }}"
+                                                       autocomplete="false"
                                                        placeholder="Contact No" onfocus="true">
                                                 @if ($errors->has('contact_no2'))
                                                     <span class="help-block">
@@ -254,13 +256,15 @@
                                             </div>
                                         </div>
                                         <div class="form-group row {{ $errors->has('address') ? ' has-error' : '' }}">
-                                            <label for="address" class="col-md-4 control-label text-right">Address:
+                                            <label for="address" class="col-md-4 control-label text-right">Address
+                                                Line1:
                                                 <span
                                                         class="required"> * </span></label>
                                             <div class="col-md-6">
                                                 <input type="text" class="form-control" name="address"
-                                                       value="{{ $user->profile->address }}" autocomplete="false"
-                                                       placeholder="Address" required onfocus="true">
+                                                       value="{{ $user->profile->company_name->address }}"
+                                                       autocomplete="false"
+                                                       placeholder="Address Line 1" required onfocus="true">
                                                 @if ($errors->has('address'))
                                                     <span class="help-block">
                                         <strong>{{ $errors->first('address') }}</strong>
@@ -268,28 +272,54 @@
                                                 @endif
                                             </div>
                                         </div>
-                                        <div class="form-group row {{ $errors->has('company_name_id') ? ' has-error' : '' }}">
-                                            <label class="control-label col-md-4 text-right">Company :</label>
+                                        <div class="form-group row {{ $errors->has('address2') ? ' has-error' : '' }}">
+                                            <label for="address2" class="col-md-4 control-label text-right">Address
+                                                Line2:
+                                            </label>
                                             <div class="col-md-6">
-                                                <select name="company_name_id" class="form-control select2"
-                                                        id="company_name_id">
-                                                    <option value="">Select Company</option>
-                                                    @foreach($company_names as $company_name)
-
-                                                        <option
-                                                                value="{{$company_name->id}}" {{($user->profile->company_name_id==$company_name->id)?'selected':''}}>
-                                                            {{--value="{{$company_name->id}}">--}}
-                                                            {{$company_name->title}}</option>
-                                                    @endforeach
-                                                </select>
-                                                @if ($errors->has('company_name_id'))
+                                                <input type="text" class="form-control" name="address2"
+                                                       value="{{ $user->profile->company_name->address2 }}"
+                                                       autocomplete="false"
+                                                       placeholder="Address line 2" onfocus="true">
+                                                @if ($errors->has('address2'))
                                                     <span class="help-block">
-                                    <strong>{{ $errors->first('company_name_id') }}</strong>
-                                </span>
+                                        <strong>{{ $errors->first('address2') }}</strong>
+                                    </span>
                                                 @endif
                                             </div>
                                         </div>
+                                        <div class="form-group row {{ $errors->has('web') ? 'has-error' : '' }}">
+                                            <label class="control-label col-md-4 text-right">Web Address :</label>
+                                            <div class="col-md-6">
+                                                <input type="text" id="web" name="web" class="form-control"
+                                                       value="{{ $user->profile->company_name->web }}" >
+                                            </div>
+                                            @if($errors->has('web'))
+                                                <em class="invalid-feedback">
+                                                    {{ $errors->first('web') }}
+                                                </em>
+                                            @endif
+                                        </div>
 
+                                        {{--<div class="form-group row {{ $errors->has('company_name_id') ? ' has-error' : '' }}">--}}
+                                            {{--<label class="control-label col-md-4 text-right">Company :</label>--}}
+                                            {{--<div class="col-md-6">--}}
+                                                {{--<select name="company_name_id" class="form-control select2"--}}
+                                                        {{--id="company_name_id">--}}
+                                                    {{--<option value="">Select Company</option>--}}
+                                                    {{--@foreach($company_names as $company_name)--}}
+                                                        {{--<option--}}
+                                                                {{--value="{{$company_name->id}}" {{($user->profile->company_name_id==$company_name->id)?'selected':''}}>--}}
+                                                            {{--{{$company_name->title}}</option>--}}
+                                                    {{--@endforeach--}}
+                                                {{--</select>--}}
+                                                {{--@if ($errors->has('company_name_id'))--}}
+                                                    {{--<span class="help-block">--}}
+                                    {{--<strong>{{ $errors->first('company_name_id') }}</strong>--}}
+                                {{--</span>--}}
+                                                {{--@endif--}}
+                                            {{--</div>--}}
+                                        {{--</div>--}}
                                     </div>
 
                                     {{--<div class="card-footer">--}}
