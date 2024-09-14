@@ -30,15 +30,15 @@ class ProfileController extends Controller
         $profile_data->date_of_birth = ($request->date_of_birth!=null) ? date('Y-m-d', strtotime($request->date_of_birth)) : null;
 //        $profile_data->company_name_id = $request->company_name_id;
         $profile_data->save ();
-
-        $company_data = CompanyName::where('id',$profile->company_name_id)->first();
-        $company_data->address = $request->address;
-        $company_data->address2 = $request->address2;
+        if ($profile_data->user->user_type_id==3 || $profile_data->user->user_type_id==4) {
+            $company_data = CompanyName::where('id', $profile->company_name_id)->first();
+            $company_data->address = $request->address;
+            $company_data->address2 = $request->address2;
 //        $company_data->contact_no = $request->contact_no1;
-        $company_data->contact_no2 = $request->contact_no2;
-        $company_data->web = $request->web;
-        $company_data->save();
-
+            $company_data->contact_no2 = $request->contact_no2;
+            $company_data->web = $request->web;
+            $company_data->save();
+        }
         \Session::flash('flash_message','Successfully Updated');
         return redirect('user/' . $profile->user->id);
     }

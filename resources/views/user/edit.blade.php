@@ -245,7 +245,8 @@
                                                 No2: </label>
                                             <div class="col-md-6">
                                                 <input type="text" class="form-control" name="contact_no2"
-                                                       value="{{ $user->profile->company_name->contact_no2 }}"
+                                                       value="{{ ($user->profile->company_name_id)?$user->profile->company_name->contact_no2:$user->profile->contact_no2 }}"
+                                                       {{--value="{{ $user->profile->company_name->contact_no2 }}"--}}
                                                        autocomplete="false"
                                                        placeholder="Contact No" onfocus="true">
                                                 @if ($errors->has('contact_no2'))
@@ -262,7 +263,7 @@
                                                         class="required"> * </span></label>
                                             <div class="col-md-6">
                                                 <input type="text" class="form-control" name="address"
-                                                       value="{{ $user->profile->company_name->address }}"
+                                                       value="{{ ($user->profile->company_name_id)?$user->profile->company_name->address:$user->profile->address }}"
                                                        autocomplete="false"
                                                        placeholder="Address Line 1" required onfocus="true">
                                                 @if ($errors->has('address'))
@@ -272,13 +273,16 @@
                                                 @endif
                                             </div>
                                         </div>
+
+                                        @if($user->user_type_id == 3 ||$user->user_type_id ==4)
+
                                         <div class="form-group row {{ $errors->has('address2') ? ' has-error' : '' }}">
                                             <label for="address2" class="col-md-4 control-label text-right">Address
                                                 Line2:
                                             </label>
                                             <div class="col-md-6">
                                                 <input type="text" class="form-control" name="address2"
-                                                       value="{{ $user->profile->company_name->address2 }}"
+                                                       value="{{ ($user->profile->company_name_id)?$user->profile->company_name->address2:'' }}"
                                                        autocomplete="false"
                                                        placeholder="Address line 2" onfocus="true">
                                                 @if ($errors->has('address2'))
@@ -292,7 +296,7 @@
                                             <label class="control-label col-md-4 text-right">Web Address :</label>
                                             <div class="col-md-6">
                                                 <input type="text" id="web" name="web" class="form-control"
-                                                       value="{{ $user->profile->company_name->web }}" >
+                                                       value="{{ ($user->profile->company_name_id)?$user->profile->company_name->web:'' }}" >
                                             </div>
                                             @if($errors->has('web'))
                                                 <em class="invalid-feedback">
@@ -300,6 +304,7 @@
                                                 </em>
                                             @endif
                                         </div>
+                                        @endif
 
                                         {{--<div class="form-group row {{ $errors->has('company_name_id') ? ' has-error' : '' }}">--}}
                                             {{--<label class="control-label col-md-4 text-right">Company :</label>--}}

@@ -187,4 +187,8 @@ Route::get('/customer_report', '\App\Http\Controllers\ReportController@customer_
 Route::get('/supplier_report', '\App\Http\Controllers\ReportController@supplier_report')->name('supplier_report');
 Route::get('/balance_report', '\App\Http\Controllers\ReportController@balance_report')->name('balance_report');
 Route::get('/balance_sheet', '\App\Http\Controllers\ReportController@balance_sheet')->name('balance_sheet');
+//Balance Report for Suman
+Route::get('/income_statement', '\App\Http\Controllers\BalanceReportController@income_statement')->name('income_statement');
+Route::get('/sbalance_report', '\App\Http\Controllers\BalanceReportController@sbalance_eport')->name('sbalance_report');
+Route::get('/sbalance_sheet', '\App\Http\Controllers\BalanceReportController@sbalance_sheet')->name('sbalance_sheet');
 
