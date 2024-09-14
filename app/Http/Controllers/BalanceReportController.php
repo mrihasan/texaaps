@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use DB;
 
 class BalanceReportController extends Controller
 {
@@ -52,8 +53,61 @@ class BalanceReportController extends Controller
             $ny = $currentYear - $startYear + 10;
             $fiscalYears = $this->getFiscalYears($currentYear, $ny); // Generate 10 fiscal years for example
         }
-        $header_title = 'Income Statement From ' . Carbon::parse($startDate)->format('d-M-Y') . ' To ' . Carbon::parse($endDate)->format('d-M-Y');
-        return view('report.income_statement', compact('fiscalYears', 'fiscalYear','startDate','endDate','header_title'));
+        $header_title = 'From ' . Carbon::parse($startDate)->format('d-M-Y') . ' To ' . Carbon::parse($endDate)->format('d-M-Y');
+
+        if (session()->get('branch') != 'all') {
+
+            $total['salesamount'] = DB::table('invoices')
+                ->where('branch_id', session()->get('branch'))
+                ->where('transaction_type', 'Sales')
+                ->whereBetween('transaction_date', [$startDate, $endDate])
+                ->sum('invoice_total');
+            $total['purchaseamount'] = DB::table('invoices')
+                ->where('branch_id', session()->get('branch'))
+                ->where('transaction_type', 'Purchase')
+                ->whereBetween('transaction_date', [$startDate, $endDate])
+                ->sum('invoice_total');
+            $total['expense'] = DB::table('expenses')
+                ->where('branch_id', session()->get('branch'))
+                ->whereBetween('expense_date', [$startDate, $endDate])
+                ->sum('expense_amount');
+            $total['salary'] = DB::table('employee_salaries')
+                ->where('branch_id', session()->get('branch'))
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->sum('paidsalary_amount');
+        } else {
+            $total['salesamount'] = DB::table('invoices')
+                ->where('transaction_type', 'Sales')
+                ->whereBetween('transaction_date', [$startDate, $endDate])
+                ->sum('invoice_total');
+            $total['purchaseamount'] = DB::table('invoices')
+                ->where('transaction_type', 'Purchase')
+                ->whereBetween('transaction_date', [$startDate, $endDate])
+                ->sum('invoice_total');
+            $total['expense'] = DB::table('expenses')
+                ->whereBetween('expense_date', [$startDate, $endDate])
+                ->sum('expense_amount');
+            $total['salary'] = DB::table('employee_salaries')
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->sum('paidsalary_amount');
+        }
+        $total['otherGain']=00;
+        $total['totalSales']=$total['salesamount']+$total['otherGain'];
+
+        $total['purchaseRawmat']=00;
+        $total['otherLoss']=00;
+        $total['totalPurchases']=$total['purchaseamount']+$total['purchaseRawmat']+$total['otherLoss'];
+
+        $total['paidBankInterest']=00;
+        $total['totalExpense']=$total['expense']+$total['paidBankInterest']+$total['salary'];
+
+        $total['salesMargin']=$total['totalSales']-$total['totalPurchases']-$total['totalExpense'];
+        $total['incomeTaxvat']=00;
+        $total['netsalesMargin']=$total['totalSales']-$total['totalPurchases']-$total['totalExpense'];
+        $total['netIncome']=$total['totalSales']-$total['totalPurchases']-$total['totalExpense']-$total['incomeTaxvat'];
+//        dd($total);
+
+        return view('report.income_statement', compact('fiscalYears', 'fiscalYear','startDate','endDate','header_title','total'));
     }
 
     // Function to get fiscal years
@@ -65,5 +119,6 @@ class BalanceReportController extends Controller
         }
         return $fiscalYears;
     }
+
 
 }
