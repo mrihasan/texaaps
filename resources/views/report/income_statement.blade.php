@@ -108,7 +108,7 @@
                                 </span>
                                 @endif
                             </div>
-                            <button type="submit" class="btn btn-info float-right">{{ __('all_settings.Search') }}</button>
+                            {{--<button type="submit" class="btn btn-info float-right">{{ __('all_settings.Search') }}</button>--}}
                         </div>
                         {!! Form::close() !!}
 
@@ -350,7 +350,12 @@
 <script src="{{ asset('supporting/bootstrap-daterangepicker/daterangepicker.min.js')}}"></script>
 <script src="{!! asset('alte305/plugins/select2/js/select2.full.min.js')!!}"></script>
 
-
+<script type="text/javascript">
+    // Trigger form submission on dropdown change
+    $('#fiscal_year').change(function() {
+        $('#saveForm').submit(); // Submit the form
+    });
+</script>
 <script>
     //    $('.select2').select2()
 
