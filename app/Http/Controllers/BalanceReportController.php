@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Expense;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use DB;
@@ -208,6 +209,9 @@ class BalanceReportController extends Controller
             ->union(
                 DB::table('invoices')->select(DB::raw('MIN(transaction_date) as min_date'))
             )
+            ->union(
+                DB::table('expenses')->select(DB::raw('MIN(expense_date) as min_date'))
+            )
             ->orderBy('min_date', 'asc')
             ->first();
 
@@ -244,19 +248,48 @@ class BalanceReportController extends Controller
             $fiscalYear = 'FY ' . $startYear . "-" . $endYear;
         }
 
+
+        // Convert to Carbon instances for comparison
+        $start = Carbon::parse($startDate);
+        $end = Carbon::parse($endDate);
+//dd($start);
+        // Fetch all expenses within the date range
+        $expenses = Expense::where('type','Fixed Asset')->where('expense_date', '>=', $startDate)
+            ->where('expense_date', '<=', $endDate)
+            ->get();
+//dd($expenses);
+        $totalDepreciatedExpense = 0;
+
+        // Loop through each expense and calculate its depreciated value
+//        foreach ($expenses as $expense) {
+//            // Call calculateDepreciation on each expense instance
+//            $totalDepreciatedExpense += $expense->calculateDepreciation($startDate, $endDate);
+//        }
+
+        foreach ($expenses as $expense) {
+            if (method_exists($expense, 'calculateDepreciation')) {
+                $totalDepreciatedExpense += $expense->calculateDepreciation($startDate, $endDate);
+            } else {
+                dd('Method calculateDepreciation does not exist on Expense model');
+            }
+        }
+
         // Set additional variables for the balance sheet
         $total['all_assets'] = 00;
         $total['total_stock'] = 00;
         $total['customer_receivable'] = 00;
-
+        $total['fixedAssets'] = $totalDepreciatedExpense;
         // Format the header title and end date for the view
         $header_title = ' Balance Sheet as on ' . Carbon::parse($endDate)->format('d-M-Y');
         $header_subtitle = ' From '.Carbon::parse($startDate)->format('d-M-Y').' to ' . Carbon::parse($endDate)->format('d-M-Y');
         $end_date = Carbon::parse($endDate)->format('d-M-Y');
 
+//        dd($total);
         // Return the view with the required variables
         return view('report.sbalance_sheet', compact('fiscalYears', 'fiscalYear', 'header_title','header_subtitle', 'end_date', 'total'));
     }
+
+
 
 
 }
