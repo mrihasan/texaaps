@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Expense;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use DB;
@@ -276,7 +277,7 @@ class BalanceReportController extends Controller
 
         // Set additional variables for the balance sheet
         $total['all_assets'] = 00;
-        $total['total_stock'] = 00;
+        $total['total_stock'] = $this->productStockReport($startDate, $endDate);
         $total['customer_receivable'] = 00;
         $total['fixedAssets'] = $totalDepreciatedExpense;
         // Format the header title and end date for the view
@@ -288,6 +289,59 @@ class BalanceReportController extends Controller
         // Return the view with the required variables
         return view('report.sbalance_sheet', compact('fiscalYears', 'fiscalYear', 'header_title','header_subtitle', 'end_date', 'total'));
     }
+
+    function productStockReport($startDate, $endDate)
+    {
+        $totalValueSum = 0;
+        $products = Product::with('inventory_details')->orderBy('title','asc')->get();
+        foreach ($products as $product) {
+            $totalPurchase = $product->inventory_details()->where('transaction_type', 'Purchase')
+                ->whereHas('invoice', function ($query) use ($startDate, $endDate) {
+                    $query->where('transaction_date', '>=', $startDate)
+                        ->where('transaction_date', '<=', $endDate);
+                })
+                ->sum('qty');
+            $totalSales = $product->inventory_details()->where('transaction_type', 'Sales')
+                ->whereHas('invoice', function ($query) use ($startDate, $endDate) {
+                    $query->where('transaction_date', '>=', $startDate)
+                        ->where('transaction_date', '<=', $endDate);
+                })
+                ->sum('qty');
+            $valuePurchase = $product->inventory_details()->where('transaction_type', 'Purchase')
+                ->whereHas('invoice', function ($query) use ($startDate, $endDate) {
+                    $query->where('transaction_date', '>=', $startDate)
+                        ->where('transaction_date', '<=', $endDate);
+                })
+                ->sum('line_total');
+            $valueSales = $product->inventory_details()->where('transaction_type', 'Sales')
+                ->whereHas('invoice', function ($query) use ($startDate, $endDate) {
+                    $query->where('transaction_date', '>=', $startDate)
+                        ->where('transaction_date', '<=', $endDate);
+                })
+                ->sum('line_total');
+            $lastPurchaseValue = $product->inventory_details()
+                    ->where('transaction_type', 'Purchase')
+                    ->whereHas('invoice', function ($query) use ($startDate, $endDate) {
+                        $query->where('transaction_date', '>=', $startDate)
+                            ->where('transaction_date', '<=', $endDate)
+                            ->orderBy('transaction_date', 'desc'); // Order by the invoice date
+                    })
+                    ->orderBy('id', 'desc')
+                    ->first() // Get the most recent purchase
+                    ->ubuy_price ?? 0;
+            $product->lastPurchaseValue = $lastPurchaseValue;
+            $product->totalPurchase = $totalPurchase;
+            $product->totalSales = $totalSales;
+            $product->stock = $totalPurchase-$totalSales;
+            $product->totalPurchaseValue = $valuePurchase;
+            $product->totalSalesValue = $valueSales;
+            $product->totalValue = ($totalPurchase-$totalSales)*$lastPurchaseValue ;
+//            calculate all stock value sum
+            $totalValueSum += $product->totalValue;
+        }
+        return $totalValueSum;
+    }
+
 
 
 

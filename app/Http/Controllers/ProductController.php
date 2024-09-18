@@ -29,6 +29,7 @@ class ProductController extends Controller
     }
     public function product_stock_report()
     {
+        $totalValueSum = 0;
         $products = Product::with('inventory_details')->orderBy('title','asc')->get();
         foreach ($products as $product) {
 //            $totalStock = $product->inventory_details()->where('transaction_type', 'Purchase')->sum('qty');
@@ -54,8 +55,10 @@ class ProductController extends Controller
             $product->totalSalesValue = $valueSales;
 //            $product->totalValue = $lastPurchaseValue * ($totalPurchase-$totalSales);
             $product->totalValue = ($totalPurchase-$totalSales)*$lastPurchaseValue ;
+
+//            calculate all stock value sum
+            $totalValueSum += $product->totalValue;
         }
-//        dd($products);
         $header_title='Product stock report';
         return view('report.product_stock_report', compact('products','header_title'));
     }
