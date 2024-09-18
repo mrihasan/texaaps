@@ -1,11 +1,11 @@
 @extends('layouts.al305_main')
 @section('report_mo','menu-open')
 @section('report','active')
-@section('balance_report','active')
-@section('title','Balance Report')
+@section('income_statement','active')
+@section('title','Income Statement')
 @section('breadcrumb')
     <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">Balance Report</a>
+        <a href="#" class="nav-link">Income Statement</a>
     </li>
 @endsection
 
@@ -15,54 +15,28 @@
         .pagebreak {
             page-break-before: always;
         }
-
         body {
             background: none;
             -ms-zoom: 1.665;
         }
-
         div.portrait, div.landscape {
             margin: 0;
             padding: 0;
             border: none;
             background: none;
         }
-
         div.landscape {
             transform: rotate(270deg) translate(-276mm, 0);
             transform-origin: 0 0;
         }
-
-        .noprint_123 {
-            display: none;
-        }
-
-        .pad_footer {
-            display: block; /* Show header and footer when printing */
-            position: fixed;
-            width: 100%;
-            text-align: left;
-            padding: 0;
-        }
-
-        .pad_footer {
-            bottom: 0;
-        }
-
-        .pad_content {
-            margin-top: 120px; /* Adjust according to your header and footer heights */
-        }
     }
-
     table {
         border-collapse: collapse;
     }
-
     table, th, td {
         border: 1px solid gray;
         padding: 4px;
     }
-
     table.center {
         margin-left: auto;
         margin-right: auto;
@@ -118,8 +92,8 @@
                                 <table class="center" width="90%" style="border: none">
 
                                     <tbody>
-                                    <tr style="border: none">
-                                        <td style="border: none;" colspan="3"><img
+                                    <tr class="print-only" style="border: none" >
+                                        <td style="border: none;" colspan="3" ><img
                                                     src="{!! asset( 'storage/images/pad_top.png'. '?'. 'time='. time()) !!}"
                                                     class="img-fluid" style="border: none" height="auto" width="30%"></td>
                                     </tr>
@@ -148,10 +122,10 @@
                                     </tr>
                                     {{--Sales Start--}}
                                     <tr style="border: solid">
-                                        <td style="text-align:left; border: solid; background-color: #7adeee"  colspan="2">
+                                        <td style="text-align:left; border: solid; background-color: #d3d3d3"  colspan="2">
                                             <strong>Sales</strong>
                                         </td>
-                                        <td style="text-align:right; border: solid; background-color: #9de0f6" >
+                                        <td style="text-align:right; border: solid; background-color: #d3d3d3" >
                                             <strong>Amount</strong>
                                         </td>
                                     </tr>
@@ -185,10 +159,10 @@
                                     {{--Sales End--}}
                                     {{--Purchase Start--}}
                                     <tr style="border: solid">
-                                        <td style="text-align:left; border: solid; background-color: #7adeee"  colspan="2">
+                                        <td style="text-align:left; border: solid; background-color: #d3d3d3"  colspan="2">
                                             <strong>Purchase</strong>
                                         </td>
-                                        <td style="text-align:right; border: solid; background-color: #9de0f6" >
+                                        <td style="text-align:right; border: solid; background-color: #d3d3d3" >
 
                                         </td>
                                     </tr>
@@ -230,10 +204,10 @@
                                     {{--Purchase End--}}
                                     {{--Expense Start--}}
                                     <tr style="border: solid">
-                                        <td style="text-align:left; border: solid; background-color: #7adeee"  colspan="2">
+                                        <td style="text-align:left; border: solid; background-color: #d3d3d3"  colspan="2">
                                             <strong>Expense</strong>
                                         </td>
-                                        <td style="text-align:right; border: solid; background-color: #9de0f6" >
+                                        <td style="text-align:right; border: solid; background-color: #d3d3d3" >
 
                                         </td>
                                     </tr>
@@ -275,10 +249,10 @@
                                     {{--Expense End--}}
                                     {{--Income Start--}}
                                     <tr style="border: solid">
-                                        <td style="text-align:left; border: solid; background-color: #7adeee"  colspan="2">
+                                        <td style="text-align:left; border: solid; background-color: #d3d3d3"  colspan="2">
                                             <strong>Gross Income</strong>
                                         </td>
-                                        <td style="text-align:right; border: solid; background-color: #9de0f6" >
+                                        <td style="text-align:right; border: solid; background-color: #d3d3d3" >
                                             <strong></strong>
                                         </td>
                                     </tr>
@@ -310,11 +284,19 @@
                                         </td>
                                     </tr>
                                     <tr style="border: solid">
-                                        <td style="text-align:left; border: solid; background-color: #7adeee" colspan="2">
+                                        <td style="text-align:left; border: solid; background-color: #d3d3d3" colspan="2">
                                             <strong>Net Income</strong>
                                         </td>
-                                        <td style="text-align:right; border: solid; background-color: #7adeee" >
+                                        <td style="text-align:right; border: solid; background-color: #d3d3d3" >
                                             <strong>{{number_format($total['netIncome'],0)}}</strong>
+                                        </td>
+                                    </tr>
+                                    <tr style="border: solid">
+                                        <td style="text-align:left; border: solid; " colspan="2">
+                                            <strong>Previous Net Income BF </strong>
+                                        </td>
+                                        <td style="text-align:right; border: solid; " >
+                                            <strong>{{number_format($total['pre_netIncome'],0)}}</strong>
                                         </td>
                                     </tr>
                                     {{--Income End--}}

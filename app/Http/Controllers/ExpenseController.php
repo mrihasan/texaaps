@@ -580,7 +580,7 @@ class ExpenseController extends Controller
 
     public function fixed_asset_statement(Request $request){
         if ($request->start_date == null) {
-            $start_date = Carbon::now()->subDays(90)->format('Y-m-d') . ' 00:00:00';
+            $start_date = Carbon::now()->subMonths(60)->format('Y-m-d') . ' 00:00:00';
             $end_date = date('Y-m-d') . ' 23:59:59';
         } else {
             $start_date = date('Y-m-d', strtotime($request->start_date)) . ' 00:00:00';

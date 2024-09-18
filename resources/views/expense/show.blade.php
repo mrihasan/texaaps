@@ -371,10 +371,13 @@
                 {!! Form::close() !!}
             @endcan
             @can('ExpenseAccess')
-                <a href="{{ url('expense/' . $expense->id . '/edit') }}"
-                   class="btn btn-info btn-xs fa-pull-right" title="Edit" style="margin-right: 10px"><span
-                            class="far fa-edit"
-                            aria-hidden="true"></span></a>
+                {{--<a href="{{ url('expense/' . $expense->id . '/edit') }}"--}}
+                   {{--class="btn btn-info btn-xs fa-pull-right" title="Editp" style="margin-right: 10px"><span--}}
+                            {{--class="far fa-edit"--}}
+                            {{--aria-hidden="true"></span></a>--}}
+                <a href="{{ route('efa.edit', ['efa' => $sidebar['module_name_menu'], 'exp' => $expense->id]) }}" class="btn btn-info btn-xs fa-pull-right"
+                   title="Edit "><span class="far fa-edit" aria-hidden="true"></span></a>
+
             @endcan
         </div>
     </div>

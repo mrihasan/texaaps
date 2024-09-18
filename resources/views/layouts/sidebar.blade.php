@@ -565,6 +565,20 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
+                                <a href="{{ url('income_statement') }}"
+                                   class="nav-link @yield('income_statement' )">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Profit & Loss Statement</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ url('sbalance_sheet') }}"
+                                   class="nav-link @yield('sbalance_sheet' )">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Balance Sheet</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="{{ url('product_stock_report') }}"
                                    class="nav-link @yield('product_stock_report' )">
                                     <i class="far fa-circle nav-icon"></i>
