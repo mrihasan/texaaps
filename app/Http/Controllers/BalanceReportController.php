@@ -282,15 +282,28 @@ class BalanceReportController extends Controller
         $total['cash_balance'] = $this->bankBalance('Petty Cash',$startDate, $endDate);
         $total['bank_balance'] = $this->bankBalance('Bank Account',$startDate, $endDate);
         $total['all_assets'] = $total['fixedAssets']+$total['total_stock']+$total['customer_receivable']+$total['cash_balance']+$total['bank_balance'];
+
         $total['investment'] = $this->totalInvestment($startDate, $endDate);
         $total['accumulatedProfit'] = $this->accumulated_loss_profit($fiscalYear);
+        $total['total_equity'] = $total['investment']+$total['accumulatedProfit'];
+
+        $total['bank_loan'] = $this->bankLoan($startDate, $endDate);
+        $total['director_loan'] = 0;
+        $total['non_current_liability'] = $total['bank_loan']['loan']+$total['director_loan'];
+
         $total['supplier_payable'] = $this->supplierPayable($startDate, $endDate);
+        $total['current_liability'] = $total['bank_loan']['loan_payable']+$total['supplier_payable'];
+
+        $total['total_liability'] = $total['non_current_liability']+$total['current_liability'];
+
+        $total['total_equity_liability'] = $total['total_equity']+$total['total_liability'];
+
         // Format the header title and end date for the view
         $header_title = ' Balance Sheet as on ' . Carbon::parse($endDate)->format('d-M-Y');
         $header_subtitle = ' From '.Carbon::parse($startDate)->format('d-M-Y').' to ' . Carbon::parse($endDate)->format('d-M-Y');
         $end_date = Carbon::parse($endDate)->format('d-M-Y');
 
-//        dd($total);
+//        dd($total['bank_loan']);
         // Return the view with the required variables
         return view('report.sbalance_sheet', compact('fiscalYears', 'fiscalYear', 'header_title','header_subtitle', 'end_date', 'total'));
     }
@@ -442,7 +455,6 @@ class BalanceReportController extends Controller
             ->sum('bank_ledgers.amount');
         return $investment;
     }
-
     function accumulated_loss_profit($fiscal_year)
     {
 //        dd($fiscal_year);
@@ -521,6 +533,25 @@ class BalanceReportController extends Controller
         $grand_total=$total['netIncome']+$total['pre_netIncome'];
 //        dd($grand_total);
         return $grand_total;
+    }
+    function bankLoan($startDate, $endDate)
+    {
+        $bank['loan'] = DB::table('bank_ledgers')
+            ->join('bank_accounts','bank_accounts.id','=','bank_ledgers.bank_account_id')
+            ->where('bank_accounts.account_type', 'Loan Account')
+            ->whereIn('transaction_type_id', [5])
+            ->where('bank_ledgers.transaction_date', '>=', $startDate)
+            ->where('bank_ledgers.transaction_date', '<=', $endDate)
+            ->sum('bank_ledgers.amount');
+        $bank['loan_payment'] = DB::table('bank_ledgers')
+            ->join('bank_accounts','bank_accounts.id','=','bank_ledgers.bank_account_id')
+            ->where('bank_accounts.account_type', 'Loan Account')
+            ->whereIn('transaction_type_id', [6])
+            ->where('bank_ledgers.transaction_date', '>=', $startDate)
+            ->where('bank_ledgers.transaction_date', '<=', $endDate)
+            ->sum('bank_ledgers.amount');
+        $bank['loan_payable']=$bank['loan']-$bank['loan_payment'];
+        return $bank;
     }
 
 

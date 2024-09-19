@@ -285,7 +285,7 @@
                                             <strong>Total equity </strong>
                                         </td>
                                         <td style="text-align:right; border: solid; " >
-                                            <strong>{{number_format($total['all_assets'],0)}}</strong>
+                                            <strong>{{number_format($total['total_equity'],0)}}</strong>
                                         </td>
                                     </tr>
                                     <tr>
@@ -309,7 +309,7 @@
                                         </td>
                                         <td style="text-align:center; " >6</td>
                                         <td style="text-align:right;" >
-                                            {{ number_format($total['all_assets'],0)}}
+                                            {{ number_format($total['bank_loan']['loan'],0)}}
                                         </td>
                                     </tr>
                                     <tr>
@@ -320,7 +320,7 @@
                                             7
                                         </td>
                                         <td style="text-align:right;" >
-                                            {{ number_format($total['all_assets'],0)}}
+                                            {{ number_format($total['director_loan'],0)}}
                                         </td>
                                     </tr>
                                     <tr>
@@ -336,7 +336,7 @@
                                             <strong>Total Non Current Liability </strong>
                                         </td>
                                         <td style="text-align:right; border: solid; " >
-                                            <strong>{{number_format($total['all_assets'],0)}}</strong>
+                                            <strong>{{number_format($total['non_current_liability'],0)}}</strong>
                                         </td>
                                     </tr>
                                     <tr>
@@ -359,20 +359,20 @@
                                         <td style="text-align:left;" >
                                             Suppliers Payables
                                         </td>
-                                        <td style="text-align:center; " >6</td>
+                                        <td style="text-align:center; " >8</td>
                                         <td style="text-align:right;" >
                                             {{ number_format($total['supplier_payable'],0)}}
                                         </td>
                                     </tr>
                                     <tr>
                                         <td style="text-align:left;" >
-                                            Bank Loan Payble
+                                            Bank Loan Payable
                                         </td>
                                         <td style="text-align:center; " >
-                                            7
+                                            9
                                         </td>
                                         <td style="text-align:right;" >
-                                            {{ number_format($total['all_assets'],0)}}
+                                            {{ number_format($total['bank_loan']['loan_payable'],0)}}
                                         </td>
                                     </tr>
                                     <tr>
@@ -388,7 +388,7 @@
                                             <strong>Total Current Liability </strong>
                                         </td>
                                         <td style="text-align:right; border: solid; " >
-                                            <strong>{{number_format($total['all_assets'],0)}}</strong>
+                                            <strong>{{number_format($total['current_liability'],0)}}</strong>
                                         </td>
                                     </tr>
                                     <tr>
@@ -412,7 +412,7 @@
                                             <strong>Total Liability </strong>
                                         </td>
                                         <td style="text-align:right; border: solid; " >
-                                            <strong>{{number_format($total['all_assets'],0)}}</strong>
+                                            <strong>{{number_format($total['total_liability'],0)}}</strong>
                                         </td>
                                     </tr>
                                     <tr>
@@ -436,7 +436,7 @@
                                             <strong>Total Liability & Equity </strong>
                                         </td>
                                         <td style="text-align:right; border: solid; " >
-                                            <strong>{{number_format($total['all_assets'],0)}}</strong>
+                                            <strong>{{number_format($total['total_equity_liability'],0)}}</strong>
                                         </td>
                                     </tr>
                                     <tr>
