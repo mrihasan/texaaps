@@ -263,7 +263,7 @@
                                     </tr>
                                     <tr>
                                         <td style="text-align:left;" >
-                                            Accumulated Loss/ Profit
+                                            Accumulated Loss/ Profit (Previous year + Current year)
                                         </td>
                                         <td style="text-align:center; " >
 

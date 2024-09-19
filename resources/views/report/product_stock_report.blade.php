@@ -306,7 +306,7 @@
                 var api = this.api();
 //                nb_cols = api.columns().nodes().length;
                 nb_cols = 11;
-                var j = 4;
+                var j = 10;
                 while (j < nb_cols) {
                     var pageTotal = api
                         .column(j, {page: 'current'})
