@@ -178,7 +178,7 @@
                                             3
                                         </td>
                                         <td style="text-align:right;" >
-                                            {{ number_format($total['all_assets'],0)}}
+                                            {{ number_format($total['customer_receivable'],0)}}
                                         </td>
                                     </tr>
                                     <tr>

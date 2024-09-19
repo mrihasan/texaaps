@@ -448,7 +448,7 @@ class ReportController extends Controller
             ->orderBy('name', 'desc')->get();
         $trt = [];
         for ($i = 0; $i < count($users); $i++) {
-            if (ledgerBalance($users[$i]->id)['balance'] < 0)
+            if (ledgerBalance($users[$i]->id)['balance'] != 0)
                 $trt[] = (ledgerBalance($users[$i]->id));
         }
 //        dd($trt);

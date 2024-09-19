@@ -278,7 +278,7 @@ class BalanceReportController extends Controller
         // Set additional variables for the balance sheet
         $total['all_assets'] = 00;
         $total['total_stock'] = $this->productStockReport($startDate, $endDate);
-        $total['customer_receivable'] = 00;
+        $total['customer_receivable'] = $this->customerReceivable($startDate, $endDate);
         $total['fixedAssets'] = $totalDepreciatedExpense;
         // Format the header title and end date for the view
         $header_title = ' Balance Sheet as on ' . Carbon::parse($endDate)->format('d-M-Y');
@@ -340,6 +340,32 @@ class BalanceReportController extends Controller
             $totalValueSum += $product->totalValue;
         }
         return $totalValueSum;
+    }
+    function customerReceivable($startDate, $endDate)
+    {
+        $ledgers = DB::table('ledgers')
+            ->join('users','users.id','ledgers.user_id')
+            ->where('users.user_type_id',3)
+            ->where('ledgers.transaction_date', '>=', $startDate)
+            ->where('ledgers.transaction_date', '<=', $endDate)
+            ->whereIn('ledgers.transaction_type_id', [1,3])
+            ->sum('amount');
+        $invoice_sales = DB::table('invoices')
+            ->join('users','users.id','invoices.user_id')
+            ->where('users.user_type_id',3)
+            ->where('invoices.transaction_date', '>=', $startDate)
+            ->where('invoices.transaction_date', '<=', $endDate)
+            ->where('invoices.transaction_type', 'Sales')
+            ->sum('invoices.invoice_total');
+        $invoice_return = DB::table('invoices')
+            ->join('users','users.id','invoices.user_id')
+            ->where('users.user_type_id',3)
+            ->where('invoices.transaction_date', '>=', $startDate)
+            ->where('invoices.transaction_date', '<=', $endDate)
+            ->where('invoices.transaction_type', 'Return')
+            ->sum('invoices.invoice_total');
+        $receivable=$invoice_sales-$invoice_return-$ledgers;
+        return $receivable;
     }
 
 
