@@ -44,6 +44,7 @@
                     <th style="text-align:right"></th>
                     <th style="text-align:right"></th>
                     <th style="text-align:right"></th>
+                    <th style="text-align:right"></th>
                     {{--<th style="text-align:right"></th>--}}
                 </tr>
                 </tfoot>
@@ -84,6 +85,16 @@
             fixedHeader: true,
 //            dom: '<"html5buttons"B>lTfgtip',
             'dom': "<'row'<'col-sm-12 col-md-4'l><'col-sm-12 col-md-4'B><'col-sm-12 col-md-4'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+            columnDefs: [
+//                { targets: [ 0,1,2,3,4, 5, 6, 7, 8, 9 ], className: 'dt-head text-center'  },
+//                { targets: [0,1,2,3,4, 5,6,7 ], className: 'text-center' },
+                {targets: [0], className: 'text-center'},
+                {targets: [1,2,3,4,5], className: 'text-left'},
+                {
+                    targets: [6,7],
+                    render: $.fn.dataTable.render.number(',', '.', 0, '')
+                }
+            ],
 
             buttons: [
                 {extend: 'copy'},
@@ -128,16 +139,17 @@
                             doc.content[1].table.body[i][2].alignment = 'left';
                             doc.content[1].table.body[i][3].alignment = 'left';
                             doc.content[1].table.body[i][4].alignment = 'left';
-                            doc.content[1].table.body[i][5].alignment = 'right';
+                            doc.content[1].table.body[i][5].alignment = 'left';
                             doc.content[1].table.body[i][6].alignment = 'right';
                             doc.content[1].table.body[i][7].alignment = 'right';
-                            doc.content[1].table.body[i][8].alignment = 'right';
-                            doc.content[1].table.body[i][9].alignment = 'right';
+//                            doc.content[1].table.body[i][8].alignment = 'right';
+//                            doc.content[1].table.body[i][9].alignment = 'right';
 //                            doc.content[1].table.body[i][10].alignment = 'right';
 //                            doc.content[1].table.body[i][11].alignment = 'center';
 //                            doc.content[1].table.body[i][12].alignment = 'center';
                         }
-                        doc.content[1].table.widths = ['5%', '10%', '10%', '15%', '10%', '10%', '10%', '10%', '10%', '10%'];
+                        doc.content[1].table.widths = ['5%', '20%', '10%', '25%', '10%', '10%', '10%', '10%'];
+
 //                        doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
                         doc.content.splice(0, 1);
                         var now = new Date();
@@ -237,7 +249,7 @@
             "footerCallback": function (row, data, start, end, display) {
                 var api = this.api();
 //                nb_cols = api.columns().nodes().length;
-                nb_cols = 10;
+                nb_cols = 8;
                 var j = 6;
                 while (j < nb_cols) {
                     var pageTotal = api

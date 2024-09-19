@@ -279,6 +279,7 @@ class BalanceReportController extends Controller
         $total['all_assets'] = 00;
         $total['total_stock'] = $this->productStockReport($startDate, $endDate);
         $total['customer_receivable'] = $this->customerReceivable($startDate, $endDate);
+        $total['supplier_payable'] = $this->supplierPayable($startDate, $endDate);
         $total['fixedAssets'] = $totalDepreciatedExpense;
         // Format the header title and end date for the view
         $header_title = ' Balance Sheet as on ' . Carbon::parse($endDate)->format('d-M-Y');
@@ -343,12 +344,19 @@ class BalanceReportController extends Controller
     }
     function customerReceivable($startDate, $endDate)
     {
-        $ledgers = DB::table('ledgers')
+        $ledgers_receipt = DB::table('ledgers')
             ->join('users','users.id','ledgers.user_id')
             ->where('users.user_type_id',3)
             ->where('ledgers.transaction_date', '>=', $startDate)
             ->where('ledgers.transaction_date', '<=', $endDate)
             ->whereIn('ledgers.transaction_type_id', [1,3])
+            ->sum('amount');
+        $ledgers_payment = DB::table('ledgers')
+            ->join('users','users.id','ledgers.user_id')
+            ->where('users.user_type_id',3)
+            ->where('ledgers.transaction_date', '>=', $startDate)
+            ->where('ledgers.transaction_date', '<=', $endDate)
+            ->whereIn('ledgers.transaction_type_id', [2,4])
             ->sum('amount');
         $invoice_sales = DB::table('invoices')
             ->join('users','users.id','invoices.user_id')
@@ -364,7 +372,40 @@ class BalanceReportController extends Controller
             ->where('invoices.transaction_date', '<=', $endDate)
             ->where('invoices.transaction_type', 'Return')
             ->sum('invoices.invoice_total');
-        $receivable=$invoice_sales-$invoice_return-$ledgers;
+        $receivable=$invoice_sales-$invoice_return-$ledgers_receipt+$ledgers_payment;
+        return $receivable;
+    }
+    function supplierPayable($startDate, $endDate)
+    {
+        $ledgers_receipt = DB::table('ledgers')
+            ->join('users','users.id','ledgers.user_id')
+            ->where('users.user_type_id',4)
+            ->where('ledgers.transaction_date', '>=', $startDate)
+            ->where('ledgers.transaction_date', '<=', $endDate)
+            ->whereIn('ledgers.transaction_type_id', [1,3])
+            ->sum('amount');
+        $ledgers_payment = DB::table('ledgers')
+            ->join('users','users.id','ledgers.user_id')
+            ->where('users.user_type_id',4)
+            ->where('ledgers.transaction_date', '>=', $startDate)
+            ->where('ledgers.transaction_date', '<=', $endDate)
+            ->whereIn('ledgers.transaction_type_id', [2,4])
+            ->sum('amount');
+        $invoice_purchase = DB::table('invoices')
+            ->join('users','users.id','invoices.user_id')
+            ->where('users.user_type_id',4)
+            ->where('invoices.transaction_date', '>=', $startDate)
+            ->where('invoices.transaction_date', '<=', $endDate)
+            ->where('invoices.transaction_type', 'Purchase')
+            ->sum('invoices.invoice_total');
+        $invoice_return = DB::table('invoices')
+            ->join('users','users.id','invoices.user_id')
+            ->where('users.user_type_id',4)
+            ->where('invoices.transaction_date', '>=', $startDate)
+            ->where('invoices.transaction_date', '<=', $endDate)
+            ->where('invoices.transaction_type', 'Put Back')
+            ->sum('invoices.invoice_total');
+        $receivable=$invoice_purchase+$invoice_return+$ledgers_receipt-$ledgers_payment;
         return $receivable;
     }
 

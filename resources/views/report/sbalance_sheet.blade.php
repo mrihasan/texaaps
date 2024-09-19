@@ -361,7 +361,7 @@
                                         </td>
                                         <td style="text-align:center; " >6</td>
                                         <td style="text-align:right;" >
-                                            {{ number_format($total['all_assets'],0)}}
+                                            {{ number_format($total['supplier_payable'],0)}}
                                         </td>
                                     </tr>
                                     <tr>

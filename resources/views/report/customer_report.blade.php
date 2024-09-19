@@ -88,7 +88,7 @@
 //                { targets: [ 0,1,2,3,4, 5, 6, 7, 8, 9 ], className: 'dt-head text-center'  },
 //                { targets: [0,1,2,3,4, 5,6,7 ], className: 'text-center' },
                 {targets: [0], className: 'text-center'},
-//                {targets: [4], className: 'text-right'},
+                {targets: [1,2,3,4,5], className: 'text-left'},
                 {
                     targets: [6,7],
                     render: $.fn.dataTable.render.number(',', '.', 0, '')
