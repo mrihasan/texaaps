@@ -39,7 +39,7 @@ class BankAccountController extends Controller
     {
         abort_if(Gate::denies('AccountMgtAccess'), redirect('error'));
         $banking = BankAccount::latest()->get();
-        $tr_type='All';
+        $tr_type='All Accounts';
         return view('banking.index', compact('banking','tr_type'));
     }
 
@@ -115,7 +115,7 @@ class BankAccountController extends Controller
             $end_date = date('Y-m-d') . ' 23:59:59';
             $account_id = $bank_account->id;
         $ledger = ledger_account($account_id, $start_date, $end_date);
-        $header_title= 'Account Information';
+        $header_title= 'Account Information of '.$bank_account->account_name.' '.$bank_account->account_no;
         return view('banking.show', compact('bank_account','ledger','header_title'));
     }
 

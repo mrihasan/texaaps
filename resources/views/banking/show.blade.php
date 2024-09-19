@@ -11,7 +11,7 @@
 @else
     @section('manage_account','active')
 @endif
-@section('title',$bank_account->account_type)
+@section('title',$header_title)
 
 
 
@@ -38,7 +38,7 @@
                 <li class="nav-item">
                     <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill"
                        href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home"
-                       aria-selected="true">Account Info</a>
+                       aria-selected="true">{{$header_title}}</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="custom-tabs-one-profile-tab" data-toggle="pill"
@@ -186,6 +186,13 @@
             fixedHeader: true,
 //            dom: '<"html5buttons"B>lTfgtip',
             'dom': "<'row'<'col-sm-12 col-md-4'l><'col-sm-12 col-md-4'B><'col-sm-12 col-md-4'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+            columnDefs: [
+                {targets: [0,1,2,3,4,5], className: 'text-left'},
+                {
+                    targets: [6,7,8], className: 'text-right',
+                    render: $.fn.dataTable.render.number(',', '.', 0, '')
+                }
+            ],
 
             buttons: [
                 {extend: 'copy'},
@@ -207,8 +214,8 @@
                     text: '<span class="fa fa-file-pdf-o fa-lg"></span><i class="hidden-xs hidden-sm hidden-md"> Pdf</i>',
                     filename: '{{$header_title}}',
                     extension: '.pdf',
-//                    orientation : 'landscape',
-                    orientation: 'portrait',
+                    orientation : 'landscape',
+//                    orientation: 'portrait',
                     title: "{{$header_title}}",
                     footer: true,
                     exportOptions: {
@@ -225,16 +232,18 @@
                              } else {
                              alert(‘Il valore inserito è numerico’);
                              }*/
-                            doc.content[1].table.body[i][0].alignment = 'center';
+                            doc.content[1].table.body[i][0].alignment = 'left';
                             doc.content[1].table.body[i][1].alignment = 'left';
                             doc.content[1].table.body[i][2].alignment = 'left';
-                            doc.content[1].table.body[i][3].alignment = 'right';
+                            doc.content[1].table.body[i][3].alignment = 'left';
                             doc.content[1].table.body[i][4].alignment = 'left';
                             doc.content[1].table.body[i][5].alignment = 'left';
-                            doc.content[1].table.body[i][6].alignment = 'center';
+                            doc.content[1].table.body[i][6].alignment = 'right';
+                            doc.content[1].table.body[i][7].alignment = 'right';
+                            doc.content[1].table.body[i][8].alignment = 'right';
                         }
-                        doc.content[1].table.widths = ['10%','15%','25%','10%','15%','20%','5%'];
-//                        doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+//                        doc.content[1].table.widths = ['10%','15%','25%','10%','15%','20%','5%'];
+                        doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
                         doc.content.splice(0, 1);
                         var now = new Date();
                         var jsDate = now.getDate() + '-' + (now.getMonth() + 1) + '-' + now.getFullYear() + ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
@@ -257,14 +266,14 @@
                                         fontSize: 10,
                                         margin: [10, 0]
                                     },
-                                    {
-                                        //image: logo,
-                                        alignment: 'center',
-                                        width: 20,
-                                        height: 20,
-                                        image: 'data:image/png;base64,{{$settings->logo_base64}}'
+                                    {{--{--}}
+                                        {{--//image: logo,--}}
+                                        {{--alignment: 'center',--}}
+                                        {{--width: 20,--}}
+                                        {{--height: 20,--}}
+                                        {{--image: 'data:image/png;base64,{{$settings->logo_base64}}'--}}
 
-                                    },
+                                    {{--},--}}
 
                                     {
                                         alignment: 'right',

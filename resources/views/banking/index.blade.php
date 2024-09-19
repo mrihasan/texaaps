@@ -30,7 +30,7 @@
                 <li class="nav-item">
                     <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill"
                        href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home"
-                       aria-selected="true">Bank Account</a>
+                       aria-selected="true">{{$tr_type}}</a>
                 </li>
                 @can('AccountMgtAccess')
                     <li class="nav-item">

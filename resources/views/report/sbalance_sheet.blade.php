@@ -204,7 +204,7 @@
                                             4
                                         </td>
                                         <td style="text-align:right;" >
-                                            {{ number_format($total['all_assets'],0)}}
+                                            {{ number_format($total['cash_balance'],0)}}
                                         </td>
                                     </tr>
                                     <tr>
@@ -215,7 +215,7 @@
                                             5
                                         </td>
                                         <td style="text-align:right;" >
-                                            {{ number_format($total['all_assets'],0)}}
+                                            {{ number_format($total['bank_balance'],0)}}
                                         </td>
                                     </tr>
                                     <tr>
@@ -258,7 +258,7 @@
 
                                         </td>
                                         <td style="text-align:right;" >
-                                            {{ number_format($total['all_assets'],0)}}
+                                            {{ number_format($total['investment'],0)}}
                                         </td>
                                     </tr>
                                     <tr>
@@ -269,7 +269,7 @@
 
                                         </td>
                                         <td style="text-align:right;" >
-                                            {{ number_format($total['all_assets'],0)}}
+                                            {{ number_format($total['accumulatedProfit'],0)}}
                                         </td>
                                     </tr>
                                     <tr>

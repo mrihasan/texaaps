@@ -276,11 +276,15 @@ class BalanceReportController extends Controller
         }
 
         // Set additional variables for the balance sheet
-        $total['all_assets'] = 00;
+        $total['fixedAssets'] = $totalDepreciatedExpense;
         $total['total_stock'] = $this->productStockReport($startDate, $endDate);
         $total['customer_receivable'] = $this->customerReceivable($startDate, $endDate);
+        $total['cash_balance'] = $this->bankBalance('Petty Cash',$startDate, $endDate);
+        $total['bank_balance'] = $this->bankBalance('Bank Account',$startDate, $endDate);
+        $total['all_assets'] = $total['fixedAssets']+$total['total_stock']+$total['customer_receivable']+$total['cash_balance']+$total['bank_balance'];
+        $total['investment'] = $this->totalInvestment($startDate, $endDate);
+        $total['accumulatedProfit'] = $this->accumulated_loss_profit($fiscalYear);
         $total['supplier_payable'] = $this->supplierPayable($startDate, $endDate);
-        $total['fixedAssets'] = $totalDepreciatedExpense;
         // Format the header title and end date for the view
         $header_title = ' Balance Sheet as on ' . Carbon::parse($endDate)->format('d-M-Y');
         $header_subtitle = ' From '.Carbon::parse($startDate)->format('d-M-Y').' to ' . Carbon::parse($endDate)->format('d-M-Y');
@@ -408,7 +412,116 @@ class BalanceReportController extends Controller
         $receivable=$invoice_purchase+$invoice_return+$ledgers_receipt-$ledgers_payment;
         return $receivable;
     }
+    function bankBalance($accType,$startDate, $endDate)
+    {
+        $bd_bank_credit = DB::table('bank_ledgers')
+            ->join('bank_accounts','bank_accounts.id','=','bank_ledgers.bank_account_id')
+            ->where('bank_accounts.account_type', $accType)
+            ->whereIn('transaction_type_id', [1,3,5,8,10])
+            ->where('bank_ledgers.transaction_date', '>=', $startDate)
+            ->where('bank_ledgers.transaction_date', '<=', $endDate)
+            ->sum('bank_ledgers.amount');
+        $bd_bank_debit = DB::table('bank_ledgers')
+            ->join('bank_accounts','bank_accounts.id','=','bank_ledgers.bank_account_id')
+            ->where('bank_accounts.account_type', $accType)
+            ->whereIn('transaction_type_id', [2,4,6,9,11])
+            ->where('bank_ledgers.transaction_date', '>=', $startDate)
+            ->where('bank_ledgers.transaction_date', '<=', $endDate)
+            ->sum('bank_ledgers.amount');
+        $balance=$bd_bank_credit-$bd_bank_debit;
 
+        return $balance;
+    }
+    function totalInvestment($startDate, $endDate)
+    {
+        $investment = DB::table('bank_ledgers')
+            ->join('bank_accounts','bank_accounts.id','=','bank_ledgers.bank_account_id')
+            ->where('bank_ledgers.transaction_type_id', 10)
+            ->where('bank_ledgers.transaction_date', '>=', $startDate)
+            ->where('bank_ledgers.transaction_date', '<=', $endDate)
+            ->sum('bank_ledgers.amount');
+        return $investment;
+    }
+
+    function accumulated_loss_profit($fiscal_year)
+    {
+//        dd($fiscal_year);
+
+            $selectedFiscalYear = $fiscal_year;
+            // Extract the start and end year from the selected fiscal year
+            list($startYear, $endYear) = sscanf($selectedFiscalYear, 'FY %d-%d');
+            // Create start and end dates
+            $startDate = "$startYear-07-01"; // Start date: July 1st of start year
+            $endDate = "$endYear-06-30"; // End date: June 30th of end year
+
+            $previous_startYear = $startYear-1;
+            $previous_endYear = $endYear-1;
+            $previous_startDate = "$previous_startYear-07-01"; // Start date: July 1st
+            $previous_endDate = "$previous_endYear-06-30";     // End date: June 30th
+//dd($startDate.' - '.$endDate);
+            $total['salesamount'] = DB::table('invoices')
+                ->where('transaction_type', 'Sales')
+                ->whereBetween('transaction_date', [$startDate, $endDate])
+                ->sum('invoice_total');
+            $total['purchaseamount'] = DB::table('invoices')
+                ->where('transaction_type', 'Purchase')
+                ->whereBetween('transaction_date', [$startDate, $endDate])
+                ->sum('invoice_total');
+            $total['expense'] = DB::table('expenses')
+                ->whereBetween('expense_date', [$startDate, $endDate])
+                ->sum('expense_amount');
+            $total['salary'] = DB::table('employee_salaries')
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->sum('paidsalary_amount');
+            $total['pre_salesamount'] = DB::table('invoices')
+                ->where('transaction_type', 'Sales')
+                ->whereBetween('transaction_date', [$previous_startDate, $previous_endDate])
+                ->sum('invoice_total');
+            $total['pre_purchaseamount'] = DB::table('invoices')
+                ->where('transaction_type', 'Purchase')
+                ->whereBetween('transaction_date', [$previous_startDate, $previous_endDate])
+                ->sum('invoice_total');
+            $total['pre_expense'] = DB::table('expenses')
+                ->whereBetween('expense_date', [$previous_startDate, $previous_endDate])
+                ->sum('expense_amount');
+            $total['pre_salary'] = DB::table('employee_salaries')
+                ->whereBetween('created_at', [$previous_startDate, $previous_endDate])
+                ->sum('paidsalary_amount');
+
+        $total['otherGain']=00;
+        $total['totalSales']=$total['salesamount']+$total['otherGain'];
+
+        $total['purchaseRawmat']=00;
+        $total['otherLoss']=00;
+        $total['totalPurchases']=$total['purchaseamount']+$total['purchaseRawmat']+$total['otherLoss'];
+
+        $total['paidBankInterest']=00;
+        $total['totalExpense']=$total['expense']+$total['paidBankInterest']+$total['salary'];
+
+        $total['salesMargin']=$total['totalSales']-$total['totalPurchases']-$total['totalExpense'];
+        $total['incomeTaxvat']=00;
+        $total['netsalesMargin']=$total['totalSales']-$total['totalPurchases']-$total['totalExpense'];
+        $total['netIncome']=$total['totalSales']-$total['totalPurchases']-$total['totalExpense']-$total['incomeTaxvat'];
+
+        $total['pre_otherGain']=00;
+        $total['pre_totalSales']=$total['pre_salesamount']+$total['pre_otherGain'];
+
+        $total['pre_purchaseRawmat']=00;
+        $total['pre_otherLoss']=00;
+        $total['pre_totalPurchases']=$total['pre_purchaseamount']+$total['pre_purchaseRawmat']+$total['pre_otherLoss'];
+
+        $total['pre_paidBankInterest']=00;
+        $total['pre_totalExpense']=$total['pre_expense']+$total['pre_paidBankInterest']+$total['pre_salary'];
+
+        $total['pre_salesMargin']=$total['pre_totalSales']-$total['pre_totalPurchases']-$total['pre_totalExpense'];
+        $total['pre_incomeTaxvat']=00;
+        $total['pre_netsalesMargin']=$total['pre_totalSales']-$total['pre_totalPurchases']-$total['pre_totalExpense'];
+        $total['pre_netIncome']=$total['pre_totalSales']-$total['pre_totalPurchases']-$total['pre_totalExpense']-$total['pre_incomeTaxvat'];
+
+        $grand_total=$total['netIncome']+$total['pre_netIncome'];
+//        dd($grand_total);
+        return $grand_total;
+    }
 
 
 
