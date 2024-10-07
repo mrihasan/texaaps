@@ -11,14 +11,14 @@ use Config;
 use Illuminate\Support\Facades\Redirect;
 use Symfony\Component\HttpFoundation\Response;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Http;
+
 
 class HomeController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth', ['except' => ['clear_all', 'cache_clear', 'config_clear', 'view_clear', 'view_cache',
-            'route_clear', 'config_cache', 'route_cache', 'storage_link', 'backupDatabase', 'error', 'fallback']]);
+        $this->middleware('auth',['except' => ['clear_all','cache_clear','config_clear','view_clear','view_cache',
+            'route_clear','config_cache','route_cache','storage_link','backupDatabase','error','fallback']]);
     }
 
     public function switchLang($lang)
@@ -32,76 +32,53 @@ class HomeController extends Controller
         }
         return Redirect::back();
     }
-
     public function switchBranch($branch)
     {
         session()->put('branch', $branch);
         return redirect()->back();
     }
-
     public function home()
     {
         $user = Auth::user();
+        if ($user->user_type_id == 1 ||$user->user_type_id == 2) {
+            $settings = DB::table('settings')->first();
 
-//        $response = Http::get('http://eidyict.com/api/access-permission/1EP1727954177537');
-////        dd($response->body());
-//        if ($response->successful()) {
-//            $data = $response->json();
-//            // Check if the access permission date is valid
-//            $accessPermissionDate = $data['access_permission_date'];
-////            dd($accessPermissionDate);
-//            if (now()->gt($accessPermissionDate)) {
-//                Auth::logout();
-////                return redirect()->back()->withErrors(['message' => 'Access permission expired.']);
-//                return redirect('/login')
-//                    ->withErrors(array('global' => "Access permission expired at " . $accessPermissionDate.' Please communicate with Khairuzzaman, 01716383038'));
-//            }
+            $admin_db['total_product'] = Product::count();
+            $admin_db['sales'] = DB::table('invoices')
+                ->where('transaction_type', 'Sales')
+                ->whereDate('transaction_date', \Carbon\Carbon::now()->format('Y-m-d'))
+                ->sum('invoice_total');
+            $admin_db['collect'] = DB::table('ledgers')
+                ->where('transaction_type_id', 3)
+                ->whereDate('transaction_date', \Carbon\Carbon::now()->format('Y-m-d'))
+                ->where('reftbl', null )
+                ->orWhere('reftbl', 'ledgers')
+                ->sum('amount');
+            $admin_db['purchase'] = DB::table('invoices')
+                ->where('transaction_type', 'Purchase')
+                ->whereDate('transaction_date', \Carbon\Carbon::now()->format('Y-m-d'))
+                ->sum('invoice_total');
+            $admin_db['paid'] = DB::table('ledgers')
+                ->where('transaction_type_id', 4)
+                ->whereDate('transaction_date', \Carbon\Carbon::now()->format('Y-m-d'))
+                ->where('reftbl', null )
+                ->orWhere('reftbl', 'ledgers')
+                ->sum('amount');
+            $admin_db['expense'] = DB::table('expenses')
+                ->whereDate('expense_date', \Carbon\Carbon::now()->format('Y-m-d'))
+                ->sum('expense_amount');
 
-
-            if ($user->user_type_id == 1 || $user->user_type_id == 2) {
-                $settings = DB::table('settings')->first();
-
-                $admin_db['total_product'] = Product::count();
-                $admin_db['sales'] = DB::table('invoices')
-                    ->where('transaction_type', 'Sales')
-                    ->whereDate('transaction_date', \Carbon\Carbon::now()->format('Y-m-d'))
-                    ->sum('invoice_total');
-                $admin_db['collect'] = DB::table('ledgers')
-                    ->where('transaction_type_id', 3)
-                    ->whereDate('transaction_date', \Carbon\Carbon::now()->format('Y-m-d'))
-                    ->where('reftbl', null)
-                    ->orWhere('reftbl', 'ledgers')
-                    ->sum('amount');
-                $admin_db['purchase'] = DB::table('invoices')
-                    ->where('transaction_type', 'Purchase')
-                    ->whereDate('transaction_date', \Carbon\Carbon::now()->format('Y-m-d'))
-                    ->sum('invoice_total');
-                $admin_db['paid'] = DB::table('ledgers')
-                    ->where('transaction_type_id', 4)
-                    ->whereDate('transaction_date', \Carbon\Carbon::now()->format('Y-m-d'))
-                    ->where('reftbl', null)
-                    ->orWhere('reftbl', 'ledgers')
-                    ->sum('amount');
-                $admin_db['expense'] = DB::table('expenses')
-                    ->whereDate('expense_date', \Carbon\Carbon::now()->format('Y-m-d'))
-                    ->sum('expense_amount');
-
-                $bc = $this->dashboard_barchart();
-                $bestSalesQty = $this->bestSaleQty(10, 90);
-                $bestSalesPrice = $this->bestSalePrice(10, 90);
-                $lowStockProduct = $this->lowStock(20);
-                return view('dashboard.admin', compact('bestSalesQty', 'bestSalesPrice', 'admin_db', 'bc', 'lowStockProduct'));
-            } elseif ($user->user_type_id == 3 || $user->user_type_id == 4) {
+            $bc = $this->dashboard_barchart();
+            $bestSalesQty = $this->bestSaleQty(10,90);
+            $bestSalesPrice = $this->bestSalePrice(10,90);
+            $lowStockProduct = $this->lowStock(20);
+            return view('dashboard.admin', compact(  'bestSalesQty','bestSalesPrice', 'admin_db', 'bc','lowStockProduct'));
+        } elseif ($user->user_type_id == 3 ||$user->user_type_id == 4) {
 //            return view('dashboard.user');
-                return redirect('myprofile');
-            } else
-                return view('layouts.al305_main');
-//        } else {
-//
-//            dd('error');
-//        }
+            return redirect('myprofile');
+        } else
+            return view('layouts.al305_main');
     }
-
     private function dashboard_barchart()
     {
         function getLastNDays($days, $format = 'Y-m-d')
@@ -166,7 +143,7 @@ class HomeController extends Controller
 //            ->whereIn('transaction_date', $day30)
             ->groupBy(DB::raw('transaction_date'))
             ->orderBy('transaction_date', 'desc')
-            ->where('reftbl', null)
+            ->where('reftbl', null )
             ->orWhere('reftbl', 'ledgers')
             ->get()->toArray();
         $payment_date = [];
@@ -190,7 +167,7 @@ class HomeController extends Controller
 //            ->whereIn('transaction_date', $day30)
             ->groupBy(DB::raw('transaction_date'))
             ->orderBy('transaction_date', 'desc')
-            ->where('reftbl', null)
+            ->where('reftbl', null )
             ->orWhere('reftbl', 'ledgers')
             ->get()->toArray();
         $receipt_date = [];
@@ -228,7 +205,6 @@ class HomeController extends Controller
             ->get();
         return $bestSalesQty;
     }
-
     private function bestSalePrice($rowLimit, $bestSale_day)
     {
         $bestSalesPrice = DB::table('invoice_details')
@@ -263,7 +239,7 @@ class HomeController extends Controller
                 $lowStock['stock'][] = $in_stock;
             }
         }
-        array_multisort($lowStock['stock'], $lowStock['product']);
+        array_multisort($lowStock['stock'],$lowStock['product']);
         $lowStockProduct1 = array_combine($lowStock['product'], $lowStock['stock']);
         $lowStockProduct = array_slice($lowStockProduct1, 0, $rowLimit);
         return $lowStockProduct;

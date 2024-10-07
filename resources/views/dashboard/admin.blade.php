@@ -140,7 +140,27 @@
     </div>
     @include('dashboard.lowStock_bestSale')
 
-
+    <!-- Warning Modal -->
+    <div class="modal fade" id="warningModal" tabindex="-1" role="dialog" aria-labelledby="warningModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="background-color: yellow">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="warningModalLabel">Access Permission Expiring Soon</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="color: #95124e">
+                    Your access permission is expiring on <strong>{{ Carbon\Carbon::parse(session('accessPermissionDate'))->format('d-M-y') }}</strong>.
+                    Please renew it before this date. After {{ Carbon\Carbon::parse(session('accessPermissionDate'))->format('d-M-y') }} you can't access this system.
+                </div>
+                <div class="modal-footer">
+                    <strong>Please contact with Md. Khairuzzaman, 01716383038</strong>
+                    <button type="button" class="btn btn-primary" id="acknowledgeWarning">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @push('js')
 <script src="{{ asset('supporting/chart.js/Chart.min.js')}}"></script>
@@ -290,5 +310,20 @@
             modal.style.display = 'none';
         }
     }
+</script>
+<script>
+    $(document).ready(function () {
+        // Check if the session variable for the warning is set
+        @if(session('showWarningModal'))
+        // Show the modal
+        $('#warningModal').modal('show');
+        @endif
+
+        // Handle the OK button click to close the modal and redirect to home
+        $('#acknowledgeWarning').click(function () {
+            $('#warningModal').modal('hide');
+            window.location.href = "{{ route('home') }}";  // Redirect to home after closing modal
+        });
+    });
 </script>
 @endpush

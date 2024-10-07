@@ -284,17 +284,64 @@
                         doc.content[0].layout = objLayout;
                     }
                 },
+                {{--{--}}
+                    {{--extend: 'print',--}}
+                    {{--footer: true,--}}
+                    {{--messageTop: '{{$title_date_range}}',--}}
+                    {{--messageBottom: '{{'Printed On: '.\Carbon\Carbon::now()->format(' D, d-M-Y, h:ia')}}',--}}
+                    {{--customize: function (win) {--}}
+                        {{--$(win.document.body).addClass('white-bg');--}}
+                        {{--$(win.document.body).css('font-size', '10px');--}}
+                        {{--$(win.document.body).find('table')--}}
+                            {{--.addClass('compact')--}}
+                            {{--.css('font-size', 'inherit');--}}
+                    {{--}--}}
+                {{--}--}}
                 {
                     extend: 'print',
                     footer: true,
-                    messageTop: '{{$title_date_range}}',
-                    messageBottom: '{{'Printed On: '.\Carbon\Carbon::now()->format(' D, d-M-Y, h:ia')}}',
+                    messageTop: 'User: {{ auth()->user()->name }}',  // Custom user name at the top of the printed page
+                    messageBottom: '{{'Printed On: '.\Carbon\Carbon::now()->format('D, d-M-Y, h:ia')}}',  // Custom date at the bottom
                     customize: function (win) {
+                        // Adding a custom class to the body for styling
                         $(win.document.body).addClass('white-bg');
-                        $(win.document.body).css('font-size', '10px');
+                        $(win.document.body).css('font-size', '10px');  // General font size for the printed document
+
+                        // Style adjustments for the printed table
                         $(win.document.body).find('table')
-                            .addClass('compact')
-                            .css('font-size', 'inherit');
+                            .addClass('compact')  // Add your custom table class
+                            .css({
+                                'font-size': 'inherit',  // Inherit font size for table elements
+                                'width': '100%',  // Set table width to 100%
+                                'border-collapse': 'collapse',  // Ensure table borders are collapsed
+                                'border': '1px solid black'  // Add border to table for better readability
+                            });
+
+                        // Add custom header content (e.g., logo, title, date)
+                        $(win.document.body).prepend(
+                            `<div style="text-align: center; margin-bottom: 20px;">
+                <h2 style="margin: 0;">Your Company Name</h2>
+                <p style="margin: 0;">User: {{ auth()->user()->name }}</p>
+                <p style="margin: 0;">Date: ${new Date().toLocaleDateString()}</p>
+            </div>`
+                        );
+
+                        // Add custom footer content (e.g., page number, signature line)
+                        $(win.document.body).append(
+                            `<div style="text-align: center; margin-top: 20px;">
+                <p>Printed by: {{ auth()->user()->name }} | Printed On: ${new Date().toLocaleString()}</p>
+                <p>Page <span class="page-num"></span> of <span class="total-pages"></span></p>
+            </div>`
+                        );
+
+                        // Add page numbers in footer (for example, using JavaScript to detect pages)
+                        var totalPages = Math.ceil($(win.document.body).height() / 1000);  // Example logic for pages
+                        $(win.document.body).find('.page-num').text(1);
+                        $(win.document.body).find('.total-pages').text(totalPages);
+
+                        // Additional style overrides for print (optional)
+                        $(win.document.body).find('h2').css('font-size', '16px');  // Custom font size for headers
+                        $(win.document.body).find('p').css('font-size', '12px');   // Custom font size for paragraphs
                     }
                 }
             ],
