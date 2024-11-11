@@ -204,7 +204,8 @@ class BankLedgerController extends Controller
             $ledger_banking->entry_by = Auth::user()->id;
             $ledger_banking->approve_status = 'Submitted';
             $ledger_banking->save();
-        } else {
+        }
+        else {
             $tcode = autoTimeStampCode('AL');
             $ledger_banking = new BankLedger();
             $ledger_banking->branch_id = $request->branch;

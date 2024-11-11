@@ -156,7 +156,7 @@
                                     <a href="{{ url('invoice/' . $stu->invoice->id ) }}" class="btn btn-success btn-xs"
                                        title="Show"><span class="far fa-eye" aria-hidden="true"></span></a> {{$stu->invoice->sl_no}}
                                 </td>
-                                <td>{{Carbon\Carbon::parse($stu->transaction_date)->format('d-M-Y')}}</td>
+                                <td>{{Carbon\Carbon::parse($stu->invoice->transaction_date)->format('d-M-Y')}}</td>
                                 <td>{{$stu->transaction_type}}</td>
                                 <td>{{$stu->product->title??''}}</td>
                                 <td>{{$stu->brand->title??''}}</td>

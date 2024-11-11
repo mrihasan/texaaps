@@ -49,29 +49,6 @@ class AuthenticatedSessionController extends Controller
             // Regenerate session after successful login
             $request->session()->regenerate();
 
-//            // API call to check access permission from the master app
-//            $response = Http::get('http://eidyict.com/api/access-permission/1EP1727954177537');
-//            // Ensure the API response is successful
-//            if ($response->successful()) {
-//                $data = $response->json();
-//                // Check if the access permission date is valid
-//                if (isset($data['access_permission_date'])) {
-//                    $accessPermissionDate = $data['access_permission_date'];
-//                    // Compare the current date with the access permission date
-//                    if (now()->gt($accessPermissionDate)) {
-//                        Auth::logout();
-//                        return redirect('/login')
-//                            ->withErrors(['global' => "Access permission expired at " . $accessPermissionDate . '. Please contact Khairuzzaman, 01716383038']);
-//                    }
-//                }
-//            } else {
-//                // If API call fails, handle the error (optional)
-//                Auth::logout();
-//                return redirect('/login')
-//                    ->withErrors(['global' => "Failed to verify access permission. Please try again later."]);
-//            }
-
-
             // Retrieve PROJECT_CODE from the .env file
             $projectCode = env('PROJECT_CODE', null);
 
@@ -84,21 +61,12 @@ class AuthenticatedSessionController extends Controller
                 if ($response->successful()) {
                     $data = $response->json();
 
-//                    if (isset($data['access_permission_date'])) {
-//                        $accessPermissionDate = $data['access_permission_date'];
-//                        if (now()->gt($accessPermissionDate)) {
-//                            Auth::logout();
-//                            return redirect('/login')
-//                                ->withErrors(['global' => "Access permission expired at " . $accessPermissionDate . '. Please contact Khairuzzaman, 01716383038']);
-//                        }
-//                    }
                     if (isset($data['access_permission_date'])) {
                         $accessPermissionDate = Carbon::parse($data['access_permission_date']);  // Ensure it's a Carbon instance
 
                         // Calculate the warning date (30 days before the accessPermissionDate)
                         // Clone the access permission date to avoid mutating the original
                         $warningDate = $accessPermissionDate->copy()->subDays(30);
-                        //dd($accessPermissionDate.'-warning '.$warningDate);
                         // If the access permission date has passed
                         if (now()->gt($accessPermissionDate)) {
                             Auth::logout();

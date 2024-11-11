@@ -268,7 +268,7 @@
             method: 'POST',
             data: {user_id: user_id, _token: token},
             success: function (data) {
-//                console.log(data);
+                console.log(data);
                 jQuery('#balanceAmount').text('Name: ' + data.user_info.name + ' , Cell Phone: ' + data.user_info.cell_phone + ' , Last Transaction Amount: ' + data.last_transaction_amount + ' & type was: ' + data.last_transaction_type + ' Dated:' + data.last_transaction_date + ' , Current Balance is: ' + data.balance);
             },
             error: function () {
