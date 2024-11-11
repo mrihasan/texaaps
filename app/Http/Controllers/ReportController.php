@@ -387,6 +387,7 @@ class ReportController extends Controller
             $ledger_balance['balance'][] = $runningSum;
             $ledger[] = $ledger_balance;
         }
+//        dd($ledger);
         return view('report.ledger_report_user', compact('ledger', 'title_date_range'));
 
     }
