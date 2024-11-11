@@ -639,6 +639,12 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a href="{{ url('performance_report') }}" class="nav-link @yield('performance_report' )">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Performance Report</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="{{ url('balance_sheet') }}" class="nav-link @yield('balance_report' )">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Balance Report</p>

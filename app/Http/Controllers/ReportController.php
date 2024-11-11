@@ -818,5 +818,30 @@ class ReportController extends Controller
             'total_salary', 'total_purchaseamount', 'total_purchaseamount_paid', 'total_asset_inventory'));
     }
 
+    public function performance_report(Request $request)
+    {
+        abort_if(Gate::denies('ReportAccess'), redirect('error'));
+
+        $start_date = $request->start_date
+            ? Carbon::parse($request->start_date)->startOfDay()
+            : Carbon::now()->subDays(60)->startOfDay();
+        $end_date = $request->end_date
+            ? Carbon::parse($request->end_date)->endOfDay()
+            : Carbon::now()->endOfDay();
+
+        $query = Invoice::select('entry_by', DB::raw('SUM(invoice_total) as total_invoice_amount'))
+            ->whereBetween('transaction_date', [$start_date, $end_date]);
+
+        if (session()->get('branch') != 'all') {
+            $query->where('branch_id', session()->get('branch'));
+        }
+
+        $performance = $query->groupBy('entry_by')->get();
+//        dd($performance);
+
+        $title_date_range = 'Performance Report From ' . $start_date->format('d-M-Y') . ' To ' . $end_date->format('d-M-Y');
+
+        return view('report.performance_report', compact('performance', 'title_date_range'));
+    }
 
 }
