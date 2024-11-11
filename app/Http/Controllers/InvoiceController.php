@@ -513,6 +513,7 @@ class InvoiceController extends Controller
             $ProductID_a = [];
             $BrandID_a = [];
             $Model_a = [];
+            $Details_a = [];
             $unitSellPrice_a = [];
             $Qty_a = [];
             $unit_name_a = [];
@@ -525,6 +526,7 @@ class InvoiceController extends Controller
             foreach ($request['unitSellPrice'] as $unitSellPrice_) {
                 $unitSellPrice_a[] = $unitSellPrice_;
             }
+            $unitSellPrice_e = $unitSellPrice_a;
             foreach ($request['brandId'] as $BrandID_) {
                 $BrandID_a[] = $BrandID_;
             }
@@ -533,7 +535,10 @@ class InvoiceController extends Controller
                 $Model_a[] = $Model_;
             }
             $Model_e = $Model_a;
-            $unitSellPrice_e = $unitSellPrice_a;
+            foreach ($request['product_details'] as $Details_) {
+                $Details_a[] = $Details_;
+            }
+            $Details_e = $Details_a;
             foreach ($request['quantity'] as $Qty_) {
                 $Qty_a[] = $Qty_;
             }
@@ -580,6 +585,7 @@ class InvoiceController extends Controller
                 $inventory_transaction->product_id = $ProductID_e[$i];
                 $inventory_transaction->brand_id = $BrandID_e[$i];
                 $inventory_transaction->model = $Model_e[$i];
+                $inventory_transaction->product_details = $Details_e[$i];
                 $inventory_transaction->usell_price = $unitSellPrice_e[$i];
                 $inventory_transaction->qty = $Qty_e[$i];
                 $inventory_transaction->unit_name = $unit_name_e[$i];
