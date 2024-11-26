@@ -181,7 +181,7 @@
                     </p>
                     <div class="col-md-12" style="padding-bottom: 10px">
                         {{--                        {!! Form::label('notes', 'Notes') !!}--}}
-                        {!! Form::textarea('additional_notes', null,['class'=>'form-control','placeholder'=>'Additional Notes', 'rows'=>'2']) !!}
+                        {!! Form::textarea('additional_notes', null,['class'=>'form-control','placeholder'=>'Additional Notes', 'rows'=>'4']) !!}
                     </div>
 
                 </div>
@@ -255,25 +255,31 @@
                         </tbody>
                     </table>
                     {{--</div>--}}
-                    <div class='col-md-6 '>
+                    <div class='col-md-7 '>
                         <button class="btn btn-danger delete" type="button">- Delete</button>
                         <button class="btn btn-success addmore" type="button">+ Add More</button>
-                        <div>&nbsp;</div>
+                        <div>&nbsp;
+                            <div class="col-md-12" style="padding-bottom: 10px">
+                                {!! Form::label('terms', 'Terms & Conditions: ') !!}
+                                {!! Form::textarea('terms', null,['class'=>'form-control','placeholder'=>'Terms & Conditions', 'rows'=>'10']) !!}
+                            </div>
+
+                        </div>
                     </div>
-                    <div class='col-md-2 '></div>
+                    <div class='col-md-1 '></div>
                     <div class='col-md-4'>
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
-                                <span class="input-group-text" style="background-color: #7adeee">Total ৳</span>
+                                <span class="input-group-text" style="background-color: #7adeee">Sub Total ৳</span>
                             </div>
                             <input readonly type="number" step="any" class="form-control" id="subTotal"
                                    placeholder="Total" style="text-align:right" name="product_total"
-                                   value="<?php echo $price_quotation->invoice_total ?>"
+                                   value="<?php echo $price_quotation->product_total ?>"
                                    onkeypress="return IsNumeric(event);" ondrop="return false;"
                                    onpaste="return false;">
                         </div>
 
-                        <div class="form-group d-none">
+                        <div class="form-group">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" style="background-color: #7adeee">Vat/Tax (%)</span>
@@ -293,11 +299,11 @@
                             </div>
                         </div>
 
-                        <div class="form-group d-none">
+                        <div class="form-group">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                 <span class="input-group-text"
-                                      style="background-color: #7adeee">Invoice Discount (%)</span>
+                                      style="background-color: #7adeee">Discount (%)</span>
                                 </div>
                                 <input type="number" step="any" class="form-control" id="discount"
                                        placeholder="Discount %"
@@ -313,19 +319,19 @@
                                        onpaste="return false;">
                             </div>
                         </div>
-                        <div class="form-group d-none">
+                        <div class="form-group">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" style="background-color: #7adeee">Total ৳</span>
                                 </div>
-                                <input type="number" step="any" name="total_amount" class="form-control"
+                                <input readonly type="number" step="any" name="total_amount" class="form-control"
                                        id="totalAftertax" placeholder="Total" style="text-align:right"
                                        value="<?php echo $price_quotation->total_amount ?>"
                                        onkeypress="return IsNumeric(event);" ondrop="return false;"
                                        onpaste="return false;">
                             </div>
                         </div>
-                        <div class="form-group d-none">
+                        <div class="form-group">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"
@@ -339,15 +345,15 @@
                                        onpaste="return false;">
                             </div>
                         </div>
-                        <div class="form-group d-none">
+                        <div class="form-group">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"
-                                          style="background-color: #7adeee">Invoice Total ৳</span>
+                                          style="background-color: #7adeee">Grand Total ৳</span>
                                 </div>
                                 <input readonly type="number" class="form-control invoiceTotal"
                                        id="invoiceTotal" name="invoice_total"
-                                       value="<?php echo $price_quotation->price_quotation_total ?>"
+                                       value="<?php echo $price_quotation->invoice_total ?>"
                                        placeholder="Invoice Total" style="text-align:right" value="0"
                                        onkeypress="return IsNumeric(event);" ondrop="return false;"
                                        onpaste="return false;">
@@ -356,10 +362,6 @@
                     </div>
                 </div>
                 <div class='row'>
-                    <div class="col-md-12" style="padding-bottom: 10px">
-                        {!! Form::label('terms', 'Terms & Conditions: ') !!}
-                        {!! Form::textarea('terms', null,['class'=>'form-control','placeholder'=>'Terms & Conditions', 'rows'=>'4']) !!}
-                    </div>
 
                 </div>
 

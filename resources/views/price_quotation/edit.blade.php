@@ -261,7 +261,7 @@
                                    onpaste="return false;">
                         </div>
 
-                        <div class="form-group d-none">
+                        <div class="form-group ">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" style="background-color: #7adeee">Vat/Tax (%)</span>
@@ -281,7 +281,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group d-none">
+                        <div class="form-group ">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                 <span class="input-group-text"
@@ -301,7 +301,7 @@
                                        onpaste="return false;">
                             </div>
                         </div>
-                        <div class="form-group d-none">
+                        <div class="form-group ">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" style="background-color: #7adeee">Total ৳</span>
@@ -313,7 +313,7 @@
                                        onpaste="return false;">
                             </div>
                         </div>
-                        <div class="form-group d-none">
+                        <div class="form-group ">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"
@@ -327,7 +327,7 @@
                                        onpaste="return false;">
                             </div>
                         </div>
-                        <div class="form-group d-none">
+                        <div class="form-group ">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"

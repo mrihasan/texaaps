@@ -26,6 +26,15 @@ return new class extends Migration
 
             $table->integer('branch_id')->nullable();
             $table->text('additional_notes')->nullable();
+
+            $table->float('product_total', 12, 1)->nullable(); //invoice sub_total
+            $table->float('vat_per', 8, 1)->nullable();       //invoice vat %
+            $table->float('vat', 8, 1)->nullable();           //invoice vat amount
+            $table->float('disc_per', 8, 1)->nullable();      //invoice discount %
+            $table->float('discount', 12, 1)->nullable();      //invoice  discount amount
+            $table->float('total_amount', 12, 1); //invoice total before less amount
+            $table->float('less_amount', 12,1)->nullable();   //invoice less amount
+
             $table->float('invoice_total', 12, 1); //invoice total
 
             $table->integer('entry_by')->nullable();

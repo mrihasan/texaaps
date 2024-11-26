@@ -87,7 +87,7 @@
                                     <br>
                                     <small>{{ Carbon\Carbon::parse($data->updated_at)->format('d-m-y, h:iA') }}</small>
                                 </td>
-                                <td style="text-align:right">{{ $data->total_amount }}</td>
+                                <td style="text-align:right">{{ $data->invoice_total}}</td>
                                 <td class="noprint">
                                     @can('SupplyAccess')
                                         <a href="{{ url('invoice/' . $data->id ) }}" class="btn btn-success btn-xs"

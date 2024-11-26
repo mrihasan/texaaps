@@ -215,10 +215,28 @@
                                 @endforeach
                                 <tr></tr>
                                 <tr>
-                                    {{--<td colspan="3" style="text-align:center"></td>--}}
+                                    <td colspan="5" style="text-align:right">Sub Total (BDT) :</td>
+                                    <td style="text-align:right">{{number_format($price_quotation->product_total,0)}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" style="text-align:right">(+)Vat/Tax {{$price_quotation->vat_per}}% :</td>
+                                    <td style="text-align:right">{{number_format($price_quotation->vat,0)}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" style="text-align:right">(-)Discount {{$price_quotation->disc_per}}% :</td>
+                                    <td style="text-align:right">{{number_format($price_quotation->discount,0)}}</td>
+                                </tr>
+                                <tr>
                                     <td colspan="5" style="text-align:right">Total (BDT) :</td>
+                                    <td style="text-align:right">{{number_format($price_quotation->total_amount,0)}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" style="text-align:right">Less Amount :</td>
+                                    <td style="text-align:right">{{number_format($price_quotation->less_amount,0)}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" style="text-align:right">Grand Total (BDT):</td>
                                     <td style="text-align:right">{{number_format($price_quotation->invoice_total,0)}}</td>
-
                                 </tr>
                                 <tr>
                                     <td colspan="6" style="text-align:left"><strong>In Word (Total): </strong>

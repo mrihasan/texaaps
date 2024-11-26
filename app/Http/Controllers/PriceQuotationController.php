@@ -110,7 +110,14 @@ class PriceQuotationController extends Controller
                 $price_quotation->reference = $request->reference;
                 $price_quotation->user_id = $request->customer_id;
                 $price_quotation->branch_id = $request->branch;
-                $price_quotation->invoice_total = $request->product_total;
+                $price_quotation->product_total = $request->product_total;
+                $price_quotation->vat_per = $request->vat_per;
+                $price_quotation->vat = $request->tax_amount;
+                $price_quotation->disc_per = $request->disc_per;
+                $price_quotation->discount = $request->discount_amount;
+                $price_quotation->total_amount = $request->total_amount;
+                $price_quotation->less_amount = $request->less_amount;
+                $price_quotation->invoice_total = $request->invoice_total;
                 $price_quotation->additional_notes = $request->additional_notes;
                 $price_quotation->entry_by = Auth::id();
                 $price_quotation->updated_by = Auth::id();
@@ -248,100 +255,112 @@ class PriceQuotationController extends Controller
             'quotation_date' => 'required',
             'product_total' => 'required',
         ]);
-        $ProductID_a = [];
-        $BrandID_a = [];
-        $Model_a = [];
-        $Details_a = [];
-        $unitSellPrice_a = [];
-        $Qty_a = [];
-        $unit_name_a = [];
-        $mrpTotal_a = [];
+        try {
+            DB::transaction(function () use ($request, $price_quotation) {
 
-        foreach ($request['productId'] as $ProductID_) {
-            $ProductID_a[] = $ProductID_;
-        }
-        $ProductID_e = $ProductID_a;
-        foreach ($request['unitSellPrice'] as $unitSellPrice_) {
-            $unitSellPrice_a[] = $unitSellPrice_;
-        }
-        foreach ($request['brandId'] as $BrandID_) {
-            $BrandID_a[] = $BrandID_;
-        }
-        $BrandID_e = $BrandID_a;
-        foreach ($request['model'] as $Model_) {
-            $Model_a[] = $Model_;
-        }
-        $Model_e = $Model_a;
-        foreach ($request['product_details'] as $Details_) {
-            $Details_a[] = $Details_;
-        }
-        $Details_e = $Details_a;
-        $unitSellPrice_e = $unitSellPrice_a;
-        foreach ($request['quantity'] as $Qty_) {
-            $Qty_a[] = $Qty_;
-        }
-        $Qty_e = $Qty_a;
-        foreach ($request['unit_name'] as $unit_name_) {
-            $unit_name_a[] = $unit_name_;
-        }
-        $unit_name_e = $unit_name_a;
-        foreach ($request['mrpTotal'] as $mrpTotal_) {
-            $mrpTotal_a[] = $mrpTotal_;
-        }
-        $mrpTotal_e = $mrpTotal_a;
+                $ProductID_a = [];
+                $BrandID_a = [];
+                $Model_a = [];
+                $Details_a = [];
+                $unitSellPrice_a = [];
+                $Qty_a = [];
+                $unit_name_a = [];
+                $mrpTotal_a = [];
 
-        $related_customer = WalkingCustomer::where('type', 'PQ')->where('invoice_id', $price_quotation->id)->first();
-        $del_pq_details = DB::table('pq_details')
-            ->where('price_quotation_id', $price_quotation->id)->delete();
+                foreach ($request['productId'] as $ProductID_) {
+                    $ProductID_a[] = $ProductID_;
+                }
+                $ProductID_e = $ProductID_a;
+                foreach ($request['unitSellPrice'] as $unitSellPrice_) {
+                    $unitSellPrice_a[] = $unitSellPrice_;
+                }
+                foreach ($request['brandId'] as $BrandID_) {
+                    $BrandID_a[] = $BrandID_;
+                }
+                $BrandID_e = $BrandID_a;
+                foreach ($request['model'] as $Model_) {
+                    $Model_a[] = $Model_;
+                }
+                $Model_e = $Model_a;
+                foreach ($request['product_details'] as $Details_) {
+                    $Details_a[] = $Details_;
+                }
+                $Details_e = $Details_a;
+                $unitSellPrice_e = $unitSellPrice_a;
+                foreach ($request['quantity'] as $Qty_) {
+                    $Qty_a[] = $Qty_;
+                }
+                $Qty_e = $Qty_a;
+                foreach ($request['unit_name'] as $unit_name_) {
+                    $unit_name_a[] = $unit_name_;
+                }
+                $unit_name_e = $unit_name_a;
+                foreach ($request['mrpTotal'] as $mrpTotal_) {
+                    $mrpTotal_a[] = $mrpTotal_;
+                }
+                $mrpTotal_e = $mrpTotal_a;
 
-        $price_quotation->pq_date = date('Y-m-d', strtotime($request->quotation_date)) . date(' H:i:s');
-        $price_quotation->reference = $request->reference;
-        $price_quotation->user_id = $request->customer_id;
-        $price_quotation->branch_id = $request->branch;
-        $price_quotation->invoice_total = $request->product_total;
-        $price_quotation->additional_notes = $request->additional_notes;
-        $price_quotation->updated_by = Auth::id();
-        $price_quotation->terms = $request->terms;
-        $price_quotation->save();
+                $related_customer = WalkingCustomer::where('type', 'PQ')->where('invoice_id', $price_quotation->id)->first();
+                $del_pq_details = DB::table('pq_details')
+                    ->where('price_quotation_id', $price_quotation->id)->delete();
 
-        $count_ids = count($ProductID_e);
-        if (count($unitSellPrice_e) != $count_ids) throw new \Exception("Bad Request Input Array lengths");
-        for ($i = 0; $i < $count_ids; $i++) {
-            if (empty($ProductID_e[$i])) continue; // skip all the blank ones
-            $inventory_transaction = new PqDetails();
-            $inventory_transaction->price_quotation_id = $price_quotation->id;
-            $inventory_transaction->product_id = $ProductID_e[$i];
-            $inventory_transaction->brand_id = $BrandID_e[$i];
-            $inventory_transaction->model = $Model_e[$i];
-            $inventory_transaction->product_details = $Details_e[$i];
-            $inventory_transaction->unit_price = $unitSellPrice_e[$i];
-            $inventory_transaction->qty = $Qty_e[$i];
-            $inventory_transaction->unit_name = $unit_name_e[$i];
-            $inventory_transaction->line_total = $mrpTotal_e[$i];
-            $inventory_transaction->save();
+                $price_quotation->pq_date = date('Y-m-d', strtotime($request->quotation_date)) . date(' H:i:s');
+                $price_quotation->reference = $request->reference;
+                $price_quotation->user_id = $request->customer_id;
+                $price_quotation->branch_id = $request->branch;
+                $price_quotation->product_total = $request->product_total;
+                $price_quotation->vat_per = $request->vat_per;
+                $price_quotation->vat = $request->tax_amount;
+                $price_quotation->disc_per = $request->disc_per;
+                $price_quotation->discount = $request->discount_amount;
+                $price_quotation->total_amount = $request->total_amount;
+                $price_quotation->less_amount = $request->less_amount;
+                $price_quotation->invoice_total = $request->invoice_total;
+                $price_quotation->additional_notes = $request->additional_notes;
+                $price_quotation->updated_by = Auth::id();
+                $price_quotation->terms = $request->terms;
+                $price_quotation->save();
+
+                $count_ids = count($ProductID_e);
+                if (count($unitSellPrice_e) != $count_ids) throw new \Exception("Bad Request Input Array lengths");
+                for ($i = 0; $i < $count_ids; $i++) {
+                    if (empty($ProductID_e[$i])) continue; // skip all the blank ones
+                    $inventory_transaction = new PqDetails();
+                    $inventory_transaction->price_quotation_id = $price_quotation->id;
+                    $inventory_transaction->product_id = $ProductID_e[$i];
+                    $inventory_transaction->brand_id = $BrandID_e[$i];
+                    $inventory_transaction->model = $Model_e[$i];
+                    $inventory_transaction->product_details = $Details_e[$i];
+                    $inventory_transaction->unit_price = $unitSellPrice_e[$i];
+                    $inventory_transaction->qty = $Qty_e[$i];
+                    $inventory_transaction->unit_name = $unit_name_e[$i];
+                    $inventory_transaction->line_total = $mrpTotal_e[$i];
+                    $inventory_transaction->save();
+                }
+
+                $del_walking_customer = DB::table('walking_customers')
+                    ->where('type', 'PQ')->where('invoice_id', $price_quotation->id)->delete();
+
+                if ($request->customer_id == 6) {
+                    $customer = new WalkingCustomer();
+                    $customer->type = 'PQ';
+                    $customer->invoice_id = $price_quotation->id;
+                    $customer->ledger_id = null;
+                    $customer->name = $request->name;
+                    $customer->mobile = $request->mobile;
+                    $customer->address = $request->address;
+                    $customer->save();
+                }
+            });
+            $last_insert_id = $price_quotation->id;
+            \Session::flash('flash_message', 'Successfully Updated');
+            return redirect('price_quotation/' . $last_insert_id);
+
+        } catch (\Exception $e) {
+            \Session::flash('flash_error', 'Failed to save , Try again.');
+            return redirect()->back();
         }
-
-        $del_walking_customer = DB::table('walking_customers')
-            ->where('type', 'PQ')->where('invoice_id', $price_quotation->id)->delete();
-
-        if ($request->customer_id == 6) {
-            $customer = new WalkingCustomer();
-            $customer->type = 'PQ';
-            $customer->invoice_id = $price_quotation->id;
-            $customer->ledger_id = null;
-            $customer->name = $request->name;
-            $customer->mobile = $request->mobile;
-            $customer->address = $request->address;
-            $customer->save();
-        }
-
-        $last_insert_id = $price_quotation->id;
-
-        \Session::flash('flash_message', 'Successfully Updated');
-        return redirect('price_quotation/' . $last_insert_id);
-
     }
-
 
     public function destroy(PriceQuotation $price_quotation)
     {

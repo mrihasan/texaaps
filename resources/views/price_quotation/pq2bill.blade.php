@@ -316,7 +316,7 @@
                             <input readonly type="number" step="any" class="form-control" id="subTotal"
                                    placeholder="Subtotal" style="text-align:right" name="product_total"
                                    onkeypress="return IsNumeric(event);" ondrop="return false;"
-                                   onpaste="return false;" value="<?php echo $price_quotation->invoice_total ?>">
+                                   onpaste="return false;" value="<?php echo $price_quotation->product_total ?>">
                         </div>
 
                         <div class="form-group">
@@ -328,12 +328,12 @@
                                        placeholder="VAT/Tax %"
                                        name="vat_per" style="text-align:right"
                                        onkeypress="return IsNumeric(event);"
-                                       ondrop="return false;" onpaste="return false;">
+                                       ondrop="return false;" onpaste="return false;" value="<?php echo $price_quotation->vat_per ?>">
                                 <input readonly type="number" step="any" name="tax_amount"
                                        class="form-control"
                                        id="taxAmount" placeholder="0" style="text-align:right"
                                        onkeypress="return IsNumeric(event);" ondrop="return false;"
-                                       onpaste="return false;">
+                                       onpaste="return false;" value="<?php echo $price_quotation->vat ?>">
                             </div>
                         </div>
 
@@ -348,12 +348,12 @@
                                        placeholder="Discount %"
                                        name="disc_per" style="text-align:right"
                                        onkeypress="return IsNumeric(event);"
-                                       ondrop="return false;" onpaste="return false;">
+                                       ondrop="return false;" onpaste="return false;" value="<?php echo $price_quotation->disc_per ?>">
                                 <input readonly type="number" step="any" name="discount_amount"
                                        class="form-control"
                                        id="discountAmount" placeholder="0" style="text-align:right"
                                        onkeypress="return IsNumeric(event);" ondrop="return false;"
-                                       onpaste="return false;">
+                                       onpaste="return false;" value="<?php echo $price_quotation->discount ?>">
                             </div>
                         </div>
                         <div class="form-group">
@@ -364,7 +364,7 @@
                                 <input readonly type="number" step="any" name="total_amount" class="form-control"
                                        id="totalAftertax" placeholder="Total" style="text-align:right"
                                        onkeypress="return IsNumeric(event);" ondrop="return false;"
-                                       onpaste="return false;" value="<?php echo $price_quotation->invoice_total ?>">
+                                       onpaste="return false;" value="<?php echo $price_quotation->total_amount ?>">
                             </div>
                         </div>
                         <div class="form-group">
@@ -377,7 +377,7 @@
                                        value="0" id="lessAmount" placeholder="Less Amount"
                                        style="text-align:right"
                                        onkeypress="return IsNumeric(event);" ondrop="return false;"
-                                       onpaste="return false;">
+                                       onpaste="return false;" value="<?php echo $price_quotation->less_amount ?>">
                             </div>
                         </div>
                         <div class="form-group">
