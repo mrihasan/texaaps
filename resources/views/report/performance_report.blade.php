@@ -69,7 +69,14 @@
                         <tr>
                             <td>{{$data->entryBy->name}}</td>
                             <td style="text-align:right"> {{$data->total_invoice_amount}}</td>
-                            <td></td>
+                            <td>
+                                <a href="{{ route('performance_details', [
+        'employee' => $data->entry_by,
+        'start_date' => $start_date_string,
+        'end_date' => $end_date_string
+    ]) }}"
+                                   class="btn btn-sm btn-info">View Details</a>
+                            </td>
                         </tr>
                             @endforeach
                         </tbody>

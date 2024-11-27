@@ -185,6 +185,7 @@ Route::get('/ledger_report_user', '\App\Http\Controllers\ReportController@ledger
 Route::get('/ledger_report_account', '\App\Http\Controllers\ReportController@ledger_report_account')->name('ledger_report_account');
 Route::get('/customer_report', '\App\Http\Controllers\ReportController@customer_report')->name('customer_report');
 Route::get('/performance_report', '\App\Http\Controllers\ReportController@performance_report')->name('performance_report');
+Route::get('/performance_details', '\App\Http\Controllers\ReportController@performance_details')->name('performance_details');
 Route::get('/supplier_report', '\App\Http\Controllers\ReportController@supplier_report')->name('supplier_report');
 Route::get('/balance_report', '\App\Http\Controllers\ReportController@balance_report')->name('balance_report');
 Route::get('/balance_sheet', '\App\Http\Controllers\ReportController@balance_sheet')->name('balance_sheet');

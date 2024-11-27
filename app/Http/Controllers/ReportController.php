@@ -829,6 +829,10 @@ class ReportController extends Controller
             ? Carbon::parse($request->end_date)->endOfDay()
             : Carbon::now()->endOfDay();
 
+        $start_date_string=$start_date->toDateString();
+        $end_date_string=$end_date->toDateString();
+
+
         $query = Invoice::select('entry_by', DB::raw('SUM(invoice_total) as total_invoice_amount'))
             ->whereBetween('transaction_date', [$start_date, $end_date]);
 
@@ -841,7 +845,47 @@ class ReportController extends Controller
 
         $title_date_range = 'Performance Report From ' . $start_date->format('d-M-Y') . ' To ' . $end_date->format('d-M-Y');
 
-        return view('report.performance_report', compact('performance', 'title_date_range'));
+        return view('report.performance_report', compact('performance', 'title_date_range','start_date_string','end_date_string'));
     }
+
+    public function performance_details(Request $request)
+    {
+//        dd($request);
+        $employee = DB::table('users')
+            ->select(['users.id', DB::raw("CONCAT(COALESCE(users.name,''), ' : ',COALESCE(users.cell_phone,'')) as user_info")])
+            ->join('invoices', 'invoices.entry_by', '=', 'users.id')
+            ->groupBy('users.id')
+            ->orderBy('users.name')
+            ->get();
+//dd($employee);
+        $start_date = $request->start_date
+            ? Carbon::parse($request->start_date)->startOfDay()
+            : Carbon::now()->subDays(60)->startOfDay();
+
+        $end_date = $request->end_date
+            ? Carbon::parse($request->end_date)->endOfDay()
+            : Carbon::now()->endOfDay();
+
+        $query = Invoice::
+        with('user')
+            ->with('branch')
+            ->where('transaction_type', 'Sales')
+            ->where('entry_by', $request->employee)
+            ->whereBetween('transaction_date', [$start_date, $end_date])
+            ->orderBy('transaction_date', 'desc')
+            ->orderBy('transaction_code', 'desc');
+        if (session()->get('branch') != 'all') {
+            $query->where('branch_id', session()->get('branch'));
+        }
+
+        $performance = $query->get();
+        $emp = entryBy($request->employee);
+//        dd($performance);
+
+        $title_date_range = 'Performance Report of '.$emp.' From ' . $start_date->format('d-M-Y') . ' To ' . $end_date->format('d-M-Y');
+
+        return view('report.performance_details', compact('performance', 'title_date_range','employee'));
+    }
+
 
 }
