@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('expense_types', function (Blueprint $table) {
             $table->increments('id');
             $table->string('expense_name');
-            $table->enum('type',['Expense','Fixed Asset'])->default('Active');
+            $table->enum('type',['Expense','Fixed Asset'])->default('Expense');
             $table->enum('status',['Active','Inactive'])->default('Active');
             $table->timestamps();
         });

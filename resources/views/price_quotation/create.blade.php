@@ -320,18 +320,18 @@
                                    onpaste="return false;">
                         </div>
 
-                        <div class="form-group ">
+                        <div class="form-group">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text" style="background-color: #7adeee">Vat/Tax (%)</span>
+                                    <span class="input-group-text" style="background-color: #7adeee">VAT/Tax (%)</span>
                                 </div>
                                 <input type="number" step="any" class="form-control" id="tax"
-                                       placeholder="VAT/Tax %"
+                                       placeholder="VAT/Tax %" value="0" min="0"
                                        name="vat_per" style="text-align:right"
                                        onkeypress="return IsNumeric(event);"
                                        ondrop="return false;" onpaste="return false;">
                                 <input readonly type="number" step="any" name="tax_amount"
-                                       class="form-control"
+                                       class="form-control" min="0" value="0"
                                        id="taxAmount" placeholder="0" style="text-align:right"
                                        onkeypress="return IsNumeric(event);" ondrop="return false;"
                                        onpaste="return false;">
@@ -346,7 +346,7 @@
                                 </div>
 
                                 <input type="number" step="any" class="form-control" id="discount"
-                                       placeholder="Discount %"
+                                       placeholder="Discount %" value="0" min="0"
                                        name="disc_per" style="text-align:right"
                                        onkeypress="return IsNumeric(event);"
                                        ondrop="return false;" onpaste="return false;">

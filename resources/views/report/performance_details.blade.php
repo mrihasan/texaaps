@@ -54,7 +54,7 @@
                             <th > Date</th>
                             <th> Sl No</th>
                             <th>Customer Info</th>
-                            <th>Total<br/>amount</th>
+                            <th>Total amount</th>
                             <th>Actions</th>
                         </tr>
                         </thead>

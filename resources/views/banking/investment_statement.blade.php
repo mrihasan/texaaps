@@ -104,24 +104,50 @@
                     {!! Form::hidden('start_date', null,['class'=>'StartDate','id'=>'StartDate'] )!!}
                     {!! Form::hidden('end_date', null,['class'=>'EndDate','id'=>'EndDate'] )!!}
 
-                    <div class="form-group row{{ $errors->has('trtypes') ? 'has-error' : '' }}">
-                        <label for="trtypes" class="col-sm-4 control-label text-right">Transaction type :<span
+                    {{--<div class="form-group row{{ $errors->has('trtypes') ? 'has-error' : '' }}">--}}
+                        {{--<label for="trtypes" class="col-sm-4 control-label text-right">Transaction type :<span--}}
+                                    {{--class="required"> * </span></label>--}}
+                        {{--<div class="col-sm-6">--}}
+                            {{--<select name="trtypes[]" id="trtypes" class="form-control select2"--}}
+                                    {{--multiple="multiple"--}}
+                                    {{--required style="width: 100%">--}}
+                                {{--@foreach($transactionTypes as $id => $trtype)--}}
+                                    {{--<option value="{{ $id }}" >{{ $trtype }}</option>--}}
+                                {{--@endforeach--}}
+                            {{--</select>--}}
+                            {{--@if($errors->has('trtypes'))--}}
+                                {{--<em class="invalid-feedback">--}}
+                                    {{--{{ $errors->first('trtypes') }}--}}
+                                {{--</em>--}}
+                            {{--@endif--}}
+                        {{--</div>--}}
+                    {{--</div>--}}
+
+                    <div class="form-group row {{ $errors->has('trtype') ? ' has-error' : '' }}">
+                        <label class="col-md-4 control-label text-md-right">Statement type : <span
                                     class="required"> * </span></label>
-                        <div class="col-sm-6">
-                            <select name="trtypes[]" id="trtypes" class="form-control select2"
-                                    multiple="multiple"
-                                    required style="width: 100%">
-                                @foreach($transactionTypes as $id => $trtype)
-                                    <option value="{{ $id }}" >{{ $trtype }}</option>
-                                @endforeach
-                            </select>
-                            @if($errors->has('trtypes'))
-                                <em class="invalid-feedback">
-                                    {{ $errors->first('trtypes') }}
-                                </em>
-                            @endif
+                        <div class=" col-md-6 mt-radio-inline">
+                            <label class="mt-radio">
+                                {{ Form::radio('trtype', 1,true) }} All
+                                <span></span>
+                            </label>
+                            <label class="mt-radio">
+                                {{ Form::radio('trtype', 2) }} Investment & Profit share
+                                <span></span>
+                            </label>
+                            <label class="mt-radio">
+                                {{ Form::radio('trtype', 3) }} Loan & Loan Payment
+                                <span></span>
+                            </label>
                         </div>
+
+                        @if ($errors->has('trtype'))
+                            <span class="help-block">
+                                        <strong>{{ $errors->first('trtype') }}</strong>
+                                    </span>
+                        @endif
                     </div>
+
 
                     <div class="form-group ">
                         <label class="control-label col-md-4 text-right">{{ __('all_settings.Select Date Ranges') }}</label>

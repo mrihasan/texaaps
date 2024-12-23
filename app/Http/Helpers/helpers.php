@@ -618,23 +618,43 @@ function ledger_account_all($start_date, $end_date)
     return $ledger;
 }
 
-function investment_statement($start_date, $end_date, $tr_type)
+function investment_statement($start_date, $end_date, $credit_trtype, $debit_trtype)
 {
 //    dd($tr_type);
+//    $mindate_ledger = DB::table('bank_ledgers')->MIN('transaction_date');
+//    $before1day1 = new DateTime($start_date);
+//    $dateObject=$before1day1->sub(new DateInterval('P1D'));
+//    $before1day=$dateObject->format('Y-m-d'). ' 23:59:59';
+//    $bd_bank_credit = DB::table('bank_ledgers')
+//        ->whereIn('transaction_type_id', $tr_type)
+//        ->whereBetween('transaction_date', [$mindate_ledger, $before1day])
+//        ->sum('amount');
+//    $bd_bank_debit = DB::table('bank_ledgers')
+//        ->whereIn('transaction_type_id', $tr_type)
+//        ->whereBetween('transaction_date', [$mindate_ledger, $before1day])
+//        ->sum('amount');
+//    $balance_brought_down=$bd_bank_credit-$bd_bank_debit;
+
     $mindate_ledger = DB::table('bank_ledgers')->MIN('transaction_date');
-    $before1day1 = new DateTime($start_date);
-    $dateObject=$before1day1->sub(new DateInterval('P1D'));
-    $before1day=$dateObject->format('Y-m-d'). ' 23:59:59';
+    if (!$mindate_ledger) {
+        $mindate_ledger = now()->format('Y-m-d H:i:s'); // Default fallback date
+    }
+
+    $adjustedStartDate = new DateTime($start_date);
+    $adjustedStartDate->sub(new DateInterval('P1D'))->setTime(23, 59, 59);
+    $before1day = $adjustedStartDate->format('Y-m-d H:i:s');
     $bd_bank_credit = DB::table('bank_ledgers')
-        ->whereIn('transaction_type_id', $tr_type)
+        ->whereIn('transaction_type_id', $credit_trtype)
         ->whereBetween('transaction_date', [$mindate_ledger, $before1day])
         ->sum('amount');
     $bd_bank_debit = DB::table('bank_ledgers')
-        ->whereIn('transaction_type_id', $tr_type)
+        ->whereIn('transaction_type_id', $debit_trtype)
         ->whereBetween('transaction_date', [$mindate_ledger, $before1day])
         ->sum('amount');
-    $balance_brought_down=$bd_bank_credit-$bd_bank_debit;
-// Create a new ledger entry for balance brought down
+    $balance_brought_down = $bd_bank_credit - $bd_bank_debit;
+    $tr_type = array_merge($credit_trtype, $debit_trtype);
+
+    // Create a new ledger entry for balance brought down
     $balance_brought_down_entry = (object) [
         'transaction_date' => $before1day,
         'transaction_code' => null,

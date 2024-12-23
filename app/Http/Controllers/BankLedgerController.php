@@ -77,18 +77,28 @@ class BankLedgerController extends Controller
     }
     public function investment_statement(Request $request)
     {
-//        dd($request->trtypes);
+//        dd($request);
 //        abort_if(Gate::denies('payment-access'), redirect('error'));
+        if ($request->trtype==2){ //2=Investment & Profit share
+            $credit_trtype = [10];
+            $debit_trtype = [11];
+        }elseif ($request->trtype==3){ //3=Loan & Loan Payment
+            $credit_trtype = [5];
+            $debit_trtype = [6];
+        }else{
+            $credit_trtype = [5,10];
+            $debit_trtype = [6,11];
+        }
         if ($request->start_date == null) {
             $start_date = Carbon::now()->subDays(90)->format('Y-m-d') . ' 00:00:00';
             $end_date = date('Y-m-d') . ' 23:59:59';
-            $tr_type = [5,6,10,11];
         } else {
             $start_date = date('Y-m-d', strtotime($request->start_date)) . ' 00:00:00';
             $end_date = date('Y-m-d', strtotime($request->end_date)) . ' 23:59:59';
-            $tr_type = $request->trtypes;
+//            $tr_type = $request->trtype;
         }
-        $ledger = investment_statement($start_date, $end_date, $tr_type);
+
+        $ledger = investment_statement($start_date, $end_date, $credit_trtype, $debit_trtype);
         $transactionTypes = TransactionType::whereIn('id', [5,6,10,11])->pluck('title', 'id');
         $header_title = 'Statement From ' . Carbon::parse($start_date)->format('d-M-Y') . ' To ' . Carbon::parse($end_date)->format('d-M-Y');
 
