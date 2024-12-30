@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Expense;
+use App\Models\Invoice;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -67,11 +68,26 @@ class BalanceReportController extends Controller
         }
         $header_title = 'From ' . Carbon::parse($startDate)->format('d-M-Y') . ' To ' . Carbon::parse($endDate)->format('d-M-Y');
 
+//        dd($startDate.'---'. $endDate.'---'.$previous_startDate.'---'. $previous_endDate);
+//        dd($previous_startDate.'---'. $previous_endDate);
+//dd(Invoice::invoiceSmallestDate());
+        $total['openingStock'] = $this->productStockReportAi(Invoice::invoiceSmallestDate(), $previous_endDate);
+        $total['closingStock'] = $this->productStockReportAi($startDate, $endDate);
+
+        $total['pre_openingStock'] = $this->productStockReportAi(Invoice::invoiceSmallestDate(), Carbon::parse($previous_endDate)->subYear()->format('Y-m-d'));
+        $total['pre_closingStock'] = $this->productStockReportAi($previous_startDate, $previous_endDate);
+//        dd($total['openingStock']);
+
         if (session()->get('branch') != 'all') {
 
             $total['salesamount'] = DB::table('invoices')
                 ->where('branch_id', session()->get('branch'))
                 ->where('transaction_type', 'Sales')
+                ->whereBetween('transaction_date', [$startDate, $endDate])
+                ->sum('invoice_total');
+            $total['returnamount'] = DB::table('invoices')
+                ->where('branch_id', session()->get('branch'))
+                ->where('transaction_type', 'Return')
                 ->whereBetween('transaction_date', [$startDate, $endDate])
                 ->sum('invoice_total');
             $total['purchaseamount'] = DB::table('invoices')
@@ -87,9 +103,15 @@ class BalanceReportController extends Controller
                 ->where('branch_id', session()->get('branch'))
                 ->whereBetween('created_at', [$startDate, $endDate])
                 ->sum('paidsalary_amount');
+
             $total['pre_salesamount'] = DB::table('invoices')
                 ->where('branch_id', session()->get('branch'))
                 ->where('transaction_type', 'Sales')
+                ->whereBetween('transaction_date', [$previous_startDate, $previous_endDate])
+                ->sum('invoice_total');
+            $total['pre_returnamount'] = DB::table('invoices')
+                ->where('branch_id', session()->get('branch'))
+                ->where('transaction_type', 'Return')
                 ->whereBetween('transaction_date', [$previous_startDate, $previous_endDate])
                 ->sum('invoice_total');
             $total['pre_purchaseamount'] = DB::table('invoices')
@@ -110,6 +132,10 @@ class BalanceReportController extends Controller
                 ->where('transaction_type', 'Sales')
                 ->whereBetween('transaction_date', [$startDate, $endDate])
                 ->sum('invoice_total');
+            $total['returnamount'] = DB::table('invoices')
+                ->where('transaction_type', 'Return')
+                ->whereBetween('transaction_date', [$startDate, $endDate])
+                ->sum('invoice_total');
             $total['purchaseamount'] = DB::table('invoices')
                 ->where('transaction_type', 'Purchase')
                 ->whereBetween('transaction_date', [$startDate, $endDate])
@@ -120,8 +146,13 @@ class BalanceReportController extends Controller
             $total['salary'] = DB::table('employee_salaries')
                 ->whereBetween('created_at', [$startDate, $endDate])
                 ->sum('paidsalary_amount');
+
             $total['pre_salesamount'] = DB::table('invoices')
                 ->where('transaction_type', 'Sales')
+                ->whereBetween('transaction_date', [$previous_startDate, $previous_endDate])
+                ->sum('invoice_total');
+            $total['pre_returnamount'] = DB::table('invoices')
+                ->where('transaction_type', 'Return')
                 ->whereBetween('transaction_date', [$previous_startDate, $previous_endDate])
                 ->sum('invoice_total');
             $total['pre_purchaseamount'] = DB::table('invoices')
@@ -135,36 +166,31 @@ class BalanceReportController extends Controller
                 ->whereBetween('created_at', [$previous_startDate, $previous_endDate])
                 ->sum('paidsalary_amount');
         }
-        $total['otherGain']=00;
-        $total['totalSales']=$total['salesamount']+$total['otherGain'];
 
-        $total['purchaseRawmat']=00;
-        $total['otherLoss']=00;
-        $total['totalPurchases']=$total['purchaseamount']+$total['purchaseRawmat']+$total['otherLoss'];
+        $total['netSales']=$total['salesamount']+$total['returnamount'];
+        $total['totalStock']=$total['purchaseamount']+$total['openingStock'];
+        $total['balanceStock']=$total['totalStock']-$total['closingStock'];
+        $total['grossProfit']=$total['netSales']-$total['balanceStock'];
+        $total['totalExpense']=$total['expense']+$total['salary'];
+        $total['operatingProfit']=$total['grossProfit']-$total['totalExpense'];
+        $total['bankCharge']=00;
+        $total['netProfitBeforeTax']=$total['operatingProfit']-$total['bankCharge'];
+        $total['incomeTaxPaid']=00;
+        $total['netProfitForTheYear']=$total['netProfitBeforeTax']-$total['incomeTaxPaid'];
 
-        $total['paidBankInterest']=00;
-        $total['totalExpense']=$total['expense']+$total['paidBankInterest']+$total['salary'];
+        $total['pre_netSales']=$total['pre_salesamount']+$total['pre_returnamount'];
+        $total['pre_totalStock']=$total['pre_purchaseamount']+$total['pre_openingStock'];
+        $total['pre_balanceStock']=$total['pre_totalStock']-$total['pre_closingStock'];
+        $total['pre_grossProfit']=$total['pre_netSales']-$total['pre_balanceStock'];
+        $total['pre_totalExpense']=$total['pre_expense']+$total['pre_salary'];
+        $total['pre_operatingProfit']=$total['pre_grossProfit']-$total['pre_totalExpense'];
+        $total['pre_bankCharge']=00;
+        $total['pre_netProfitBeforeTax']=$total['pre_operatingProfit']-$total['pre_bankCharge'];
+        $total['pre_incomeTaxPaid']=00;
+        $total['pre_netProfitForTheYear']=$total['pre_netProfitBeforeTax']-$total['pre_incomeTaxPaid'];
+        $total['balanceTransferred']=$total['netProfitForTheYear']+$total['pre_netProfitForTheYear'];
 
-        $total['salesMargin']=$total['totalSales']-$total['totalPurchases']-$total['totalExpense'];
-        $total['incomeTaxvat']=00;
-        $total['netsalesMargin']=$total['totalSales']-$total['totalPurchases']-$total['totalExpense'];
-        $total['netIncome']=$total['totalSales']-$total['totalPurchases']-$total['totalExpense']-$total['incomeTaxvat'];
 
-        $total['pre_otherGain']=00;
-        $total['pre_totalSales']=$total['pre_salesamount']+$total['pre_otherGain'];
-
-        $total['pre_purchaseRawmat']=00;
-        $total['pre_otherLoss']=00;
-        $total['pre_totalPurchases']=$total['pre_purchaseamount']+$total['pre_purchaseRawmat']+$total['pre_otherLoss'];
-
-        $total['pre_paidBankInterest']=00;
-        $total['pre_totalExpense']=$total['pre_expense']+$total['pre_paidBankInterest']+$total['pre_salary'];
-
-        $total['pre_salesMargin']=$total['pre_totalSales']-$total['pre_totalPurchases']-$total['pre_totalExpense'];
-        $total['pre_incomeTaxvat']=00;
-        $total['pre_netsalesMargin']=$total['pre_totalSales']-$total['pre_totalPurchases']-$total['pre_totalExpense'];
-        $total['pre_netIncome']=$total['pre_totalSales']-$total['pre_totalPurchases']-$total['pre_totalExpense']-$total['pre_incomeTaxvat'];
-//        dd($total);
 
         return view('report.income_statement', compact('fiscalYears', 'fiscalYear','startDate','endDate','header_title','total'));
     }
@@ -310,55 +336,173 @@ class BalanceReportController extends Controller
 
     function productStockReport($startDate, $endDate)
     {
-        $totalValueSum = 0;
-        $products = Product::with('inventory_details')->orderBy('title','asc')->get();
-        foreach ($products as $product) {
-            $totalPurchase = $product->inventory_details()->where('transaction_type', 'Purchase')
-                ->whereHas('invoice', function ($query) use ($startDate, $endDate) {
-                    $query->where('transaction_date', '>=', $startDate)
-                        ->where('transaction_date', '<=', $endDate);
-                })
-                ->sum('qty');
-            $totalSales = $product->inventory_details()->where('transaction_type', 'Sales')
-                ->whereHas('invoice', function ($query) use ($startDate, $endDate) {
-                    $query->where('transaction_date', '>=', $startDate)
-                        ->where('transaction_date', '<=', $endDate);
-                })
-                ->sum('qty');
-            $valuePurchase = $product->inventory_details()->where('transaction_type', 'Purchase')
-                ->whereHas('invoice', function ($query) use ($startDate, $endDate) {
-                    $query->where('transaction_date', '>=', $startDate)
-                        ->where('transaction_date', '<=', $endDate);
-                })
-                ->sum('line_total');
-            $valueSales = $product->inventory_details()->where('transaction_type', 'Sales')
-                ->whereHas('invoice', function ($query) use ($startDate, $endDate) {
-                    $query->where('transaction_date', '>=', $startDate)
-                        ->where('transaction_date', '<=', $endDate);
-                })
-                ->sum('line_total');
-            $lastPurchaseValue = $product->inventory_details()
-                    ->where('transaction_type', 'Purchase')
+        if (session()->get('branch') != 'all') {
+            $totalValueSum = 0;
+            $products = Product::with('inventory_details')->orderBy('title', 'asc')->get();
+            foreach ($products as $product) {
+                $totalPurchase = $product->inventory_details()->where('transaction_type', 'Purchase')
                     ->whereHas('invoice', function ($query) use ($startDate, $endDate) {
                         $query->where('transaction_date', '>=', $startDate)
                             ->where('transaction_date', '<=', $endDate)
-                            ->orderBy('transaction_date', 'desc'); // Order by the invoice date
+                            ->where('branch_id', session()->get('branch'));
                     })
+                    ->sum('qty');
+                $totalSales = $product->inventory_details()->where('transaction_type', 'Sales')
+                    ->whereHas('invoice', function ($query) use ($startDate, $endDate) {
+                        $query->where('transaction_date', '>=', $startDate)
+                            ->where('transaction_date', '<=', $endDate)
+                            ->where('branch_id', session()->get('branch'));
+                    })
+                    ->sum('qty');
+                $valuePurchase = $product->inventory_details()->where('transaction_type', 'Purchase')
+                    ->whereHas('invoice', function ($query) use ($startDate, $endDate) {
+                        $query->where('transaction_date', '>=', $startDate)
+                            ->where('transaction_date', '<=', $endDate)
+                            ->where('branch_id', session()->get('branch'));
+                    })
+                    ->sum('line_total');
+                $valueSales = $product->inventory_details()->where('transaction_type', 'Sales')
+                    ->whereHas('invoice', function ($query) use ($startDate, $endDate) {
+                        $query->where('transaction_date', '>=', $startDate)
+                            ->where('transaction_date', '<=', $endDate)
+                            ->where('branch_id', session()->get('branch'));
+                    })
+                    ->sum('line_total');
+                $lastPurchaseValue = $product->inventory_details()
+                        ->where('transaction_type', 'Purchase')
+                        ->whereHas('invoice', function ($query) use ($startDate, $endDate) {
+                            $query->where('transaction_date', '>=', $startDate)
+                                ->where('transaction_date', '<=', $endDate)
+                                ->where('branch_id', session()->get('branch'))
+                                ->orderBy('transaction_date', 'desc'); // Order by the invoice date
+                        })
+                        ->orderBy('id', 'desc')
+                        ->first()// Get the most recent purchase
+                        ->ubuy_price ?? 0;
+                $product->lastPurchaseValue = $lastPurchaseValue;
+                $product->totalPurchase = $totalPurchase;
+                $product->totalSales = $totalSales;
+                $product->stock = $totalPurchase - $totalSales;
+                $product->totalPurchaseValue = $valuePurchase;
+                $product->totalSalesValue = $valueSales;
+                $product->totalValue = ($totalPurchase - $totalSales) * $lastPurchaseValue;
+//            calculate all stock value sum
+                $totalValueSum += $product->totalValue;
+            }
+            return $totalValueSum;
+        }else{
+            $totalValueSum = 0;
+            $products = Product::with('inventory_details')->orderBy('title', 'asc')->get();
+            foreach ($products as $product) {
+                $totalPurchase = $product->inventory_details()->where('transaction_type', 'Purchase')
+                    ->whereHas('invoice', function ($query) use ($startDate, $endDate) {
+                        $query->where('transaction_date', '>=', $startDate)
+                            ->where('transaction_date', '<=', $endDate);
+                    })
+                    ->sum('qty');
+                $totalSales = $product->inventory_details()->where('transaction_type', 'Sales')
+                    ->whereHas('invoice', function ($query) use ($startDate, $endDate) {
+                        $query->where('transaction_date', '>=', $startDate)
+                            ->where('transaction_date', '<=', $endDate);
+                    })
+                    ->sum('qty');
+                $valuePurchase = $product->inventory_details()->where('transaction_type', 'Purchase')
+                    ->whereHas('invoice', function ($query) use ($startDate, $endDate) {
+                        $query->where('transaction_date', '>=', $startDate)
+                            ->where('transaction_date', '<=', $endDate);
+                    })
+                    ->sum('line_total');
+                $valueSales = $product->inventory_details()->where('transaction_type', 'Sales')
+                    ->whereHas('invoice', function ($query) use ($startDate, $endDate) {
+                        $query->where('transaction_date', '>=', $startDate)
+                            ->where('transaction_date', '<=', $endDate);
+                    })
+                    ->sum('line_total');
+                $lastPurchaseValue = $product->inventory_details()
+                        ->where('transaction_type', 'Purchase')
+                        ->whereHas('invoice', function ($query) use ($startDate, $endDate) {
+                            $query->where('transaction_date', '>=', $startDate)
+                                ->where('transaction_date', '<=', $endDate)
+                                ->orderBy('transaction_date', 'desc'); // Order by the invoice date
+                        })
+                        ->orderBy('id', 'desc')
+                        ->first()// Get the most recent purchase
+                        ->ubuy_price ?? 0;
+                $product->lastPurchaseValue = $lastPurchaseValue;
+                $product->totalPurchase = $totalPurchase;
+                $product->totalSales = $totalSales;
+                $product->stock = $totalPurchase - $totalSales;
+                $product->totalPurchaseValue = $valuePurchase;
+                $product->totalSalesValue = $valueSales;
+                $product->totalValue = ($totalPurchase - $totalSales) * $lastPurchaseValue;
+//            calculate all stock value sum
+                $totalValueSum += $product->totalValue;
+            }
+            return $totalValueSum;
+
+        }
+    }
+
+    function productStockReportAi($startDate, $endDate)
+    {
+        $branchId = session()->get('branch');
+        $hasBranchFilter = $branchId !== 'all';
+
+        $totalValueSum = 0;
+        $products = Product::with('inventory_details')->orderBy('title', 'asc')->get();
+
+        foreach ($products as $product) {
+            $invoiceFilter = function ($query) use ($startDate, $endDate, $branchId, $hasBranchFilter) {
+                $query->whereBetween('transaction_date', [$startDate, $endDate]);
+                if ($hasBranchFilter) {
+                    $query->where('branch_id', $branchId);
+                }
+            };
+
+            $totalPurchase = $product->inventory_details()
+                ->where('transaction_type', 'Purchase')
+                ->whereHas('invoice', $invoiceFilter)
+                ->sum('qty');
+
+            $totalSales = $product->inventory_details()
+                ->where('transaction_type', 'Sales')
+                ->whereHas('invoice', $invoiceFilter)
+                ->sum('qty');
+
+            $valuePurchase = $product->inventory_details()
+                ->where('transaction_type', 'Purchase')
+                ->whereHas('invoice', $invoiceFilter)
+                ->sum('line_total');
+
+            $valueSales = $product->inventory_details()
+                ->where('transaction_type', 'Sales')
+                ->whereHas('invoice', $invoiceFilter)
+                ->sum('line_total');
+
+            $lastPurchaseValue = $product->inventory_details()
+                    ->where('transaction_type', 'Purchase')
+                    ->whereHas('invoice', $invoiceFilter)
+                    ->with(['invoice' => function ($query) {
+                        $query->orderBy('transaction_date', 'desc');
+                    }])
                     ->orderBy('id', 'desc')
-                    ->first() // Get the most recent purchase
+                    ->first()
                     ->ubuy_price ?? 0;
+
             $product->lastPurchaseValue = $lastPurchaseValue;
             $product->totalPurchase = $totalPurchase;
             $product->totalSales = $totalSales;
-            $product->stock = $totalPurchase-$totalSales;
+            $product->stock = $totalPurchase - $totalSales;
             $product->totalPurchaseValue = $valuePurchase;
             $product->totalSalesValue = $valueSales;
-            $product->totalValue = ($totalPurchase-$totalSales)*$lastPurchaseValue ;
-//            calculate all stock value sum
+            $product->totalValue = $product->stock * $lastPurchaseValue;
+
             $totalValueSum += $product->totalValue;
         }
+
         return $totalValueSum;
     }
+
     function customerReceivable($startDate, $endDate)
     {
         $ledgers_receipt = DB::table('ledgers')

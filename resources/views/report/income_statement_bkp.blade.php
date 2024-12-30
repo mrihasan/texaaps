@@ -15,43 +15,31 @@
         .pagebreak {
             page-break-before: always;
         }
-
         body {
             background: none;
             -ms-zoom: 1.665;
         }
-
         div.portrait, div.landscape {
             margin: 0;
             padding: 0;
             border: none;
             background: none;
         }
-
         div.landscape {
             transform: rotate(270deg) translate(-276mm, 0);
             transform-origin: 0 0;
         }
     }
-
     table {
         border-collapse: collapse;
     }
-
     table, th, td {
         border: 1px solid gray;
         padding: 4px;
     }
-
     table.center {
         margin-left: auto;
         margin-right: auto;
-    }
-</style>
-<style>
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
     }
 </style>
 {{--<link href="{{ asset('custom/bootstrap-select/css/bootstrap-select.css') }}" rel="stylesheet" />--}}
@@ -70,6 +58,7 @@
             <div class="card-header">
                 <h3 class="card-title">{{'Income Statement '.$header_title}}</h3>
             </div>
+
             <div class="card-body">
                 <div class="tab-content" id="custom-tabs-one-tabContent">
                     <div class="tab-pane fade show active" id="custom-tabs-one-home" role="tabpanel"
@@ -93,24 +82,20 @@
                                 </span>
                                 @endif
                             </div>
+                            {{--<button type="submit" class="btn btn-info float-right">{{ __('all_settings.Search') }}</button>--}}
                         </div>
                         {!! Form::close() !!}
 
-                        <div id="loading" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center;">
-                            <div style="width: 50px; height: 50px; border: 6px solid #fff; border-top: 6px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;"></div>
-                            <div style="font-size: 18px; font-weight: bold;">Processing your request, please wait...</div>
-                        </div>
 
                         <div class="portlet-body form portrait" id="print_this0">
                             <div class="content">
-                                <table class="center" width="60%" style="border: none">
+                                <table class="center" width="90%" style="border: none">
 
                                     <tbody>
-                                    <tr class="print-only" style="border: none">
-                                        <td style="border: none;" colspan="3"><img
+                                    <tr class="print-only" style="border: none" >
+                                        <td style="border: none;" colspan="3" ><img
                                                     src="{!! asset( 'storage/images/pad_top.png'. '?'. 'time='. time()) !!}"
-                                                    class="img-fluid" style="border: none" height="auto" width="30%">
-                                        </td>
+                                                    class="img-fluid" style="border: none" height="auto" width="30%"></td>
                                     </tr>
                                     <tr style="border: none">
                                         <td style="border: none; text-align: center" colspan="3">
@@ -128,7 +113,7 @@
                                     </tr>
 
                                     <tr style="border: none">
-                                        <td style="text-align:left; border: none" width="20%">
+                                        <td style="text-align:left; border: none" width="20%" >
                                         </td>
                                         <td style="text-align:left;border: none " width="60%">
                                         </td>
@@ -137,11 +122,10 @@
                                     </tr>
                                     {{--Sales Start--}}
                                     <tr style="border: solid">
-                                        <td style="text-align:left; border: solid; background-color: #d3d3d3"
-                                            colspan="2">
+                                        <td style="text-align:left; border: solid; background-color: #d3d3d3"  colspan="2">
                                             <strong>Sales</strong>
                                         </td>
-                                        <td style="text-align:right; border: solid; background-color: #d3d3d3">
+                                        <td style="text-align:right; border: solid; background-color: #d3d3d3" >
                                             <strong>Amount</strong>
                                         </td>
                                     </tr>
@@ -149,187 +133,173 @@
                                         <td style="text-align:left; border: solid;" rowspan="2">
 
                                         </td>
-                                        <td style="text-align:left; border: solid;">
-                                            Total Sales
+                                        <td style="text-align:left; border: solid;" >
+                                            Sales
                                         </td>
-                                        <td style="text-align:right; border: solid;">
+                                        <td style="text-align:right; border: solid;" >
                                             {{ number_format($total['salesamount'],0)}}
                                         </td>
                                     </tr>
                                     <tr style="border: solid">
-                                        <td style="text-align:left; border: solid;">
-                                            Sales Return
+                                        <td style="text-align:left; border: solid;" >
+                                            Other Gain (Interest/comission)
                                         </td>
-                                        <td style="text-align:right; border: solid; ">
-                                            {{ number_format($total['returnamount'],0)}}
+                                        <td style="text-align:right; border: solid; " >
+                                            {{number_format($total['otherGain'],0)}}
                                         </td>
                                     </tr>
                                     <tr style="border: solid">
-                                        <td style="text-align:right; border: solid; " colspan="2">
-                                            <strong>Net Sale</strong>
+                                        <td style="text-align:center; border: solid; " colspan="2">
+                                            <strong>Total Sale</strong>
                                         </td>
-                                        <td style="text-align:right; border: solid; ">
-                                            <strong>{{number_format($total['netSales'],0)}}</strong>
+                                        <td style="text-align:right; border: solid; " >
+                                            <strong>{{number_format($total['totalSales'],0)}}</strong>
                                         </td>
                                     </tr>
                                     {{--Sales End--}}
                                     {{--Purchase Start--}}
                                     <tr style="border: solid">
-                                        <td style="text-align:left; border: solid; background-color: #d3d3d3"
-                                            colspan="2">
-                                            <strong>Cost of Sale</strong>
+                                        <td style="text-align:left; border: solid; background-color: #d3d3d3"  colspan="2">
+                                            <strong>Purchase</strong>
                                         </td>
-                                        <td style="text-align:right; border: solid; background-color: #d3d3d3">
+                                        <td style="text-align:right; border: solid; background-color: #d3d3d3" >
 
                                         </td>
                                     </tr>
                                     <tr style="border: solid">
-                                        <td style="text-align:left; border: solid;" rowspan="2">
+                                        <td style="text-align:left; border: solid;" rowspan="3">
 
                                         </td>
-                                        <td style="text-align:left; border: solid;">
-                                            Opening Stock
+                                        <td style="text-align:left; border: solid;" >
+                                            Purchase (Raw Material)
                                         </td>
-                                        <td style="text-align:right; border: solid;">
-                                            {{number_format($total['openingStock'],0)}}
+                                        <td style="text-align:right; border: solid;" >
+                                            {{number_format($total['purchaseRawmat'],0)}}
                                         </td>
                                     </tr>
                                     <tr style="border: solid">
-                                        <td style="text-align:left; border: solid;">
-                                            Total Purchase
+                                        <td style="text-align:left; border: solid;" >
+                                            Purchase (Goods)
                                         </td>
-                                        <td style="text-align:right; border: solid; ">
+                                        <td style="text-align:right; border: solid; " >
                                             {{number_format($total['purchaseamount'],0)}}
-
                                         </td>
                                     </tr>
                                     <tr style="border: solid">
-                                        <td style="text-align:right; border: solid; " colspan="2">
-                                            <strong>Total Stock</strong>
+                                        <td style="text-align:left; border: solid;" >
+                                            Other Loss
                                         </td>
-                                        <td style="text-align:right; border: solid; ">
-                                            <strong>{{number_format($total['totalStock'],0)}}</strong>
-                                        </td>
-                                    </tr>
-                                    <tr style="border: solid">
-                                        <td style="text-align:right; border: solid; " colspan="2">
-                                            <strong> Closing Stock</strong>
-                                        </td>
-                                        <td style="text-align:right; border: solid; ">
-                                            <strong>{{number_format($total['closingStock'],0)}}</strong>
+                                        <td style="text-align:right; border: solid; " >
+                                            {{number_format($total['otherLoss'],0)}}
                                         </td>
                                     </tr>
                                     <tr style="border: solid">
-                                        <td style="text-align:right; border: solid; " colspan="2">
-                                            <strong> Balance Stock</strong>
+                                        <td style="text-align:center; border: solid; " colspan="2">
+                                            <strong>Total Purchase</strong>
                                         </td>
-                                        <td style="text-align:right; border: solid; ">
-                                            <strong>{{number_format($total['balanceStock'],0)}}</strong>
-                                        </td>
-                                    </tr>
-                                    <tr style="border: solid">
-                                        <td style="text-align:right; border: solid; " colspan="2">
-                                            <strong> Gross Profit</strong>
-                                        </td>
-                                        <td style="text-align:right; border: solid; ">
-                                            <strong>{{number_format($total['grossProfit'],0)}}</strong>
+                                        <td style="text-align:right; border: solid; " >
+                                            <strong>{{number_format($total['totalPurchases'],0)}}</strong>
                                         </td>
                                     </tr>
                                     {{--Purchase End--}}
                                     {{--Expense Start--}}
                                     <tr style="border: solid">
-                                        <td style="text-align:left; border: solid; background-color: #d3d3d3"
-                                            colspan="2">
+                                        <td style="text-align:left; border: solid; background-color: #d3d3d3"  colspan="2">
                                             <strong>Expense</strong>
                                         </td>
-                                        <td style="text-align:right; border: solid; background-color: #d3d3d3">
+                                        <td style="text-align:right; border: solid; background-color: #d3d3d3" >
 
+                                        </td>
+                                    </tr>
+                                    <tr style="border: solid">
+                                        <td style="text-align:left; border: solid;" rowspan="3">
+
+                                        </td>
+                                        <td style="text-align:left; border: solid;" >
+                                            All Expnenses
+                                        </td>
+                                        <td style="text-align:right; border: solid;" >
+                                            {{number_format($total['expense'],0)}}
+                                        </td>
+                                    </tr>
+                                    <tr style="border: solid">
+                                        <td style="text-align:left; border: solid;" >
+                                            Bank Interest paid
+                                        </td>
+                                        <td style="text-align:right; border: solid; " >
+                                            {{number_format($total['paidBankInterest'],0)}}
+                                        </td>
+                                    </tr>
+                                    <tr style="border: solid">
+                                        <td style="text-align:left; border: solid;" >
+                                            Salary & Wages
+                                        </td>
+                                        <td style="text-align:right; border: solid; " >
+                                            {{number_format($total['salary'],0)}}
+                                        </td>
+                                    </tr>
+                                    <tr style="border: solid">
+                                        <td style="text-align:center; border: solid; " colspan="2">
+                                            <strong>Total Expense</strong>
+                                        </td>
+                                        <td style="text-align:right; border: solid; " >
+                                            <strong>{{number_format($total['totalExpense'],0)}}</strong>
+                                        </td>
+                                    </tr>
+                                    {{--Expense End--}}
+                                    {{--Income Start--}}
+                                    <tr style="border: solid">
+                                        <td style="text-align:left; border: solid; background-color: #d3d3d3"  colspan="2">
+                                            <strong>Gross Income</strong>
+                                        </td>
+                                        <td style="text-align:right; border: solid; background-color: #d3d3d3" >
+                                            <strong></strong>
                                         </td>
                                     </tr>
                                     <tr style="border: solid">
                                         <td style="text-align:left; border: solid;" rowspan="2">
 
                                         </td>
-                                        <td style="text-align:left; border: solid;">
-                                            All Expnenses
+                                        <td style="text-align:left; border: solid;" >
+                                            Sales Margin
                                         </td>
-                                        <td style="text-align:right; border: solid;">
-                                            {{number_format($total['expense'],0)}}
-                                        </td>
-                                    </tr>
-                                    <tr style="border: solid">
-                                        <td style="text-align:left; border: solid;">
-                                            Salary & Wages
-                                        </td>
-                                        <td style="text-align:right; border: solid; ">
-                                            {{number_format($total['salary'],0)}}
+                                        <td style="text-align:right; border: solid;" >
+                                            {{number_format($total['salesMargin'],0)}}
                                         </td>
                                     </tr>
                                     <tr style="border: solid">
-                                        <td style="text-align:right; border: solid; " colspan="2">
-                                            <strong>Total Expense</strong>
+                                        <td style="text-align:left; border: solid;" >
+                                            Income Tax  & VAT
                                         </td>
-                                        <td style="text-align:right; border: solid; ">
-                                            <strong>{{number_format($total['totalExpense'],0)}}</strong>
-                                        </td>
-                                    </tr>
-                                    <tr style="border: solid">
-                                        <td style="text-align:right; border: solid; " colspan="2">
-                                            <strong>Operating Profit</strong>
-                                        </td>
-                                        <td style="text-align:right; border: solid; ">
-                                            <strong>{{number_format($total['operatingProfit'],0)}}</strong>
+                                        <td style="text-align:right; border: solid; " >
+                                            {{$total['incomeTaxvat']}}
                                         </td>
                                     </tr>
                                     <tr style="border: solid">
-                                        <td style="text-align:right; border: solid; " colspan="2">
-                                            <strong>Bank Charge</strong>
-                                        </td>
-                                        <td style="text-align:right; border: solid; ">
-                                            <strong>{{number_format($total['bankCharge'],0)}}</strong>
-                                        </td>
-                                    </tr>
-                                    <tr style="border: solid;background-color: #d3d3d3">
                                         <td style="text-align:left; border: solid; " colspan="2">
-                                            <strong>Net Profit Before Tax</strong>
+                                            <strong>Net Sales Margin</strong>
                                         </td>
-                                        <td style="text-align:right; border: solid; ">
-                                            <strong>{{number_format($total['netProfitBeforeTax'],0)}}</strong>
+                                        <td style="text-align:right; border: solid; " >
+                                            <strong>{{number_format($total['netsalesMargin'],0)}}</strong>
                                         </td>
                                     </tr>
                                     <tr style="border: solid">
-                                        <td style="text-align:right; border: solid; " colspan="2">
-                                            <strong>Income Tax Paid</strong>
+                                        <td style="text-align:left; border: solid; background-color: #d3d3d3" colspan="2">
+                                            <strong>Net Income</strong>
                                         </td>
-                                        <td style="text-align:right; border: solid; ">
-                                            {{number_format($total['incomeTaxPaid'],0)}}
-                                        </td>
-                                    </tr>
-                                    <tr style="border: solid;background-color: #d3d3d3">
-                                        <td style="text-align:Left; border: solid; " colspan="2">
-                                            <strong>Net Profit For the Year</strong>
-                                        </td>
-                                        <td style="text-align:right; border: solid; ">
-                                            {{number_format($total['netProfitForTheYear'],0)}}
+                                        <td style="text-align:right; border: solid; background-color: #d3d3d3" >
+                                            <strong>{{number_format($total['netIncome'],0)}}</strong>
                                         </td>
                                     </tr>
-                                    <tr style="border: solid;background-color: #d3d3d3">
-                                        <td style="text-align:Left; border: solid; " colspan="2">
-                                            <strong>Previous Net Income BF</strong>
+                                    <tr style="border: solid">
+                                        <td style="text-align:left; border: solid; " colspan="2">
+                                            <strong>Previous Net Income BF </strong>
                                         </td>
-                                        <td style="text-align:right; border: solid; ">
-                                            {{number_format($total['pre_netProfitForTheYear'],0)}}
-                                        </td>
-                                    </tr>
-                                    <tr style="border: solid;background-color: #d3d3d3">
-                                        <td style="text-align:Left; border: solid; " colspan="2">
-                                            <strong>Balance transferred to Statement of Financial Position</strong>
-                                        </td>
-                                        <td style="text-align:right; border: solid; ">
-                                            {{number_format($total['balanceTransferred'],0)}}
+                                        <td style="text-align:right; border: solid; " >
+                                            <strong>{{number_format($total['pre_netIncome'],0)}}</strong>
                                         </td>
                                     </tr>
-                                    {{--Expense End--}}
+                                    {{--Income End--}}
                                     </tbody>
                                 </table>
                             </div>
@@ -344,6 +314,7 @@
                 <a type="button" id="pbutton0" class="btn btn-warning pull-right"><i
                             class="fa fa-print"> Print</i></a>
             </div>
+
 
 
             <!-- /.card-body -->
@@ -361,34 +332,12 @@
 <script src="{{ asset('supporting/bootstrap-daterangepicker/daterangepicker.min.js')}}"></script>
 <script src="{!! asset('alte305/plugins/select2/js/select2.full.min.js')!!}"></script>
 
-{{--<script type="text/javascript">--}}
-    {{--// Trigger form submission on dropdown change--}}
-    {{--$('#fiscal_year').change(function () {--}}
-        {{--$('#saveForm').submit(); // Submit the form--}}
-    {{--});--}}
-{{--</script>--}}
-
 <script type="text/javascript">
-    $(document).ready(function () {
-        // Trigger spinner during form submission
-        $('#fiscal_year').change(function () {
-            $('#loading').fadeIn(); // Show the spinner
-            $('#saveForm').submit(); // Submit the form
-        });
-
-        // Trigger spinner during page refresh or navigation
-        $(window).on('beforeunload', function () {
-            $('#loading').fadeIn(); // Show the spinner
-        });
-
-        // Hide the spinner after the page has fully loaded
-        $(window).on('load', function () {
-            $('#loading').fadeOut(); // Hide the spinner
-        });
+    // Trigger form submission on dropdown change
+    $('#fiscal_year').change(function() {
+        $('#saveForm').submit(); // Submit the form
     });
 </script>
-
-
 <script>
     //    $('.select2').select2()
 

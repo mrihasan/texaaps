@@ -41,4 +41,9 @@ class Invoice extends Model
         return $this->hasMany(InvoiceDetail::class,'invoice_id');
     }
 
+    public static function invoiceSmallestDate()
+    {
+        return self::min('transaction_date');
+    }
+
 }
