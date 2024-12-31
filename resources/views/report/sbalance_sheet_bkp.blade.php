@@ -42,13 +42,6 @@
         margin-right: auto;
     }
 </style>
-<style>
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-</style>
-
 {{--<link href="{{ asset('custom/bootstrap-select/css/bootstrap-select.css') }}" rel="stylesheet" />--}}
 <!-- Tempusdominus Bbootstrap 4 -->
 {{--<link rel="stylesheet"--}}
@@ -93,23 +86,19 @@
                             {{--<button type="submit" class="btn btn-info float-right">{{ __('all_settings.Search') }}</button>--}}
                         </div>
                         {!! Form::close() !!}
-                        <div id="loading" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center;">
-                            <div style="width: 50px; height: 50px; border: 6px solid #fff; border-top: 6px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;"></div>
-                            <div style="font-size: 18px; font-weight: bold;">Processing your request, please wait...</div>
-                        </div>
 
                         <div class="portlet-body form portrait" id="print_this0">
                             <div class="content">
-                                <table class="center" width="60%" style="border: none">
+                                <table class="center" width="90%" style="border: none">
 
                                     <tbody>
                                     <tr class="print-only" style="border: none" >
-                                        <td style="border: none;" colspan="2" ><img
+                                        <td style="border: none;" colspan="3" ><img
                                                     src="{!! asset( 'storage/images/pad_top.png'. '?'. 'time='. time()) !!}"
                                                     class="img-fluid" style="border: none" height="auto" width="30%"></td>
                                     </tr>
                                     <tr style="border: none">
-                                        <td style="border: none; text-align: center" colspan="2">
+                                        <td style="border: none; text-align: center" colspan="3">
                                             <br/>
                                             <h4 style="text-align: center; margin-top: 0px;margin-bottom: 0px; text-decoration: underline;">
                                                 <strong>{{$header_title}}</strong></h4>
@@ -119,58 +108,63 @@
                                     </tr>
 
                                     <tr style="border: none">
-                                        <td style="text-align:left; border: none" width="70%" >
+                                        <td style="text-align:left; border: none" width="60%" >
+                                        </td>
+                                        <td style="text-align:left;border: none " width="10%">
                                         </td>
                                         <td style="text-align:right; border: none" width="30%">
                                         </td>
                                     </tr>
                                     <tr >
                                         <td style="text-align:left; border: none">
+                                        </td>
+                                        <td style="text-align:left;">
                                         </td>
                                         <td style="text-align:center; text-decoration: underline">Amount In Taka</td>
                                     </tr>
                                     <tr >
                                         <td style="text-align:left; border: none">
                                         </td>
+                                        <td style="text-align:center; text-decoration: underline ">Notes</td>
                                         <td style="text-align:center; text-decoration: underline">At <br/>{{$end_date}}</td>
                                     </tr>
 
                                     <tr >
-                                        <td style="text-align:left; text-decoration: underline"  colspan="2">
-                                            <strong>ASSETS</strong>
+                                        <td style="text-align:left; text-decoration: underline"  colspan="3">
+                                            <strong>Assets</strong>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td style="text-align:left;" >
-                                            NON-CURRENT ASSETS
+                                            All Assets
                                         </td>
-                                        <td style="text-align:right;" >
-                                            {{--{{ number_format($total['fixedAssets'],0)}}--}}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="text-align:left;" >
-                                            Fixed Assets- At Cost Less Depreciation
+                                        <td style="text-align:center; " >
+                                            1
                                         </td>
                                         <td style="text-align:right;" >
                                             {{ number_format($total['fixedAssets'],0)}}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td style="text-align:left; border: none" width="70%" >
+                                        <td style="text-align:left; border: none" width="60%" >
+                                        </td>
+                                        <td style="text-align:left;border: none " width="10%">
                                         </td>
                                         <td style="text-align:right; border: none" width="30%">
                                         </td>
                                     </tr>
 {{--Current Assets Start--}}
                                     <tr >
-                                        <td style="text-align:left; text-decoration: underline"  colspan="2">
+                                        <td style="text-align:left; text-decoration: underline"  colspan="3">
                                             <strong>Current Assets</strong>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td style="text-align:left;" >
                                             Total Stock (Goods & Raw Materials)
+                                        </td>
+                                        <td style="text-align:center; " >
+                                            2
                                         </td>
                                         <td style="text-align:right;" >
                                             {{ number_format($total['total_stock'],0)}}
@@ -180,12 +174,17 @@
                                         <td style="text-align:left;" >
                                             Customer Receivable
                                         </td>
+                                        <td style="text-align:center; " >
+                                            3
+                                        </td>
                                         <td style="text-align:right;" >
                                             {{ number_format($total['customer_receivable'],0)}}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td style="text-align:left; border: none" width="70%" >
+                                        <td style="text-align:left; border: none" width="60%" >
+                                        </td>
+                                        <td style="text-align:left;border: none " width="10%">
                                         </td>
                                         <td style="text-align:right; border: none" width="30%">
                                         </td>
@@ -193,13 +192,16 @@
                                     {{--Current Assets End--}}
 {{--Other Current Assets Start--}}
                                     <tr >
-                                        <td style="text-align:left; text-decoration: underline"  colspan="2">
+                                        <td style="text-align:left; text-decoration: underline"  colspan="3">
                                             <strong>Other Current Assets</strong>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td style="text-align:left;" >
                                             Cash Balance
+                                        </td>
+                                        <td style="text-align:center; " >
+                                            4
                                         </td>
                                         <td style="text-align:right;" >
                                             {{ number_format($total['cash_balance'],0)}}
@@ -209,18 +211,23 @@
                                         <td style="text-align:left;" >
                                             Bank Balance
                                         </td>
+                                        <td style="text-align:center; " >
+                                            5
+                                        </td>
                                         <td style="text-align:right;" >
                                             {{ number_format($total['bank_balance'],0)}}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td style="text-align:left; border: none" width="70%" >
+                                        <td style="text-align:left; border: none" width="60%" >
+                                        </td>
+                                        <td style="text-align:left;border: none " width="10%">
                                         </td>
                                         <td style="text-align:right; border: none" width="30%">
                                         </td>
                                     </tr>
                                     <tr style="border: solid">
-                                        <td style="text-align:left; border: solid; " >
+                                        <td style="text-align:left; border: solid; " colspan="2">
                                             <strong>Total Assets </strong>
                                         </td>
                                         <td style="text-align:right; border: solid; " >
@@ -228,7 +235,9 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td style="text-align:left; border: none" width="70%" >
+                                        <td style="text-align:left; border: none" width="60%" >
+                                        </td>
+                                        <td style="text-align:left;border: none " width="10%">
                                         </td>
                                         <td style="text-align:right; border: none" width="30%">
                                         </td>
@@ -237,13 +246,16 @@
                                     {{--Current Assets End--}}
 {{--Equity & Liability Start--}}
                                     <tr >
-                                        <td style="text-align:left; text-decoration: underline"  colspan="2">
+                                        <td style="text-align:left; text-decoration: underline"  colspan="3">
                                             <strong>Equity & Liability</strong>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td style="text-align:left;" >
                                             Total Investments
+                                        </td>
+                                        <td style="text-align:center; " >
+
                                         </td>
                                         <td style="text-align:right;" >
                                             {{ number_format($total['investment'],0)}}
@@ -253,26 +265,23 @@
                                         <td style="text-align:left;" >
                                             Accumulated Loss/ Profit (Previous year + Current year)
                                         </td>
+                                        <td style="text-align:center; " >
+
+                                        </td>
                                         <td style="text-align:right;" >
                                             {{ number_format($total['accumulatedProfit'],0)}}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td style="text-align:left;" >
-                                            Drawing by Directors
+                                        <td style="text-align:left; border: none" width="60%" >
                                         </td>
-                                        <td style="text-align:right;" >
-                                            {{ number_format($total['drawingbyDirectors'],0)}}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="text-align:left; border: none" width="70%" >
+                                        <td style="text-align:left;border: none " width="10%">
                                         </td>
                                         <td style="text-align:right; border: none" width="30%">
                                         </td>
                                     </tr>
                                     <tr style="border: solid">
-                                        <td style="text-align:left; border: solid; ">
+                                        <td style="text-align:left; border: solid; " colspan="2">
                                             <strong>Total equity </strong>
                                         </td>
                                         <td style="text-align:right; border: solid; " >
@@ -280,7 +289,9 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td style="text-align:left; border: none" width="70%" >
+                                        <td style="text-align:left; border: none" width="60%" >
+                                        </td>
+                                        <td style="text-align:left;border: none " width="10%">
                                         </td>
                                         <td style="text-align:right; border: none" width="30%">
                                         </td>
@@ -288,7 +299,7 @@
                                     {{--Equity & Liability End--}}
 {{--Non Current Liability Start--}}
                                     <tr >
-                                        <td style="text-align:left; text-decoration: underline"  colspan="2">
+                                        <td style="text-align:left; text-decoration: underline"  colspan="3">
                                             <strong>Non Current Liability</strong>
                                         </td>
                                     </tr>
@@ -296,6 +307,7 @@
                                         <td style="text-align:left;" >
                                             Bank Loan
                                         </td>
+                                        <td style="text-align:center; " >6</td>
                                         <td style="text-align:right;" >
                                             {{ number_format($total['bank_loan']['loan'],0)}}
                                         </td>
@@ -304,18 +316,23 @@
                                         <td style="text-align:left;" >
                                             Loan From Director's
                                         </td>
+                                        <td style="text-align:center; " >
+                                            7
+                                        </td>
                                         <td style="text-align:right;" >
                                             {{ number_format($total['director_loan'],0)}}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td style="text-align:left; border: none" width="70%" >
+                                        <td style="text-align:left; border: none" width="60%" >
+                                        </td>
+                                        <td style="text-align:left;border: none " width="10%">
                                         </td>
                                         <td style="text-align:right; border: none" width="30%">
                                         </td>
                                     </tr>
                                     <tr style="border: solid">
-                                        <td style="text-align:left; border: solid; " >
+                                        <td style="text-align:left; border: solid; " colspan="2">
                                             <strong>Total Non Current Liability </strong>
                                         </td>
                                         <td style="text-align:right; border: solid; " >
@@ -323,7 +340,9 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td style="text-align:left; border: none" width="70%" >
+                                        <td style="text-align:left; border: none" width="60%" >
+                                        </td>
+                                        <td style="text-align:left;border: none " width="10%">
                                         </td>
                                         <td style="text-align:right; border: none" width="30%">
                                         </td>
@@ -332,34 +351,40 @@
                                     {{--Non Current Liability End--}}
 {{--Current Liability Start--}}
                                     <tr >
-                                        <td style="text-align:left; text-decoration: underline" colspan="2" >
+                                        <td style="text-align:left; text-decoration: underline"  colspan="3">
                                             <strong>Current Liability</strong>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td style="text-align:left;" >
-                                            Liabilities for Goods Suppliers (Suppliers Payables)
+                                            Suppliers Payables
                                         </td>
+                                        <td style="text-align:center; " >8</td>
                                         <td style="text-align:right;" >
                                             {{ number_format($total['supplier_payable'],0)}}
                                         </td>
                                     </tr>
                                     <tr>
                                         <td style="text-align:left;" >
-                                            Liabilities for Expenses
+                                            Bank Loan Payable
+                                        </td>
+                                        <td style="text-align:center; " >
+                                            9
                                         </td>
                                         <td style="text-align:right;" >
-                                            {{ number_format($total['liabilitiesForExpenses'],0)}}
+                                            {{ number_format($total['bank_loan']['loan_payable'],0)}}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td style="text-align:left; border: none" width="70%" >
+                                        <td style="text-align:left; border: none" width="60%" >
+                                        </td>
+                                        <td style="text-align:left;border: none " width="10%">
                                         </td>
                                         <td style="text-align:right; border: none" width="30%">
                                         </td>
                                     </tr>
                                     <tr style="border: solid">
-                                        <td style="text-align:left; border: solid; " >
+                                        <td style="text-align:left; border: solid; " colspan="2">
                                             <strong>Total Current Liability </strong>
                                         </td>
                                         <td style="text-align:right; border: solid; " >
@@ -367,19 +392,23 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td style="text-align:left; border: none" width="70%" >
+                                        <td style="text-align:left; border: none" width="60%" >
+                                        </td>
+                                        <td style="text-align:left;border: none " width="10%">
                                         </td>
                                         <td style="text-align:right; border: none" width="30%">
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td style="text-align:left; border: none" width="70%" >
+                                        <td style="text-align:left; border: none" width="60%" >
+                                        </td>
+                                        <td style="text-align:left;border: none " width="10%">
                                         </td>
                                         <td style="text-align:right; border: none" width="30%">
                                         </td>
                                     </tr>
                                     <tr style="border: solid">
-                                        <td style="text-align:left; border: solid; " >
+                                        <td style="text-align:left; border: solid; " colspan="2">
                                             <strong>Total Liability </strong>
                                         </td>
                                         <td style="text-align:right; border: solid; " >
@@ -387,19 +416,23 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td style="text-align:left; border: none" width="70%" >
+                                        <td style="text-align:left; border: none" width="60%" >
+                                        </td>
+                                        <td style="text-align:left;border: none " width="10%">
                                         </td>
                                         <td style="text-align:right; border: none" width="30%">
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td style="text-align:left; border: none" width="70%" >
+                                        <td style="text-align:left; border: none" width="60%" >
+                                        </td>
+                                        <td style="text-align:left;border: none " width="10%">
                                         </td>
                                         <td style="text-align:right; border: none" width="30%">
                                         </td>
                                     </tr>
                                     <tr style="border: solid">
-                                        <td style="text-align:left; border: solid; " >
+                                        <td style="text-align:left; border: solid; " colspan="2">
                                             <strong>Total Liability & Equity </strong>
                                         </td>
                                         <td style="text-align:right; border: solid; " >
@@ -407,7 +440,9 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td style="text-align:left; border: none" width="70%" >
+                                        <td style="text-align:left; border: none" width="60%" >
+                                        </td>
+                                        <td style="text-align:left;border: none " width="10%">
                                         </td>
                                         <td style="text-align:right; border: none" width="30%">
                                         </td>
@@ -447,32 +482,12 @@
 <script src="{{ asset('supporting/bootstrap-daterangepicker/daterangepicker.min.js')}}"></script>
 <script src="{!! asset('alte305/plugins/select2/js/select2.full.min.js')!!}"></script>
 
-{{--<script type="text/javascript">--}}
-    {{--// Trigger form submission on dropdown change--}}
-    {{--$('#fiscal_year').change(function() {--}}
-        {{--$('#saveForm').submit(); // Submit the form--}}
-    {{--});--}}
-{{--</script>--}}
 <script type="text/javascript">
-    $(document).ready(function () {
-        // Trigger spinner during form submission
-        $('#fiscal_year').change(function () {
-            $('#loading').fadeIn(); // Show the spinner
-            $('#saveForm').submit(); // Submit the form
-        });
-
-        // Trigger spinner during page refresh or navigation
-        $(window).on('beforeunload', function () {
-            $('#loading').fadeIn(); // Show the spinner
-        });
-
-        // Hide the spinner after the page has fully loaded
-        $(window).on('load', function () {
-            $('#loading').fadeOut(); // Hide the spinner
-        });
+    // Trigger form submission on dropdown change
+    $('#fiscal_year').change(function() {
+        $('#saveForm').submit(); // Submit the form
     });
 </script>
-
 <script>
     //    $('.select2').select2()
 
